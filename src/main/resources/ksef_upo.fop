@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:n1="http://upo.schematy.mf.gov.pl/KSeF/v1">
+    <xsl:output method="xml"  encoding="UTF-8" indent="yes"/>
+    <xsl:template match="/">
+        <fo:root font-family="DejaVu Sans" font-size="7pt">
+            <fo:layout-master-set>
+                
+                <fo:simple-page-master master-name="A4-portrait-regular" page-height="29.7cm"
+                    page-width="21.0cm" >
+                    <fo:region-body region-name="xsl-region-body" margin="0.8cm"/>
+                </fo:simple-page-master>
+                
+                <fo:simple-page-master master-name="A4-landscape-regular"
+                    page-height="8.28in"
+                    page-width="11.9in" >
+                    <fo:region-body region-name="xsl-region-body" margin="0.8cm"/>
+                </fo:simple-page-master>
+                
+                
+                <fo:simple-page-master master-name="A4-portrait-last-page" page-height="29.7cm"
+                    page-width="21.0cm">
+                    <fo:region-body region-name="xsl-region-body" margin="0.8cm"/>
+                    <fo:region-after region-name="xsl-region-after" extent="0.5in"/>
+                </fo:simple-page-master>
+                
+                
+                <fo:page-sequence-master master-name="page-sequence-master">
+                    <fo:repeatable-page-master-alternatives>
+                        <!--<fo:conditional-page-master-reference master-reference="A4-portrait-last-page" page-position="last" /> -->
+                        <fo:conditional-page-master-reference master-reference="A4-landscape-regular" />
+                        
+                    </fo:repeatable-page-master-alternatives>
+                </fo:page-sequence-master>
+                
+            </fo:layout-master-set>
+            
+       
+            
+            
+            
+            <fo:page-sequence master-reference="page-sequence-master">
+                
+      
+                
+                <fo:flow flow-name="xsl-region-body">
+                    
+                    <fo:block font-size="14" space-after="14pt" font-weight="700">
+                        <fo:inline>Krajowy System</fo:inline><fo:inline color="#ff0000"> e</fo:inline>-<fo:inline>Faktur</fo:inline>
+                    </fo:block>
+                    
+                   
+                    <fo:block>
+                        <fo:inline font-weight="700">Nazwa pełna podmiotu, któremu doręczono dokument elektroniczny:</fo:inline> <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:NazwaPodmiotuPrzyjmujacego"/></fo:inline>
+                    </fo:block>
+                    
+                    <fo:block>
+                        <fo:inline font-weight="700">Informacja o dokumencie:</fo:inline> <fo:inline>Dokument został zarejestrowany w systemie teleinformatycznym
+                            Ministerstwa Finansów</fo:inline>
+                    </fo:block>
+                    
+                    <fo:block font-size="14" space-before="14pt" font-weight="700">
+                        Urzędowe poświadczenie odbioru dokumentu elektronicznego KSeF
+                    </fo:block>
+                    
+                    
+                    <fo:block space-before="14pt">
+                        <fo:table>
+                          
+                            <fo:table-body>
+                                
+                                
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline font-weight="700">Identyfikator podatkowy podmiotu (Podmiot1):</fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:IdentyfikatorPodatkowyPodmiotu"/></fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline font-weight="700">Identyfikator dokumentu przesłanego do KSeF:</fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:NumerReferencyjny"/></fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline font-weight="700">Wartość funkcji skrótu dokumentu w postaci otrzymanej przez system (łącznie z podpisem elektronicznym):</fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:SkrotZlozonejStruktury"/></fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline font-weight="700">Nazwa pliku XSD struktury logicznej dotycząca przesłanego dokumentu:</fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:NazwaStrukturyLogicznej"/></fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline font-weight="700">Kod formularza przedłożonego dokumentu elektronicznego:</fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell>
+                                        <fo:block>
+                                        <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:KodFormularza"/></fo:inline>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>                                
+                                
+                            </fo:table-body>
+                        </fo:table>
+                        
+                    </fo:block>
+                    
+                    <fo:block font-size="6pt" line-height="inherit" space-before="14pt">
+                        
+                        
+                        
+                        <fo:table>
+                            
+                            <fo:table-header background-color="#f6f7fa">
+                                
+                                <fo:table-row border-width="1px" border-style="solid" border-color="#bababa" border-bottom="2px solid #000000">
+                                    <fo:table-cell padding="5pt" border-right="1px solid #bababa" border-bottom="2px solid #000000">
+                                        <fo:block>
+                                            Numer identyfikujący fakturę w Krajowym
+                                            Systemie e-Faktur (KSeF)
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell padding="5pt" border-right="1px solid #bababa" border-bottom="2px solid #000000">
+                                        <fo:block>
+                                            Numer faktury
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                    <fo:table-cell padding="5pt" border-right="1px solid #bababa" border-bottom="2px solid #000000">
+                                        <fo:block>
+                                            Data przesłania dokumentu do systemu
+                                            informatycznego Ministerstwa Finansów
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell padding="5pt" border-right="1px solid #bababa" border-bottom="2px solid #000000">
+                                        <fo:block>
+                                            Data przyjęcia dokumentu do systemu
+                                            informatycznego Ministerstwa Finansów
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell padding="5pt" border-bottom="2px solid #000000">
+                                        <fo:block>
+                                            Wartość funkcji skrótu złożonego
+                                            dokumentu
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                
+                            </fo:table-header>
+                            
+                            <fo:table-body>                               
+                                <xsl:for-each select="//n1:Potwierdzenie/n1:Dokument">
+                                    <fo:table-row border-width="1px" border-style="solid" border-color="#bababa">
+                                        <fo:table-cell padding="5pt" border-right="1px solid #bababa">
+                                        <fo:block>
+                                            <xsl:value-of select="./n1:NumerKSeFDokumentu"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                        <fo:table-cell padding="5pt" border-right="1px solid #bababa">
+                                        <fo:block>
+                                            <xsl:value-of select="./n1:NumerFaktury"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    
+                                        <fo:table-cell padding="5pt" border-right="1px solid #bababa">
+                                        <fo:block>
+                                            <xsl:value-of select="./n1:DataPrzeslaniaDokumentu"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                        <fo:table-cell padding="5pt" border-right="1px solid #bababa">
+                                        <fo:block>
+                                            <xsl:value-of select="./n1:DataPrzyjeciaDokumentu"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell padding="5pt">
+                                        <fo:block>
+                                            <xsl:value-of select="./n1:SkrotDokumentu"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                                    
+                                </xsl:for-each>
+                            </fo:table-body>
+                        </fo:table>
+                        
+                        
+                        
+                    </fo:block>
+                   
+                    
+                    <fo:block id="TheVeryLastPage"> </fo:block>
+                    
+                    
+                </fo:flow>
+             
+           
+               
+            </fo:page-sequence>
+        </fo:root>
+    
+    
+        
+    </xsl:template>
+    
+
+    
+    
+
+
+</xsl:stylesheet>
