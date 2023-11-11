@@ -1,0 +1,14 @@
+<fop version="1.0">
+    <renderers>
+        <renderer mime="application/pdf">
+            <fonts>
+                <font kerning="yes" embed-url="file:src/main/resources/fonts/OpenSans-Regular.ttf">
+                    <font-triplet name="sans" style="normal" weight="normal"/>
+                </font>
+                <font kerning="yes" embed-url="file:src/main/resources/fonts/OpenSans-Bold.ttf">
+                    <font-triplet name="sans" style="normal" weight="bold"/>
+                </font>
+            </fonts>
+        </renderer>
+    </renderers>
+</fop>

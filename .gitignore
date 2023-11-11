@@ -62,3 +62,4 @@ buildNumber.properties
 *.iml
 out
 gen
+/src/test/resources/upo.pdf

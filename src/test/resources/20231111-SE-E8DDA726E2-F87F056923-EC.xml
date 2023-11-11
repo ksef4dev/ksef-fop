@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Potwierdzenie xmlns="http://upo.schematy.mf.gov.pl/KSeF/v3">
+    <NazwaPodmiotuPrzyjmujacego>Ministerstwo Finansów</NazwaPodmiotuPrzyjmujacego>
+    <NumerReferencyjny>20231111-SE-E8DDA726E2-F87F056923-EC</NumerReferencyjny>
+    <IdentyfikatorPodatkowyPodmiotu>2932110194</IdentyfikatorPodatkowyPodmiotu>
+    <SkrotZlozonejStruktury>Kc/IqBczP2Qb9zvTeS7ZH5uH9D0VT8sfD/dSFnGbK18=</SkrotZlozonejStruktury>
+    <NazwaStrukturyLogicznej>FA 1-0E</NazwaStrukturyLogicznej>
+    <KodFormularza>FA (2)</KodFormularza>
+    <Dokument>
+        <NumerKSeFDokumentu>2932110194-20231111-E3B49FA0E428-C4</NumerKSeFDokumentu>
+        <NumerFaktury>FK2023/11/05</NumerFaktury>
+        <DataPrzeslaniaDokumentu>2023-11-11T10:49:12.089+01:00</DataPrzeslaniaDokumentu>
+        <DataPrzyjeciaDokumentu>2023-11-11T10:49:18.507+01:00</DataPrzyjeciaDokumentu>
+        <SkrotDokumentu>hiU44GC5CzUbbYE9BSUB9C22sOaYKgKFB2Z8By5H0Gs=</SkrotDokumentu>
+    </Dokument>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="sigId_8554136433720245">
+        <ds:SignedInfo>
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+            <ds:Reference Id="mainRefId_8554136433721949" Type="" URI="">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>IpQW5NbQikrp6PQF3L0828OuKEeRZNo8z/MWY9JQOBg=</ds:DigestValue>
+            </ds:Reference>
+            <ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#sigPropId_8554136433722369">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>DYhfVNBatdtzDVvEXJr3MnA/MWNdIWUOanjtjBdt8ds=</ds:DigestValue>
+            </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue Id="sigValId_8554136433721328">
+            HsCYsMj054Rk+fkdw4yVZ2fVAoljqNi85fhoQNFuC5XnHm3RAKD62/6Jn8mdHqjBGe2aNu4cvyZkmdrryw7GWvjyvsksfWBhEI0Py1FjAGeJk3Dy+twYfuG16cXksEkTjXUrKXcGBMKwQqNziBf1JSvGJSllkGRjzE321+0TAFmwVXwNLWVQ4oHNk1wipAYA33P001ZRd986ILZcUjjUeJGQFQVC5v+suwKmbeqcPXO2M6V3iPNPMqamNwEEKHgaHQ81Q0iEY66ZBHAj/JWpfxrsxSbojZEqYYAhykSTGnVvMIFSIjvxdkwsNX2ZNdIZuIhMWD+s7PEY1vg3BF1/8g==
+        </ds:SignatureValue>
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate>
+                    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
+                </ds:X509Certificate>
+            </ds:X509Data>
+        </ds:KeyInfo>
+        <ds:Object>
+            <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"
+                                        Target="#sigId_8554136433720245">
+                <xades:SignedProperties Id="sigPropId_8554136433722369">
+                    <xades:SignedSignatureProperties>
+                        <xades:SigningTime>2023-11-11T10:49:19+01:00</xades:SigningTime>
+                        <xades:SigningCertificate>
+                            <xades:Cert>
+                                <xades:CertDigest>
+                                    <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                                    <ds:DigestValue>BJpR95la7Jl/4bvCl06repTA1KU=</ds:DigestValue>
+                                </xades:CertDigest>
+                                <xades:IssuerSerial>
+                                    <ds:X509IssuerName>OID.2.5.4.97=VATPL-5260300517, CN=COPE SZAFIR - Kwalifikowany
+                                        TEST, O=Krajowa Izba Rozliczeniowa S.A., C=PL
+                                    </ds:X509IssuerName>
+                                    <ds:X509SerialNumber>22096408045728768374159134294361131025763874480
+                                    </ds:X509SerialNumber>
+                                </xades:IssuerSerial>
+                            </xades:Cert>
+                        </xades:SigningCertificate>
+                    </xades:SignedSignatureProperties>
+                    <xades:SignedDataObjectProperties>
+                        <xades:DataObjectFormat ObjectReference="#mainRefId_8554136433721949">
+                            <xades:MimeType>text/xml</xades:MimeType>
+                        </xades:DataObjectFormat>
+                    </xades:SignedDataObjectProperties>
+                </xades:SignedProperties>
+            </xades:QualifyingProperties>
+        </ds:Object>
+    </ds:Signature>
+</Potwierdzenie>
