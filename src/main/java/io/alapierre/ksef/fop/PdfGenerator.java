@@ -16,18 +16,46 @@ import java.io.*;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
-@RequiredArgsConstructor
 public class PdfGenerator {
 
-    private final String fopConfig;
+    private final FopFactory fopFactory;
 
-    public void generateUpo(Source upoXML, OutputStream out) throws IOException, TransformerException, ConfigurationException, FOPException {
+    /**
+     * Create generator with Apache FOP config file from classpath
+     *
+     * @param fopConfig config file name
+     * @throws IOException throws when cant load given config file from classpath
+     * @throws ConfigurationException throws when config file has errors
+     */
+    public PdfGenerator(String fopConfig) throws IOException, ConfigurationException {
+        this(loadResource(fopConfig));
+    }
 
-        FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI());
+    /**
+     * Create generator with Apache FOP config
+     *
+     * @param fopConfig InputStream to read FOP config file
+     *
+     * @throws ConfigurationException  throws when config file has errors
+     */
+    public PdfGenerator(InputStream fopConfig) throws ConfigurationException {
+        val builder = new FopFactoryBuilder(new File(".").toURI());
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg = cfgBuilder.build(loadResource(fopConfig));
+        Configuration cfg = cfgBuilder.build(fopConfig);
         builder.setConfiguration(cfg);
-        FopFactory fopFactory = builder.build();
+        fopFactory = builder.build();
+    }
+
+    /**
+     * Generates UPO PDF from given XML and OutputStream
+     * @param upoXML UPO XML
+     * @param out destination OutputStream
+     * @throws IOException throws when IO error occurs
+     * @throws TransformerException throws when XSLT transformer error occurs
+     * @throws FOPException throws when FOP error occurs
+     */
+    public void generateUpo(Source upoXML, OutputStream out) throws IOException, TransformerException, FOPException {
+
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
@@ -38,7 +66,7 @@ public class PdfGenerator {
         transformer.transform(upoXML, res);
     }
 
-    private InputStream loadResource(String resource) throws IOException {
+    private static InputStream loadResource(String resource) throws IOException {
         val res = PdfGenerator.class.getClassLoader().getResourceAsStream(resource);
         if(res == null) throw new IOException("Can't load classpath resource " + resource);
         return res;

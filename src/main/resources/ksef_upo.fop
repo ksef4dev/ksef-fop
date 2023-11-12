@@ -14,7 +14,7 @@
 
                 <fo:simple-page-master master-name="A4-landscape-regular"
                     page-height="8.28in"
-                    page-width="11.9in" >w search j
+                    page-width="11.9in" >
                     <fo:region-body region-name="xsl-region-body" margin="0.8cm"/>
                 </fo:simple-page-master>
 
@@ -46,11 +46,11 @@
 
 
                     <fo:block>
-                        <fo:inline font-weight="700">Nazwa pełna podmiotu, któremu doręczono dokument elektroniczny:</fo:inline> <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:NazwaPodmiotuPrzyjmujacego"/></fo:inline>
+                        <fo:inline font-weight="700">Nazwa pełna podmiotu, któremu doręczono dokument elektroniczny: </fo:inline> <fo:inline><xsl:value-of select="//n1:Potwierdzenie/n1:NazwaPodmiotuPrzyjmujacego"/></fo:inline>
                     </fo:block>
 
                     <fo:block>
-                        <fo:inline font-weight="700">Informacja o dokumencie:</fo:inline> <fo:inline>Dokument został zarejestrowany w systemie teleinformatycznym
+                        <fo:inline font-weight="700">Informacja o dokumencie: </fo:inline> <fo:inline>Dokument został zarejestrowany w systemie teleinformatycznym
                             Ministerstwa Finansów</fo:inline>
                     </fo:block>
 
