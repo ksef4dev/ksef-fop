@@ -36,6 +36,13 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Print github.actor
         run: 'echo "Wykonawca: ${{ github.actor }}"'
+      - name: Sprawdź kontekst repozytorium
+        run: |
+          if [ "${{ github.repository }}" = "${{ github.event.pull_request.head.repo.full_name }}" ]; then
+            echo "Uruchamiany w kontekście oryginalnego repozytorium"
+          else
+            echo "Uruchamiany w kontekście forkowanego repozytorium"
+          fi
       - name: Build and analyze
         if: github.actor != 'dependabot[bot]'
         env:
