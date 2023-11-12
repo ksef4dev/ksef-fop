@@ -25,7 +25,7 @@ public class GeneratePdfTest {
     @Test
     void genByService() throws Exception {
 
-        PdfGenerator generator = new PdfGenerator("fop.xconf");
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo.pdf"))) {
 
