@@ -20,7 +20,7 @@ import java.io.*;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
-public class GeneratePdfTest {
+class GeneratePdfTest {
 
     @Test
     void genByService() throws Exception {
