@@ -42,7 +42,7 @@ public class GeneratePdfTest {
 
             FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI());
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            Configuration cfg = cfgBuilder.buildFromFile(new File("src/main/resources/fop.xconf"));
+            Configuration cfg = cfgBuilder.buildFromFile(new File("src/test/resources/fop.xconf"));
             builder.setConfiguration(cfg);
             FopFactory fopFactory = builder.build();
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
