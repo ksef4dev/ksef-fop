@@ -34,17 +34,19 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Print github.actor
+        run: 'echo "Wykonawca: ${{ github.actor }}"'
       - name: Build and analyze
-#        if: github.event.pull_request.head.repo.full_name == github.repository
+        if: github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ksef4dev_ksef-fop
-#      - name: Build only
-#        if: github.event.pull_request.head.repo.full_name != github.repository
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-#        run: mvn -B verify
+      - name: Build only
+        if: github.actor == 'dependabot[bot]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+        run: mvn -B verify
       - name: deploy snapshots
         if: github.event_name == 'push'
         run: mvn --batch-mode deploy
