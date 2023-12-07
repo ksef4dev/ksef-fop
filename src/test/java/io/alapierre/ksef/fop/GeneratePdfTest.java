@@ -15,6 +15,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -68,6 +72,37 @@ class GeneratePdfTest {
             Source src = new StreamSource(xml);
             Result res = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, res);
+        }
+    }
+
+    @Test
+    void generateInvoicePdf() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_19.xml");
+            Source src = new StreamSource(xml);
+            generator.generateInvoice(src, out);
+        }
+    }
+
+    @Test
+    void testInvoicePdfGenerateFromExampleInvoices() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
+
+        // Pobieranie wszystkich plików XML z folderu
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(invoiceFolder, "*.xml")) {
+            for (Path entry : stream) {
+                // Tworzenie strumienia dla każdego pliku XML
+                try (InputStream xml = Files.newInputStream(entry);
+                     OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
+
+                    Source src = new StreamSource(xml);
+                    generator.generateInvoice(src, out);
+                }
+            }
         }
     }
 }

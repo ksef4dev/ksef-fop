@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://crd.gov.pl/wzor/2023/06/29/12648/" xsi:schemaLocation="http://crd.gov.pl/wzor/2023/06/29/12648/">
+    <tns:Naglowek>
+        <tns:KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</tns:KodFormularza>
+        <tns:WariantFormularza>2</tns:WariantFormularza>
+        <tns:DataWytworzeniaFa>2023-12-01T08:34:48Z</tns:DataWytworzeniaFa>
+        <tns:SystemInfo>ITrust KSeF</tns:SystemInfo>
+    </tns:Naglowek>
+    <tns:Podmiot1>
+        <tns:DaneIdentyfikacyjne>
+            <tns:NIP>9999999999</tns:NIP>
+            <tns:Nazwa>ABC Developex S.A.</tns:Nazwa>
+        </tns:DaneIdentyfikacyjne>
+        <tns:Adres>
+            <tns:KodKraju>PL</tns:KodKraju>
+            <tns:AdresL1>ul. Sadowa 1 m. 3</tns:AdresL1>
+            <tns:AdresL2>00-002 Kraków</tns:AdresL2>
+        </tns:Adres>
+        <tns:DaneKontaktowe>
+            <tns:Email>abc@abc.pl</tns:Email>
+            <tns:Telefon>667444555</tns:Telefon>
+        </tns:DaneKontaktowe>
+    </tns:Podmiot1>
+    <tns:Podmiot2>
+        <tns:DaneIdentyfikacyjne>
+            <tns:NIP>1111111111</tns:NIP>
+            <tns:Nazwa>F.H.U. Jan Kowalski</tns:Nazwa>
+        </tns:DaneIdentyfikacyjne>
+        <tns:Adres>
+            <tns:KodKraju>PL</tns:KodKraju>
+            <tns:AdresL1>ul. Polna 1</tns:AdresL1>
+            <tns:AdresL2>00-001 Warszawa</tns:AdresL2>
+        </tns:Adres>
+        <tns:DaneKontaktowe>
+            <tns:Email>jan@kowalski.pl</tns:Email>
+            <tns:Telefon>555777999</tns:Telefon>
+        </tns:DaneKontaktowe>
+        <tns:NrKlienta>fdfd778343</tns:NrKlienta>
+        <tns:IDNabywcy>0001</tns:IDNabywcy>
+    </tns:Podmiot2>
+    <tns:Fa>
+        <tns:NrKSeF>5451824119-20231201-27647BC34480-8D</tns:NrKSeF>
+        <tns:KodWaluty>PLN</tns:KodWaluty>
+        <tns:P_1>2023-11-30</tns:P_1>
+        <tns:P_1M>Warszawa</tns:P_1M>
+        <tns:P_2>2/11/2023</tns:P_2>
+        <tns:P_6>2023-11-30</tns:P_6>
+        <tns:P_13_1>13915</tns:P_13_1>
+        <tns:P_14_1>3200.45</tns:P_14_1>
+        <tns:P_15>17115.45</tns:P_15>
+        <tns:Adnotacje>
+            <tns:P_16>2</tns:P_16>
+            <tns:P_17>2</tns:P_17>
+            <tns:P_18>2</tns:P_18>
+            <tns:P_18A>2</tns:P_18A>
+            <tns:Zwolnienie>
+                <tns:P_19N>1</tns:P_19N>
+            </tns:Zwolnienie>
+            <tns:NoweSrodkiTransportu>
+                <tns:P_22N>1</tns:P_22N>
+            </tns:NoweSrodkiTransportu>
+            <tns:P_23>2</tns:P_23>
+            <tns:PMarzy>
+                <tns:P_PMarzyN>1</tns:P_PMarzyN>
+            </tns:PMarzy>
+        </tns:Adnotacje>
+        <tns:RodzajFaktury>VAT</tns:RodzajFaktury>
+        <tns:FaWiersz>
+            <tns:NrWierszaFa>1</tns:NrWierszaFa>
+            <tns:P_7>promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka </tns:P_7>
+            <tns:P_8B>1</tns:P_8B>
+            <tns:P_9A>10120</tns:P_9A>
+            <tns:P_11>10120</tns:P_11>
+            <tns:P_12>23</tns:P_12>
+        </tns:FaWiersz>
+        <tns:FaWiersz>
+            <tns:NrWierszaFa>2</tns:NrWierszaFa>
+            <tns:P_7>aaaa111133339998</tns:P_7>
+            <tns:P_8B>1</tns:P_8B>
+            <tns:P_9A>3795</tns:P_9A>
+            <tns:P_11>3795</tns:P_11>
+            <tns:P_12>23</tns:P_12>
+        </tns:FaWiersz>
+        <tns:Platnosc>
+            <tns:TerminPlatnosci>
+                <tns:Termin>2023-12-14</tns:Termin>
+            </tns:TerminPlatnosci>
+            <tns:FormaPlatnosci>6</tns:FormaPlatnosci>
+            <tns:RachunekBankowy>
+                <tns:NrRB>73111111111111111111111111</tns:NrRB>
+                <tns:NazwaBanku>Bank Bankowości Bankowej S. A.</tns:NazwaBanku>
+            </tns:RachunekBankowy>
+        </tns:Platnosc>
+    </tns:Fa>
+</Faktura>

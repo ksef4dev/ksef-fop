@@ -8,6 +8,9 @@
                 <font kerning="yes" embed-url="file:fonts/OpenSans-Bold.ttf">
                     <font-triplet name="sans" style="normal" weight="bold"/>
                 </font>
+                <font kerning="yes" embed-url="file:fonts/OpenSans-Semibold.ttf">
+                    <font-triplet name="sans" style="normal" weight="600"/>
+                </font>
             </fonts>
         </renderer>
     </renderers>
