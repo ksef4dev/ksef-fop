@@ -81,7 +81,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_19.xml");
+            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
             generator.generateInvoice(src, out);
         }

@@ -38,6 +38,22 @@
         <tns:NrKlienta>fdfd778343</tns:NrKlienta>
         <tns:IDNabywcy>0001</tns:IDNabywcy>
     </tns:Podmiot2>
+    <tns:Podmiot3>
+        <tns:DaneIdentyfikacyjne>
+            <tns:NIP>2222222222</tns:NIP>
+            <tns:Nazwa>Szkoła Podstawowa w Bzdziszewie</tns:Nazwa>
+        </tns:DaneIdentyfikacyjne>
+        <tns:Adres>
+            <tns:KodKraju>PL</tns:KodKraju>
+            <tns:AdresL1>ul. Akacjowa 200</tns:AdresL1>
+            <tns:AdresL2>00-007 Bzdziszewo</tns:AdresL2>
+        </tns:Adres>
+        <tns:DaneKontaktowe>
+            <tns:Email>sp@bzdziszewo.p</tns:Email>
+            <tns:Telefon>666888999</tns:Telefon>
+        </tns:DaneKontaktowe>
+        <tns:Rola>5</tns:Rola>
+    </tns:Podmiot3>
     <tns:Fa>
         <tns:NrKSeF>5451824119-20231201-27647BC34480-8D</tns:NrKSeF>
         <tns:KodWaluty>PLN</tns:KodWaluty>
@@ -67,7 +83,7 @@
         <tns:RodzajFaktury>VAT</tns:RodzajFaktury>
         <tns:FaWiersz>
             <tns:NrWierszaFa>1</tns:NrWierszaFa>
-            <tns:P_7>promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka promocja lodówka pełna mleka </tns:P_7>
+            <tns:P_7>usługa pierwsza</tns:P_7>
             <tns:P_8B>1</tns:P_8B>
             <tns:P_9A>10120</tns:P_9A>
             <tns:P_11>10120</tns:P_11>
