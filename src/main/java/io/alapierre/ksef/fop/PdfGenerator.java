@@ -1,6 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.fop.apps.*;
 import org.apache.fop.configuration.Configuration;
@@ -64,6 +63,26 @@ public class PdfGenerator {
         Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_upo.fop")));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(upoXML, res);
+    }
+
+    /**
+     * Generates invoice PDF from given XML and OutputStream
+     * @param invoiceXml e-invoice FA(2) XML
+     * @param out destination OutputStream
+     * @throws IOException throws when IO error occurs
+     * @throws TransformerException throws when XSLT transformer error occurs
+     * @throws FOPException throws when FOP error occurs
+     */
+    public void generateInvoice(Source invoiceXml, OutputStream out) throws IOException, TransformerException, FOPException {
+
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+
+        Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
+        TransformerFactory factory = TransformerFactory.newInstance();
+
+        Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_invoice.xsl")));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(invoiceXml, res);
     }
 
     private static InputStream loadResource(String resource) throws IOException {
