@@ -8,6 +8,7 @@
 * [Configuration](#configuration)
 * [Invoice PDF](#invoices)
 * [Examples](#examples)
+* [FOP Schema](#fop-schema)
 
 # General information
 ### PDF generator for KSeF
@@ -88,3 +89,6 @@ try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/
         }
 ````
 
+# Fop Schema 
+
+https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/fop/src/foschema/fop.xsd
