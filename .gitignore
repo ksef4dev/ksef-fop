@@ -63,3 +63,4 @@ buildNumber.properties
 out
 gen
 /src/test/resources/upo.pdf
+/src/test/resources/invoice.pdf
