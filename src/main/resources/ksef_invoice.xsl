@@ -232,105 +232,108 @@
                         </fo:table-body>
                     </fo:table>
 
-                    <!-- Linia oddzielająca -->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
                     <!-- Podmiot inny-->
-                    <fo:table font-size="7pt">
-                        <fo:table-column column-width="50%"/>
-                        <fo:table-column column-width="50%"/>
-                        <fo:table-body>
-                            <fo:table-row>
-                                <fo:table-cell padding-bottom="6px">
-                                    <fo:block font-size="12pt" text-align="left">
-                                        <fo:inline font-weight="bold">Podmiot inny</fo:inline>
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
+                   <xsl:if test="crd:Podmiot3">
+                       <!-- Linia oddzielająca -->
+                       <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
-                            <!-- Dane podmiotu innego -->
-                            <fo:table-row>
-                                <fo:table-cell>
-                                    <fo:block text-align="left">
-                                        <fo:inline font-weight="600">NIP: </fo:inline>
-                                        <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:NIP"/>
-                                    </fo:block>
-                                    <fo:block text-align="left">
-                                        <fo:inline font-weight="600">Nazwa: </fo:inline>
-                                        <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
-                                    </fo:block>
-                                    <fo:block text-align="left">
-                                        <fo:inline font-weight="600">Rola: </fo:inline>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '1'">
-                                            Faktor
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '2'">
-                                            Odbiorca
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '3'">
-                                            Podmiot pierwotny
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '4'">
-                                            Dodatkowy nabywca
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '5'">
-                                            Wystawca faktury
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '6'">
-                                            Dokonujący płatności
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '7'">
-                                            Jednostka samorządu terytorialnego - wystawca
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '8'">
-                                            Jednostka samorządu terytorialnego - odbiorca
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '9'">
-                                            Członek grupy VAT - wystawca
-                                        </xsl:if>
-                                        <xsl:if test="crd:Podmiot3/crd:Rola = '10'">
-                                            Członek grupy VAT - odbiorca
-                                        </xsl:if>
-                                    </fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell>
-                                    <fo:block text-align="left">
-                                        <fo:inline font-weight="bold">Adres</fo:inline>
-                                    </fo:block>
-                                    <fo:block text-align="left">
-                                        <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
-                                    </fo:block>
-                                    <fo:block text-align="left">
-                                        <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <!-- Dane kontaktowe-->
-                            <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe|crd:Podmiot3/crd:DaneKontaktowe|crd:Podmiot3/crd:NrKlienta|crd:Podmiot3/crd:IDNabywcy">
-                                <fo:table-row>
-                                    <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email|crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
-                                        <fo:table-cell padding-top="16px">
-                                            <fo:block text-align="left" padding-bottom="3px">
-                                                <fo:inline font-weight="bold">Dane kontaktowe</fo:inline>
-                                            </fo:block>
-                                            <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email">
-                                                <fo:block text-align="left" padding-bottom="2px">
-                                                    <fo:inline font-weight="600">E-mail: </fo:inline>
-                                                    <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Email"/>
-                                                </fo:block>
-                                            </xsl:if>
-                                            <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
-                                                <fo:block text-align="left" padding-bottom="2px">
-                                                    <fo:inline font-weight="600">Tel.: </fo:inline>
-                                                    <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon"/>
-                                                </fo:block>
-                                            </xsl:if>
-                                        </fo:table-cell>
-                                    </xsl:if>
-                                </fo:table-row>
-                            </xsl:if>
-                        </fo:table-body>
-                    </fo:table>
+                       <fo:table font-size="7pt">
+                           <fo:table-column column-width="50%"/>
+                           <fo:table-column column-width="50%"/>
+                           <fo:table-body>
+                               <fo:table-row>
+                                   <fo:table-cell padding-bottom="6px">
+                                       <fo:block font-size="12pt" text-align="left">
+                                           <fo:inline font-weight="bold">Podmiot inny</fo:inline>
+                                       </fo:block>
+                                   </fo:table-cell>
+                               </fo:table-row>
+
+                               <!-- Dane podmiotu innego -->
+                               <fo:table-row>
+                                   <fo:table-cell>
+                                       <fo:block text-align="left">
+                                           <fo:inline font-weight="600">NIP: </fo:inline>
+                                           <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                       </fo:block>
+                                       <fo:block text-align="left">
+                                           <fo:inline font-weight="600">Nazwa: </fo:inline>
+                                           <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                                       </fo:block>
+                                       <fo:block text-align="left">
+                                           <fo:inline font-weight="600">Rola: </fo:inline>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '1'">
+                                               Faktor
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '2'">
+                                               Odbiorca
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '3'">
+                                               Podmiot pierwotny
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '4'">
+                                               Dodatkowy nabywca
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '5'">
+                                               Wystawca faktury
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '6'">
+                                               Dokonujący płatności
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '7'">
+                                               Jednostka samorządu terytorialnego - wystawca
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '8'">
+                                               Jednostka samorządu terytorialnego - odbiorca
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '9'">
+                                               Członek grupy VAT - wystawca
+                                           </xsl:if>
+                                           <xsl:if test="crd:Podmiot3/crd:Rola = '10'">
+                                               Członek grupy VAT - odbiorca
+                                           </xsl:if>
+                                       </fo:block>
+                                   </fo:table-cell>
+                                   <fo:table-cell>
+                                       <fo:block text-align="left">
+                                           <fo:inline font-weight="bold">Adres</fo:inline>
+                                       </fo:block>
+                                       <fo:block text-align="left">
+                                           <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
+                                       </fo:block>
+                                       <fo:block text-align="left">
+                                           <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
+                                       </fo:block>
+                                   </fo:table-cell>
+                               </fo:table-row>
+                               <!-- Dane kontaktowe-->
+                               <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe|crd:Podmiot3/crd:DaneKontaktowe|crd:Podmiot3/crd:NrKlienta|crd:Podmiot3/crd:IDNabywcy">
+                                   <fo:table-row>
+                                       <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email|crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
+                                           <fo:table-cell padding-top="16px">
+                                               <fo:block text-align="left" padding-bottom="3px">
+                                                   <fo:inline font-weight="bold">Dane kontaktowe</fo:inline>
+                                               </fo:block>
+                                               <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email">
+                                                   <fo:block text-align="left" padding-bottom="2px">
+                                                       <fo:inline font-weight="600">E-mail: </fo:inline>
+                                                       <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Email"/>
+                                                   </fo:block>
+                                               </xsl:if>
+                                               <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
+                                                   <fo:block text-align="left" padding-bottom="2px">
+                                                       <fo:inline font-weight="600">Tel.: </fo:inline>
+                                                       <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon"/>
+                                                   </fo:block>
+                                               </xsl:if>
+                                           </fo:table-cell>
+                                       </xsl:if>
+                                   </fo:table-row>
+                               </xsl:if>
+                           </fo:table-body>
+                       </fo:table>
+                   </xsl:if>
 
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
@@ -349,7 +352,7 @@
                                     <xsl:if test="crd:Fa/crd:P_1">
                                         <fo:table-cell padding-bottom="6px">
                                             <fo:block  text-align="left">
-                                                <fo:inline  font-weight="bold">Data wystawienia, z zastrzeżeniem art. 106na ust. 1 ustawy: </fo:inline>
+                                                <fo:inline  font-weight="bold">Data wystawienia: </fo:inline>
                                                 <xsl:value-of select="crd:Fa/crd:P_1"/>
                                             </fo:block>
                                         </fo:table-cell>
@@ -389,10 +392,11 @@
                         <!-- Pozycje na FV-->
                         <fo:table table-layout="fixed" width="100%" border-collapse="separate">
                             <fo:table-column column-width="5%"/> <!-- Lp. -->
-                            <fo:table-column column-width="57%"/> <!-- Nazwa -->
+                            <fo:table-column column-width="52%"/> <!-- Nazwa -->
                             <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
                             <fo:table-column column-width="5%"/> <!-- Ilość -->
                             <fo:table-column column-width="5%"/> <!-- Jednostka -->
+                            <fo:table-column column-width="5%"/> <!-- Rabat -->
                             <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
                             <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
                             <fo:table-header >
@@ -411,6 +415,9 @@
                                     </fo:table-cell>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Jedn.</fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Rabat</fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Stawka podatku</fo:block>
@@ -435,110 +442,112 @@
                             </fo:inline>
                         </fo:inline>
                     </fo:block>
-                    <!-- Linia oddzielająca -->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="3mm"/>
-
-                    <fo:block font-size="12pt" text-align="left" space-after="5mm">
-                        <fo:inline font-weight="bold">Podsumowanie stawek podatku</fo:inline>
-                    </fo:block>
 
                     <!-- Podsumowanie stawek podatku-->
-                    <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                        <fo:table-column column-width="25%"/> <!-- Stawka podatku -->
-                        <fo:table-column column-width="25%"/> <!-- Kwota netto-->
-                        <fo:table-column column-width="25%"/> <!-- Kwota podatku -->
-                        <fo:table-column column-width="25%"/> <!-- Kwota brutto -->
-                        <fo:table-header>
-                            <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                    <fo:block>Stawka podatku</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                    <fo:block>Kwota netto</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                    <fo:block>Kwota podatku</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                    <fo:block>Kwota brutto</fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                        </fo:table-header>
-                        <fo:table-body>
-                            <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_14_1">
-                                <fo:table-row>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
-                                        <fo:block>
-                                            <xsl:text>22% lub 23%</xsl:text>
-                                        </fo:block>
+                    <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_13_2|crd:Fa/crd:P_13_3">
+                        <!-- Linia oddzielająca -->
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="3mm"/>
+
+                        <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                            <fo:inline font-weight="bold">Podsumowanie stawek podatku</fo:inline>
+                        </fo:block>
+                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                            <fo:table-column column-width="25%"/> <!-- Stawka podatku -->
+                            <fo:table-column column-width="25%"/> <!-- Kwota netto-->
+                            <fo:table-column column-width="25%"/> <!-- Kwota podatku -->
+                            <fo:table-column column-width="25%"/> <!-- Kwota brutto -->
+                            <fo:table-header>
+                                <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Stawka podatku</fo:block>
                                     </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Kwota netto</fo:block>
                                     </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Kwota podatku</fo:block>
                                     </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1) + number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Kwota brutto</fo:block>
                                     </fo:table-cell>
                                 </fo:table-row>
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:P_13_2|crd:Fa/crd:P_14_2">
-                                <fo:table-row>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
-                                        <fo:block>
-                                            <xsl:text>7% lub 8%</xsl:text>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_2), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_2), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_2) + number(crd:Fa/crd:P_14_2), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:P_13_3|crd:Fa/crd:P_14_3">
-                                <fo:table-row>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
-                                        <fo:block>
-                                            <xsl:text>5%</xsl:text>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_3), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_3), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                        <fo:block>
-                                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_3) + number(crd:Fa/crd:P_14_3), '#,##0.00'), ',.', ' ,')"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                            </xsl:if>
-                        </fo:table-body>
-                    </fo:table>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_14_1">
+                                    <fo:table-row>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>22% lub 23%</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1) + number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_2|crd:Fa/crd:P_14_2">
+                                    <fo:table-row>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>7% lub 8%</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_2), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_2), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_2) + number(crd:Fa/crd:P_14_2), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_3|crd:Fa/crd:P_14_3">
+                                    <fo:table-row>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>5%</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_3), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_3), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_3) + number(crd:Fa/crd:P_14_3), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                            </fo:table-body>
+                        </fo:table>
+                    </xsl:if>
 
                     <!-- Płatność -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
@@ -597,6 +606,37 @@
                         </fo:block>
                     </xsl:if>
 
+                    <!-- Warunki transakcji -->
+                    <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block font-size="12pt" text-align="left" space-after="4mm">
+                            <fo:inline font-weight="bold">Warunki transakcji</fo:inline>
+                        </fo:block>
+
+                        <!-- Zamówienie -->
+                        <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                            <fo:inline font-weight="bold">Zamówienie</fo:inline>
+                        </fo:block>
+
+                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                            <fo:table-column column-width="25%"/> <!-- Data zamowienia -->
+                            <fo:table-column column-width="25%"/> <!-- Numer zamowienia -->
+                            <fo:table-header>
+                                <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Data zamówienia</fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block>Numer zamówienia</fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"></xsl:apply-templates>
+                            </fo:table-body>
+                        </fo:table>
+                    </xsl:if>
 
                     <!-- Numer rachunku bankowego -->
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:RachunekBankowy">
@@ -683,6 +723,11 @@
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
+                    <xsl:value-of select="crd:P_10"/> <!-- Rabat-->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
                     <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->
                     %
                 </fo:block>
@@ -690,6 +735,22 @@
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
                     <xsl:value-of select="translate(format-number(number(crd:P_11), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży netto -->
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+
+    </xsl:template>
+
+    <xsl:template match="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:DataZamowienia"/> <!-- DataZamowienia -->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" padding-left="3pt">
+                <fo:block>
+                    <xsl:value-of select="crd:NrZamowienia"/> <!-- NrZamowienia -->
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>
