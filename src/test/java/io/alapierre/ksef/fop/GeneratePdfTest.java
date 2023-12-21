@@ -77,18 +77,27 @@ class GeneratePdfTest {
 
     @Test
     void generateInvoicePdf() throws Exception {
+        String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
+        String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";
+        File qrCodeFile = new File("src/test/resources/barcode.png");
+        byte[] qrCode = Files.readAllBytes(qrCodeFile.toPath());
+
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            generator.generateInvoice(src, out);
+            generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, out);
         }
     }
 
     @Test
     void testInvoicePdfGenerateFromExampleInvoices() throws Exception {
+        String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
+        String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";
+        File qrCodeFile = new File("src/test/resources/barcode.png");
+        byte[] qrCode = Files.readAllBytes(qrCodeFile.toPath());
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
         Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
 
@@ -100,7 +109,7 @@ class GeneratePdfTest {
                      OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
 
                     Source src = new StreamSource(xml);
-                    generator.generateInvoice(src, out);
+                    generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, out);
                 }
             }
         }

@@ -10,6 +10,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.util.Base64;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -69,20 +70,35 @@ public class PdfGenerator {
      * Generates invoice PDF from given XML and OutputStream
      * @param invoiceXml e-invoice FA(2) XML
      * @param out destination OutputStream
+     * @param ksefNumber KSeF number
+     * @param verificationLink The verification link
+     * @param qrCode Barcode
      * @throws IOException throws when IO error occurs
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException throws when FOP error occurs
      */
-    public void generateInvoice(Source invoiceXml, OutputStream out) throws IOException, TransformerException, FOPException {
-
+    public void generateInvoice(Source invoiceXml,
+                                String ksefNumber,
+                                String verificationLink,
+                                byte[] qrCode,
+                                OutputStream out) throws IOException, TransformerException, FOPException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
         TransformerFactory factory = TransformerFactory.newInstance();
-
         Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_invoice.xsl")));
+
+        insertAdditionalInvoiceData(ksefNumber, verificationLink, qrCode, transformer);
+
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(invoiceXml, res);
+    }
+
+    private void insertAdditionalInvoiceData(String ksefNumber, String verificationLink, byte[] qrCode, Transformer transformer) {
+        String qrCodeBase64 = Base64.getEncoder().encodeToString(qrCode);
+        transformer.setParameter("nrKsef", ksefNumber);
+        transformer.setParameter("verificationLink", verificationLink);
+        transformer.setParameter("qrCode", qrCodeBase64);
     }
 
     private static InputStream loadResource(String resource) throws IOException {
