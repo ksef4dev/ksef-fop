@@ -5,6 +5,8 @@ import org.apache.fop.apps.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
@@ -77,9 +79,9 @@ public class PdfGenerator {
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException throws when FOP error occurs
      */
-    public void generateInvoice(Source invoiceXml,
-                                String ksefNumber,
-                                String verificationLink,
+    public void generateInvoice(@NotNull Source invoiceXml,
+                                @Nullable String ksefNumber,
+                                @Nullable String verificationLink,
                                 byte[] qrCode,
                                 OutputStream out) throws IOException, TransformerException, FOPException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
@@ -94,11 +96,25 @@ public class PdfGenerator {
         transformer.transform(invoiceXml, res);
     }
 
-    private void insertAdditionalInvoiceData(String ksefNumber, String verificationLink, byte[] qrCode, Transformer transformer) {
-        String qrCodeBase64 = Base64.getEncoder().encodeToString(qrCode);
-        transformer.setParameter("nrKsef", ksefNumber);
-        transformer.setParameter("verificationLink", verificationLink);
-        transformer.setParameter("qrCode", qrCodeBase64);
+    private void insertAdditionalInvoiceData(@Nullable String ksefNumber,
+                                             @Nullable String verificationLink,
+                                             byte[] qrCode,
+                                             @NotNull Transformer transformer) {
+        String qrCodeBase64 = null;
+        if (qrCode != null) {
+            qrCodeBase64 = Base64.getEncoder().encodeToString(qrCode);
+        }
+        setParameterIfNotNull("nrKsef", ksefNumber, transformer);
+        setParameterIfNotNull("verificationLink", verificationLink, transformer);
+        setParameterIfNotNull("qrCode", qrCodeBase64, transformer);
+    }
+
+    private void setParameterIfNotNull(@NotNull String name,
+                                       @Nullable Object value,
+                                       @NotNull Transformer transformer) {
+        if (value != null) {
+            transformer.setParameter(name, value);
+        }
     }
 
     private static InputStream loadResource(String resource) throws IOException {
