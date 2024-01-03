@@ -40,7 +40,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>2.0.9</slf4j.version>
-        <annotations.version>24.0.1</annotations.version>
+        <annotations.version>24.1.0</annotations.version>
         <sonar.organization>ksef4dev</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
