@@ -60,6 +60,7 @@ The PDF invoice generator currently offers the following features:
 - Tax Rate Summary: Automatically calculate and present a summary of the various tax rates on your invoice.
 - Payment Details: Information regarding payment terms, payment methods, etc.
 - Bank account number: Option to add a bank account number to facilitate the payment process.
+- Verification Data: QR code and verification link
 
 
 # Examples
@@ -79,13 +80,16 @@ try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/
 
 ##### Generate Invoice
 ````java
- PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
+String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";
+File qrCodeFile = new File("src/test/resources/barcode.png");
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            generator.generateInvoice(src, out);
+            generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, out);
         }
 ````
 

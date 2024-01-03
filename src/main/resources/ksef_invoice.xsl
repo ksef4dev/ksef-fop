@@ -5,6 +5,11 @@
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
+    <!--  Additional parameters that are not included in the xml invoice -->
+    <xsl:param name="nrKsef"/>
+    <xsl:param name="qrCode"/>
+    <xsl:param name="verificationLink"/>
+
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
         <xsl:attribute name="border">solid 0.2mm black</xsl:attribute>
@@ -92,10 +97,12 @@
                         </xsl:if>
                     </fo:block>
                     <!-- Numer KSeF-->
-                    <fo:block font-size="9pt" text-align="right" space-after="5mm">
-                        <fo:inline font-weight="bold">Numer KSeF: </fo:inline>
-                        <fo:inline><xsl:value-of select="crd:Fa/crd:NrKSeF"/></fo:inline>
-                    </fo:block>
+                    <xsl:if test="$nrKsef">
+                        <fo:block font-size="9pt" text-align="right" space-after="5mm">
+                            <fo:inline font-weight="bold">Numer KSeF: </fo:inline>
+                            <fo:inline><xsl:value-of select="$nrKsef"/></fo:inline>
+                        </fo:block>
+                    </xsl:if>
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm"/>
                     <!-- Sprzedawca / Nabywca -->
@@ -688,6 +695,53 @@
                                 </xsl:if>
                             </fo:table-body>
                         </fo:table>
+                    </xsl:if>
+
+                    <xsl:if test="$verificationLink and $nrKsef and $qrCode">
+                        <!-- Kod QR -->
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="2mm"/>
+
+                        <fo:block font-size="12pt" text-align="left">
+                            <fo:inline font-weight="bold">Sprawdź, czy Twoja faktura znajduje się w KSeF</fo:inline>
+                        </fo:block>
+                        <fo:block>
+                            <fo:table width="100%">
+                                <fo:table-column column-width="35%"/>
+                                <fo:table-column column-width="65%"/>
+                                <fo:table-body>
+                                    <fo:table-row>
+                                        <!-- Komórka z obrazkiem QR -->
+                                        <fo:table-cell display-align="center" height="auto" font-size="7pt">
+                                            <fo:block text-align="center" font-weight="600">
+                                                <fo:external-graphic
+                                                        content-width="170pt"
+                                                        content-height="170pt"
+                                                        src="url('data:image/png;base64,{$qrCode}')"/>
+                                            </fo:block>
+                                            <xsl:if test="$nrKsef">
+                                                <fo:block text-align="center" font-weight="600">
+                                                    <xsl:value-of select="$nrKsef"/>
+                                                </fo:block>
+                                            </xsl:if>
+                                        </fo:table-cell>
+                                        <!-- Komórka z tekstem -->
+                                        <fo:table-cell display-align="center" height="auto">
+                                            <fo:block font-size="7pt"  display-align="center">
+                                                <fo:block font-weight="600" space-after="2mm">
+                                                    Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji faktury.
+                                                </fo:block>
+                                                <fo:block display-align="center" space-after="2mm">
+                                                    <fo:basic-link
+                                                            external-destination="{$verificationLink}" color="blue">
+                                                        <xsl:value-of select="$verificationLink"/>
+                                                    </fo:basic-link>
+                                                </fo:block>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-body>
+                            </fo:table>
+                        </fo:block>
                     </xsl:if>
                 </fo:flow>
             </fo:page-sequence>
