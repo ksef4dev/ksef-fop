@@ -9,6 +9,7 @@
     <xsl:param name="nrKsef"/>
     <xsl:param name="qrCode"/>
     <xsl:param name="verificationLink"/>
+    <xsl:param name="logo"/>
 
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
@@ -63,7 +64,10 @@
                 <fo:flow flow-name="xsl-region-body" color="#343a40">
                     <!-- Tytuł strony -->
                     <fo:block font-size="20pt" font-weight="bold" text-align="left">
-                        Krajowy System e-Faktur
+                        <fo:external-graphic
+                                content-width="80pt"
+                                content-height="80pt"
+                                src="url('data:image/png;base64,{$logo}')"/>
                     </fo:block>
                     <!-- Numer faktury -->
                     <fo:block font-size="9pt" text-align="right" padding-top="-5mm">
@@ -396,16 +400,27 @@
                         <fo:block text-align="left" space-after="5mm">
                             <fo:inline font-weight="bold">Pozycje</fo:inline>
                         </fo:block>
+                        <xsl:variable name="pierwszyElement" select="crd:Fa/crd:FaWiersz[1]" />
                         <!-- Pozycje na FV-->
                         <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                            <fo:table-column column-width="5%"/> <!-- Lp. -->
-                            <fo:table-column column-width="52%"/> <!-- Nazwa -->
-                            <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
+                            <fo:table-column column-width="4%"/> <!-- Lp. -->
+                            <fo:table-column column-width="53%"/> <!-- Nazwa -->
                             <fo:table-column column-width="5%"/> <!-- Ilość -->
                             <fo:table-column column-width="5%"/> <!-- Jednostka -->
+                            <xsl:if test="$pierwszyElement/crd:P_9A">
+                                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
+                            </xsl:if>
+                            <xsl:if test="$pierwszyElement/crd:P_9B">
+                                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
+                            </xsl:if>
                             <fo:table-column column-width="5%"/> <!-- Rabat -->
                             <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
-                            <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
+                            <xsl:if test="$pierwszyElement/crd:P_11">
+                                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
+                            </xsl:if>
+                            <xsl:if test="$pierwszyElement/crd:P_11A">
+                                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
+                            </xsl:if>
                             <fo:table-header >
                                 <fo:table-row background-color="#f5f5f5" font-weight="bold">
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
@@ -415,23 +430,38 @@
                                         <fo:block>Nazwa towaru lub usługi</fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Cena jedn. netto</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Ilość</fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Jedn.</fo:block>
                                     </fo:table-cell>
+                                    <xsl:if test="$pierwszyElement/crd:P_9A">
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Cena jedn. netto</fo:block>
+                                        </fo:table-cell>
+                                    </xsl:if>
+                                    <xsl:if test="$pierwszyElement/crd:P_9B">
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Cena jedn. brutto</fo:block>
+                                        </fo:table-cell>
+                                    </xsl:if>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Rabat</fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Stawka podatku</fo:block>
                                     </fo:table-cell>
-                                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Wartość sprzedaży netto</fo:block>
-                                    </fo:table-cell>
+
+                                    <xsl:if test="$pierwszyElement/crd:P_11">
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Wartość sprzedaży netto</fo:block>
+                                        </fo:table-cell>
+                                    </xsl:if>
+                                    <xsl:if test="$pierwszyElement/crd:P_11A">
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Wartość sprzedaży brutto</fo:block>
+                                        </fo:table-cell>
+                                    </xsl:if>
                                 </fo:table-row>
                             </fo:table-header>
                             <fo:table-body>
@@ -762,11 +792,6 @@
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
-                    <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/> <!-- Cena netto -->
-                </fo:block>
-            </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <fo:block>
                     <xsl:value-of select="crd:P_8B"/> <!-- Ilość -->
                 </fo:block>
             </fo:table-cell>
@@ -775,6 +800,20 @@
                     <xsl:value-of select="crd:P_8A"/> <!-- Jednostka -->
                 </fo:block>
             </fo:table-cell>
+            <xsl:if test="crd:P_9A">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/> <!-- Cena netto -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="crd:P_9B">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:value-of select="translate(format-number(number(crd:P_9B), '#,##0.00'), ',.', ' ,')"/> <!-- Cena brutto -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
                     <xsl:value-of select="crd:P_10"/> <!-- Rabat-->
@@ -786,11 +825,20 @@
                     %
                 </fo:block>
             </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <fo:block>
-                    <xsl:value-of select="translate(format-number(number(crd:P_11), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży netto -->
-                </fo:block>
-            </fo:table-cell>
+            <xsl:if test="crd:P_11">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:value-of select="translate(format-number(number(crd:P_11), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży netto -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="crd:P_11A">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:value-of select="translate(format-number(number(crd:P_11A), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży brutto -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
         </fo:table-row>
 
     </xsl:template>

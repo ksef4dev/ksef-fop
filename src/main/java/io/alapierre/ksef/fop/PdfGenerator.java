@@ -13,6 +13,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.Base64;
+import java.util.Optional;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -83,6 +84,7 @@ public class PdfGenerator {
                                 @Nullable String ksefNumber,
                                 @Nullable String verificationLink,
                                 byte[] qrCode,
+                                byte[] logo,
                                 OutputStream out) throws IOException, TransformerException, FOPException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 
@@ -90,7 +92,7 @@ public class PdfGenerator {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_invoice.xsl")));
 
-        insertAdditionalInvoiceData(ksefNumber, verificationLink, qrCode, transformer);
+        insertAdditionalInvoiceData(ksefNumber, verificationLink, qrCode, logo, transformer);
 
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(invoiceXml, res);
@@ -99,14 +101,16 @@ public class PdfGenerator {
     private void insertAdditionalInvoiceData(@Nullable String ksefNumber,
                                              @Nullable String verificationLink,
                                              byte[] qrCode,
+                                             byte[] logo,
                                              @NotNull Transformer transformer) {
-        String qrCodeBase64 = null;
-        if (qrCode != null) {
-            qrCodeBase64 = Base64.getEncoder().encodeToString(qrCode);
-        }
+        Optional.ofNullable(qrCode)
+                .map(Base64.getEncoder()::encodeToString)
+                .ifPresent(encodedQrCode -> setParameterIfNotNull("qrCode", encodedQrCode, transformer));
+        Optional.ofNullable(logo)
+                .map(Base64.getEncoder()::encodeToString)
+                .ifPresent(encodedLogo -> setParameterIfNotNull("logo", encodedLogo, transformer));
         setParameterIfNotNull("nrKsef", ksefNumber, transformer);
         setParameterIfNotNull("verificationLink", verificationLink, transformer);
-        setParameterIfNotNull("qrCode", qrCodeBase64, transformer);
     }
 
     private void setParameterIfNotNull(@NotNull String name,
