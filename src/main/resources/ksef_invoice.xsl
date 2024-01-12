@@ -379,12 +379,12 @@
                                 </fo:table-row>
                             </xsl:if>
 
-                            <!-- Data dokonania lub zakończenia dostawy towarów lub wykonania: -->
+                            <!-- Data dokonania lub zakończenia dostawy towarów lub wykonania usługi: -->
                             <xsl:if test="crd:Fa/crd:P_6">
                                 <fo:table-row>
                                     <fo:table-cell>
                                         <fo:block text-align="left">
-                                            <fo:inline  font-weight="bold">Data dokonania lub zakończenia dostawy towarów lub wykonania: </fo:inline>
+                                            <fo:inline  font-weight="bold">Data dokonania lub zakończenia dostawy towarów lub wykonania usługi: </fo:inline>
                                             <xsl:value-of select="crd:Fa/crd:P_6"/>
                                         </fo:block>
                                     </fo:table-cell>
