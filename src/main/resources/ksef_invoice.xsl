@@ -188,8 +188,10 @@
                             <!-- Dane kontaktowe-->
                             <xsl:if test="crd:Podmiot1/crd:DaneKontaktowe|crd:Podmiot2/crd:DaneKontaktowe|crd:Podmiot2/crd:NrKlienta|crd:Podmiot2/crd:IDNabywcy">
                                 <fo:table-row>
+                                <fo:table-cell padding-top="16px">
+                                    <fo:block>
+                                    </fo:block>
                                     <xsl:if test="crd:Podmiot1/crd:DaneKontaktowe/crd:Email|crd:Podmiot1/crd:DaneKontaktowe/crd:Telefon">
-                                        <fo:table-cell padding-top="16px">
                                             <fo:block text-align="left" padding-bottom="3px">
                                                 <fo:inline font-weight="bold">Dane kontaktowe</fo:inline>
                                             </fo:block>
@@ -205,8 +207,8 @@
                                                     <xsl:value-of select="crd:Podmiot1/crd:DaneKontaktowe/crd:Telefon"/>
                                                 </fo:block>
                                             </xsl:if>
-                                        </fo:table-cell>
                                     </xsl:if>
+                                </fo:table-cell>
                                     <xsl:if test="crd:Podmiot2/crd:DaneKontaktowe/crd:Email|crd:Podmiot2/crd:DaneKontaktowe/crd:Telefon|crd:Podmiot2/crd:NrKlienta|crd:Podmiot2/crd:IDNabywcy">
                                         <fo:table-cell padding-top="16px">
                                             <fo:block text-align="left" padding-bottom="3px">
