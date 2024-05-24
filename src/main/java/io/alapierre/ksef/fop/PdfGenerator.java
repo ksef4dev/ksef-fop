@@ -22,6 +22,19 @@ import java.util.Optional;
 public class PdfGenerator {
 
     private final FopFactory fopFactory;
+    private InvoicePdfConfig invoicePdfConfig = new InvoicePdfConfig();
+
+    /**
+     * Create generator with Apache FOP config file from classpath
+     *
+     * @param fopConfig config file name
+     * @throws IOException throws when cant load given config file from classpath
+     * @throws ConfigurationException throws when config file has errors
+     */
+    public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
+        this(loadResource(fopConfig));
+        this.invoicePdfConfig = invoicePdfConfig;
+    }
 
     /**
      * Create generator with Apache FOP config file from classpath
@@ -111,6 +124,7 @@ public class PdfGenerator {
                 .ifPresent(encodedLogo -> setParameterIfNotNull("logo", encodedLogo, transformer));
         setParameterIfNotNull("nrKsef", ksefNumber, transformer);
         setParameterIfNotNull("verificationLink", verificationLink, transformer);
+        setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);
     }
 
     private void setParameterIfNotNull(@NotNull String name,

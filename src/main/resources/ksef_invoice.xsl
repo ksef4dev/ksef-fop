@@ -10,6 +10,7 @@
     <xsl:param name="qrCode"/>
     <xsl:param name="verificationLink"/>
     <xsl:param name="logo"/>
+    <xsl:param name="showFooter"/>
 
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
@@ -51,6 +52,7 @@
             <fo:page-sequence master-reference="A4">
 
                 <!-- Stopka -->
+                <xsl:if test="$showFooter">
                 <fo:static-content flow-name="xsl-region-after">
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px black" padding-bottom="2mm" space-after="2mm"/>
@@ -59,7 +61,7 @@
                         Wytworzona w: <xsl:value-of select="crd:Naglowek/crd:SystemInfo"/>
                     </fo:block>
                 </fo:static-content>
-
+                </xsl:if>
                 <!-- Faktura -->
                 <fo:flow flow-name="xsl-region-body" color="#343a40">
                     <!-- Tytuł strony -->
@@ -476,6 +478,7 @@
                         <fo:inline font-weight="bold">Kwota należności ogółem: </fo:inline>
                         <fo:inline>
                             <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_15), '#,##0.00'), ',.', ' ,')"/>
+                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
                             <fo:inline>
                                 <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
                             </fo:inline>
@@ -516,22 +519,22 @@
                                     <fo:table-row>
                                         <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
                                             <fo:block>
-                                                <xsl:text>22% lub 23%</xsl:text>
+                                                <xsl:text>22% lub 23%</xsl:text>  <!-- Stawka podatku -->
                                             </fo:block>
                                         </fo:table-cell>
                                         <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                             <fo:block>
-                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1), '#,##0.00'), ',.', ' ,')"/>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1), '#,##0.00'), ',.', ' ,')"/>  <!-- Kwota netto -->
                                             </fo:block>
                                         </fo:table-cell>
                                         <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                             <fo:block>
-                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>  <!-- Kwota podatku -->
                                             </fo:block>
                                         </fo:table-cell>
                                         <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                             <fo:block>
-                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1) + number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>
+                                                <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_13_1) + number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>  <!-- Kwota brutto -->
                                             </fo:block>
                                         </fo:table-cell>
                                     </fo:table-row>
@@ -816,12 +819,12 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
                     <xsl:value-of select="crd:P_10"/> <!-- Rabat-->
                 </fo:block>
             </fo:table-cell>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
                     <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->
                     %
