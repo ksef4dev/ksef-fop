@@ -123,13 +123,18 @@
                                         <fo:inline font-weight="bold">Sprzedawca</fo:inline>
                                     </fo:block>
                                 </fo:table-cell>
-                                <xsl:if test="crd:Podmiot3">
-                                    <fo:table-cell padding-bottom="8px">
-                                        <fo:block font-size="12pt" text-align="left">
-                                            <fo:inline font-weight="bold">Wystawca</fo:inline>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </xsl:if>
+                                <fo:table-cell padding-bottom="8px">
+                                    <xsl:choose>
+                                        <xsl:when test="crd:Podmiot3">
+                                            <fo:block font-size="12pt" text-align="left">
+                                                <fo:inline font-weight="bold">Wystawca</fo:inline>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </fo:table-cell>
                                 <fo:table-cell padding-bottom="8px">
                                     <fo:block font-size="12pt" text-align="left">
                                         <fo:inline font-weight="bold">Nabywca</fo:inline>
@@ -198,65 +203,78 @@
                                 </fo:table-cell>
 
                                 <!-- Dane wystawcy -->
-                                <xsl:if test="crd:Podmiot3">
-                                    <fo:table-cell>
-                                        <fo:table font-size="7pt">
-                                            <fo:table-body>
-                                                <fo:table-row>
-                                                    <fo:table-cell>
-                                                        <fo:block text-align="left" padding-bottom="3px">
-                                                            <fo:inline font-weight="600">NIP: </fo:inline>
-                                                            <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:NIP"/>
-                                                        </fo:block>
-                                                    </fo:table-cell>
-                                                </fo:table-row>
-                                                <fo:table-row>
-                                                    <fo:table-cell>
-                                                        <fo:block text-align="left">
-                                                            <fo:inline font-weight="600">Nazwa: </fo:inline>
-                                                            <xsl:value-of select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
-                                                        </fo:block>
-                                                    </fo:table-cell>
-                                                </fo:table-row>
-                                                <fo:table-row>
-                                                    <fo:table-cell padding-top="16px">
-                                                        <fo:block text-align="left" padding-bottom="3px">
-                                                            <fo:inline font-weight="bold">Adres</fo:inline>
-                                                        </fo:block>
-                                                        <fo:block text-align="left">
-                                                            <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
-                                                            <xsl:if test="crd:Podmiot3/crd:Adres/crd:AdresL2">
-                                                                <fo:inline>, </fo:inline>
-                                                                <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
-                                                            </xsl:if>
-                                                        </fo:block>
-                                                    </fo:table-cell>
-                                                </fo:table-row>
-                                                <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email|crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
+                                <fo:table-cell>
+                                    <xsl:choose>
+                                        <xsl:when test="crd:Podmiot3">
+                                            <fo:table font-size="7pt">
+                                                <fo:table-body>
+                                                    <fo:table-row>
+                                                        <fo:table-cell>
+                                                            <fo:block text-align="left" padding-bottom="3px">
+                                                                <fo:inline font-weight="600">NIP:</fo:inline>
+                                                                <xsl:value-of
+                                                                        select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                                            </fo:block>
+                                                        </fo:table-cell>
+                                                    </fo:table-row>
+                                                    <fo:table-row>
+                                                        <fo:table-cell>
+                                                            <fo:block text-align="left">
+                                                                <fo:inline font-weight="600">Nazwa:</fo:inline>
+                                                                <xsl:value-of
+                                                                        select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                                                            </fo:block>
+                                                        </fo:table-cell>
+                                                    </fo:table-row>
                                                     <fo:table-row>
                                                         <fo:table-cell padding-top="16px">
                                                             <fo:block text-align="left" padding-bottom="3px">
-                                                                <fo:inline font-weight="bold">Dane kontaktowe</fo:inline>
+                                                                <fo:inline font-weight="bold">Adres</fo:inline>
                                                             </fo:block>
-                                                            <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email">
-                                                                <fo:block text-align="left" padding-bottom="2px">
-                                                                    <fo:inline font-weight="600">E-mail: </fo:inline>
-                                                                    <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Email"/>
-                                                                </fo:block>
-                                                            </xsl:if>
-                                                            <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
-                                                                <fo:block text-align="left" padding-bottom="2px">
-                                                                    <fo:inline font-weight="600">Tel.: </fo:inline>
-                                                                    <xsl:value-of select="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon"/>
-                                                                </fo:block>
-                                                            </xsl:if>
+                                                            <fo:block text-align="left">
+                                                                <xsl:value-of
+                                                                        select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
+                                                                <xsl:if test="crd:Podmiot3/crd:Adres/crd:AdresL2">
+                                                                    <fo:inline>,</fo:inline>
+                                                                    <xsl:value-of
+                                                                            select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
+                                                                </xsl:if>
+                                                            </fo:block>
                                                         </fo:table-cell>
                                                     </fo:table-row>
-                                                </xsl:if>
-                                            </fo:table-body>
-                                        </fo:table>
-                                    </fo:table-cell>
-                                </xsl:if>
+                                                    <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email|crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
+                                                        <fo:table-row>
+                                                            <fo:table-cell padding-top="16px">
+                                                                <fo:block text-align="left" padding-bottom="3px">
+                                                                    <fo:inline font-weight="bold">Dane kontaktowe
+                                                                    </fo:inline>
+                                                                </fo:block>
+                                                                <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Email">
+                                                                    <fo:block text-align="left" padding-bottom="2px">
+                                                                        <fo:inline font-weight="600">E-mail:</fo:inline>
+                                                                        <xsl:value-of
+                                                                                select="crd:Podmiot3/crd:DaneKontaktowe/crd:Email"/>
+                                                                    </fo:block>
+                                                                </xsl:if>
+                                                                <xsl:if test="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon">
+                                                                    <fo:block text-align="left" padding-bottom="2px">
+                                                                        <fo:inline font-weight="600">Tel.:</fo:inline>
+                                                                        <xsl:value-of
+                                                                                select="crd:Podmiot3/crd:DaneKontaktowe/crd:Telefon"/>
+                                                                    </fo:block>
+                                                                </xsl:if>
+                                                            </fo:table-cell>
+                                                        </fo:table-row>
+                                                    </xsl:if>
+                                                </fo:table-body>
+                                            </fo:table>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+
+                                </fo:table-cell>
 
                                 <!-- Dane nabywcy -->
                                 <fo:table-cell>
