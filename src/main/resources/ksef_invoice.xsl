@@ -228,7 +228,7 @@
                                                     <fo:table-row>
                                                         <fo:table-cell>
                                                             <fo:block text-align="left" padding-bottom="3px">
-                                                                <fo:inline font-weight="600">NIP:</fo:inline>
+                                                                <fo:inline font-weight="600">NIP: </fo:inline>
                                                                 <xsl:value-of
                                                                         select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:NIP"/>
                                                             </fo:block>
@@ -237,7 +237,7 @@
                                                     <fo:table-row>
                                                         <fo:table-cell>
                                                             <fo:block text-align="left">
-                                                                <fo:inline font-weight="600">Nazwa:</fo:inline>
+                                                                <fo:inline font-weight="600">Nazwa: </fo:inline>
                                                                 <xsl:value-of
                                                                         select="crd:Podmiot3/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                                             </fo:block>
@@ -249,12 +249,10 @@
                                                                 <fo:inline font-weight="bold">Adres</fo:inline>
                                                             </fo:block>
                                                             <fo:block text-align="left">
-                                                                <xsl:value-of
-                                                                        select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
+                                                                <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL1"/>
                                                                 <xsl:if test="crd:Podmiot3/crd:Adres/crd:AdresL2">
-                                                                    <fo:inline>,</fo:inline>
-                                                                    <xsl:value-of
-                                                                            select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
+                                                                    <fo:inline>, </fo:inline>
+                                                                    <xsl:value-of select="crd:Podmiot3/crd:Adres/crd:AdresL2"/>
                                                                 </xsl:if>
                                                             </fo:block>
                                                         </fo:table-cell>
