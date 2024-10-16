@@ -83,7 +83,8 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            generator.generateInvoice(src, null, null, null, null, out);
+            InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(null, null, null, null);
+            generator.generateInvoice(src, invoiceGenerationParams, out);
         }
     }
 
@@ -102,7 +103,9 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, logo, out);
+            InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(ksefNumber, verificationLink, qrCode, logo);
+
+            generator.generateInvoice(src, invoiceGenerationParams, out);
         }
     }
 
@@ -125,7 +128,9 @@ class GeneratePdfTest {
                      OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
 
                     Source src = new StreamSource(xml);
-                    generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, logo, out);
+                    InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(ksefNumber, verificationLink, qrCode, logo);
+
+                    generator.generateInvoice(src, invoiceGenerationParams, out);
                 }
             }
         }
