@@ -408,31 +408,33 @@
                     </fo:table>
 
 <!--                    Dodatkowy opis-->
-                    <fo:block>
-                        <fo:block text-align="left" space-after="3mm">
-                            <fo:inline font-weight="bold">Dodatkowy opis</fo:inline>
+                    <xsl:if test="count(crd:Fa/crd:DodatkowyOpis) > 0">
+                        <fo:block>
+                            <fo:block text-align="left" space-after="3mm">
+                                <fo:inline font-weight="bold">Dodatkowy opis</fo:inline>
+                            </fo:block>
+                            <!-- Dodatkowe opisy-->
+                            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                                <fo:table-column column-width="50%"/> <!-- Rodzaj informacji -->
+                                <fo:table-column column-width="50%"/> <!-- Treść informacji -->
+                                <fo:table-header>
+                                    <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Rodzaj informacji</fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Treść informacji</fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-header>
+                                <fo:table-body>
+                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"></xsl:apply-templates>
+                                </fo:table-body>
+                            </fo:table>
                         </fo:block>
-                        <!-- Dodatkowe opisy-->
-                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                            <fo:table-column column-width="50%"/> <!-- Rodzaj informacji -->
-                            <fo:table-column column-width="50%"/> <!-- Treść informacji -->
-                            <fo:table-header>
-                                <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Rodzaj informacji</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Treść informacji</fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                            </fo:table-header>
-                            <fo:table-body>
-                                <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"></xsl:apply-templates>
-                            </fo:table-body>
-                        </fo:table>
-                    </fo:block>
+                    </xsl:if>
 
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
