@@ -157,6 +157,9 @@ public class PdfGenerator {
         Optional.ofNullable(duplicateDate)
                 .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .ifPresent(formattedDate -> setParameterIfNotNull("duplicateDate", formattedDate, transformer));
+        Optional.ofNullable(params.getCurrencyDate())
+                .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .ifPresent(formattedDate -> setParameterIfNotNull("currencyDate", formattedDate, transformer));
         setParameterIfNotNull("nrKsef", params.getKsefNumber(), transformer);
         setParameterIfNotNull("verificationLink", params.getVerificationLink(), transformer);
         setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);

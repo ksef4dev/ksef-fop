@@ -19,6 +19,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -81,9 +82,12 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
+            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_1.xml");
             Source src = new StreamSource(xml);
-            InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(null, null, null, null);
+
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .currencyDate(LocalDate.of(2024, 1, 1))
+                    .build();
             generator.generateInvoice(src, invoiceGenerationParams, out);
         }
     }
@@ -103,7 +107,12 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(ksefNumber, verificationLink, qrCode, logo);
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .ksefNumber(ksefNumber)
+                    .verificationLink(verificationLink)
+                    .qrCode(qrCode)
+                    .logo(logo)
+                    .build();
 
             generator.generateInvoice(src, invoiceGenerationParams, out);
         }
@@ -128,7 +137,13 @@ class GeneratePdfTest {
                      OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
 
                     Source src = new StreamSource(xml);
-                    InvoiceGenerationParams invoiceGenerationParams = new InvoiceGenerationParams(ksefNumber, verificationLink, qrCode, logo);
+
+                    InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                            .ksefNumber(ksefNumber)
+                            .verificationLink(verificationLink)
+                            .qrCode(qrCode)
+                            .logo(logo)
+                            .build();
 
                     generator.generateInvoice(src, invoiceGenerationParams, out);
                 }

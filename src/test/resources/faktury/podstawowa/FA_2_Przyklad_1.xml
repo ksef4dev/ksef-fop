@@ -38,6 +38,47 @@ xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
 		</DaneKontaktowe>
 		<NrKlienta>fdfd778343</NrKlienta>
 	</Podmiot2>
+	<Podmiot3>
+		<DaneIdentyfikacyjne>
+			<NIP>3333333333</NIP>
+			<Nazwa>F.H.U. Grażyna Kowalska</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Polna 1</AdresL1>
+			<AdresL2>00-001 Warszawa</AdresL2>
+		</Adres>
+		<DaneKontaktowe>
+			<Email>jan@kowalski.pl</Email>
+			<Telefon>555777999</Telefon>
+		</DaneKontaktowe>
+		<Rola>5</Rola>
+	</Podmiot3>
+	<Podmiot3>
+		<DaneIdentyfikacyjne>
+			<NIP>5451824119</NIP>
+			<Nazwa>F.H.U. Jan Kowalski</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Polna 1</AdresL1>
+			<AdresL2>00-001 Warszawa</AdresL2>
+		</Adres>
+		<Rola>2</Rola>
+	</Podmiot3>
+	<Podmiot3>
+		<DaneIdentyfikacyjne>
+			<NIP>5451824119</NIP>
+			<Nazwa>F.H.U. Adam Nowak</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Polna 1</AdresL1>
+			<AdresL2>00-001 Warszawa</AdresL2>
+		</Adres>
+		<Rola>6</Rola>
+	</Podmiot3>
+
 	<Fa>
 		<KodWaluty>PLN</KodWaluty>
 		<P_1>2022-02-15</P_1>
@@ -68,8 +109,8 @@ xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
 		<RodzajFaktury>VAT</RodzajFaktury>
 		<FP>1</FP>
 		<DodatkowyOpis>
-			<Klucz>preferowane godziny dowozu</Klucz>
-			<Wartosc>dni robocze 17:00 - 20:00</Wartosc>
+			<Klucz>Uwagi</Klucz>
+			<Wartosc>Testowe uwagi</Wartosc>
 		</DodatkowyOpis>
 		<FaWiersz>
 			<NrWierszaFa>1</NrWierszaFa>
@@ -102,16 +143,27 @@ xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
 			<P_12>5</P_12>
 		</FaWiersz>
 		<Platnosc>
-			<Zaplacono>1</Zaplacono>
-			<DataZaplaty>2022-01-27</DataZaplaty>
+			<TerminPlatnosci>
+				<Termin>2022-03-15</Termin>
+			</TerminPlatnosci>
 			<FormaPlatnosci>6</FormaPlatnosci>
+			<RachunekBankowy>
+				<NrRB>73111111111111111111111111</NrRB>
+				<NazwaBanku>Bank 1</NazwaBanku>
+				<OpisRachunku>PLN</OpisRachunku>
+			</RachunekBankowy>
+			<RachunekBankowy>
+				<NrRB>73111111111111111111111111</NrRB>
+				<NazwaBanku>Bank 2</NazwaBanku>
+				<OpisRachunku>PLN</OpisRachunku>
+			</RachunekBankowy>
+			<RachunekBankowy>
+				<NrRB>73111111111111111111111111</NrRB>
+				<NazwaBanku>Bank 3</NazwaBanku>
+				<OpisRachunku>PLN</OpisRachunku>
+			</RachunekBankowy>
+
 		</Platnosc>
-		<WarunkiTransakcji>
-			<Zamowienia>
-				<DataZamowienia>2022-01-26</DataZamowienia>
-				<NrZamowienia>4354343</NrZamowienia>
-			</Zamowienia>
-		</WarunkiTransakcji>
 	</Fa>
 	<Stopka>
 		<Informacje>
