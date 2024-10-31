@@ -723,7 +723,7 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Informacja o płatności:</fo:inline>
                             Zapłata częściowa
@@ -772,7 +772,10 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
+                    <xsl:if test="
+                    crd:Fa/crd:Platnosc/crd:Zaplacono != 1
+                    and
+                    crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Opłacono: </fo:inline>
                             <xsl:value-of select="translate(format-number(number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej),  '#,##0.00'), ',.', ' ,')"/>
@@ -783,7 +786,9 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa and number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej) > 0">
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and
+                    crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa and
+                     number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej) >= 0">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Pozostało do zapłaty: </fo:inline>
                             <xsl:value-of
