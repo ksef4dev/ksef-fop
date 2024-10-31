@@ -241,7 +241,7 @@
                                             <fo:table-row>
                                                 <fo:table-cell>
                                                     <fo:block text-align="left" padding-bottom="3px">
-                                                        <fo:inline font-weight="600">NIP:</fo:inline>
+                                                        <fo:inline font-weight="600">NIP: </fo:inline>
                                                         <xsl:value-of
                                                                 select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP"/>
                                                     </fo:block>
@@ -250,7 +250,7 @@
                                             <fo:table-row>
                                                 <fo:table-cell>
                                                     <fo:block text-align="left">
-                                                        <fo:inline font-weight="600">Nazwa:</fo:inline>
+                                                        <fo:inline font-weight="600">Nazwa: </fo:inline>
                                                         <xsl:value-of
                                                                 select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                                     </fo:block>
@@ -717,16 +717,23 @@
 
                     <!-- Informacja o płatności -->
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono = 1">
-                        <fo:block font-size="7pt" text-align="left">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Informacja o płatności:</fo:inline>
                             Zapłacono
                         </fo:block>
                     </xsl:if>
 
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Informacja o płatności:</fo:inline>
+                            Zapłata częściowa
+                        </fo:block>
+                    </xsl:if>
+
                     <!-- DataZaplaty -->
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:DataZaplaty">
-                        <fo:block font-size="7pt" text-align="left">
-                            <fo:inline font-weight="bold">Data zapłaty:</fo:inline>
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Data zapłaty: </fo:inline>
                             <xsl:value-of select="crd:Fa/crd:Platnosc/crd:DataZaplaty"/>
                         </fo:block>
                     </xsl:if>
@@ -759,9 +766,32 @@
                     <!-- Termin płatności -->
 
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin">
-                        <fo:block font-size="7pt" text-align="left">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Termin płatności: </fo:inline>
                             <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin"/>
+                        </fo:block>
+                    </xsl:if>
+
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Opłacono: </fo:inline>
+                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej),  '#,##0.00'), ',.', ' ,')"/>
+                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
+                            <fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                            </fo:inline>
+                        </fo:block>
+                    </xsl:if>
+
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa and number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej) > 0">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Pozostało do zapłaty: </fo:inline>
+                            <xsl:value-of
+                                    select="translate(format-number(number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej), '#,##0.00'), ',.', ' ,')"/>
+                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
+                            <fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                            </fo:inline>
                         </fo:block>
                     </xsl:if>
 

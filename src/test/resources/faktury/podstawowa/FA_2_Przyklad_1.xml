@@ -1,95 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
 	<Naglowek>
 		<KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
 		<WariantFormularza>2</WariantFormularza>
-		<DataWytworzeniaFa>2022-01-01T00:00:00Z</DataWytworzeniaFa>
-		<SystemInfo>SamploFaktur</SystemInfo>
+		<DataWytworzeniaFa>2024-10-31T14:16:25.548619+01:00</DataWytworzeniaFa>
+		<SystemInfo>Aplikacja Podatnika KSeF</SystemInfo>
 	</Naglowek>
 	<Podmiot1>
+		<PrefiksPodatnika>PL</PrefiksPodatnika>
 		<DaneIdentyfikacyjne>
-			<NIP>9999999999</NIP>
-			<Nazwa>ABC AGD sp. z o. o.</Nazwa>
+			<NIP>5451824119</NIP>
+			<Nazwa>Codeque Karol Bryzgiel</Nazwa>
 		</DaneIdentyfikacyjne>
 		<Adres>
 			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Kwiatowa 1 m. 2</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
+			<AdresL1>Adres</AdresL1>
 		</Adres>
-		<DaneKontaktowe>
-			<Email>abc@abc.pl</Email>
-			<Telefon>667444555</Telefon>
-		</DaneKontaktowe>
 	</Podmiot1>
 	<Podmiot2>
 		<DaneIdentyfikacyjne>
-			<NIP>1111111111</NIP>
-			<Nazwa>F.H.U. Jan Kowalski</Nazwa>
+			<NIP>5450001143</NIP>
+			<Nazwa>PRZEDSIĘBIORSTWO USŁUGOWO-HANDLOWE JAN XXXXXXXX</Nazwa>
 		</DaneIdentyfikacyjne>
 		<Adres>
 			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
+			<AdresL1>ul. Test-Krucza 32 Dąbrowa Białostocka 16-200 Dąbrowa Białostocka</AdresL1>
 		</Adres>
-		<DaneKontaktowe>
-			<Email>jan@kowalski.pl</Email>
-			<Telefon>555777999</Telefon>
-		</DaneKontaktowe>
-		<NrKlienta>fdfd778343</NrKlienta>
 	</Podmiot2>
-	<Podmiot3>
-		<DaneIdentyfikacyjne>
-			<NIP>3333333333</NIP>
-			<Nazwa>F.H.U. Grażyna Kowalska</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
-		</Adres>
-		<DaneKontaktowe>
-			<Email>jan@kowalski.pl</Email>
-			<Telefon>555777999</Telefon>
-		</DaneKontaktowe>
-		<Rola>5</Rola>
-	</Podmiot3>
-	<Podmiot3>
-		<DaneIdentyfikacyjne>
-			<NIP>5451824119</NIP>
-			<Nazwa>F.H.U. Jan Kowalski</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
-		</Adres>
-		<Rola>2</Rola>
-	</Podmiot3>
-	<Podmiot3>
-		<DaneIdentyfikacyjne>
-			<NIP>5451824119</NIP>
-			<Nazwa>F.H.U. Adam Nowak</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
-		</Adres>
-		<Rola>6</Rola>
-	</Podmiot3>
-
 	<Fa>
 		<KodWaluty>PLN</KodWaluty>
-		<P_1>2022-02-15</P_1>
-		<P_1M>Warszawa</P_1M>
-		<P_2>FV2022/02/150</P_2>
-		<P_6>2022-01-27</P_6>
-		<P_13_1>1666.66</P_13_1>
-		<P_14_1>383.33</P_14_1>
-		<P_13_3>0.95</P_13_3>
-		<P_14_3>0.05</P_14_3>
-		<P_15>2051</P_15>
+		<P_1>2024-10-31</P_1>
+		<P_2>5/test/2024</P_2>
+		<P_6>2024-10-31</P_6>
+		<P_13_1>500</P_13_1>
+		<P_14_1>115</P_14_1>
+		<P_15>615</P_15>
 		<Adnotacje>
 			<P_16>2</P_16>
 			<P_17>2</P_17>
@@ -107,72 +55,21 @@ xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
 			</PMarzy>
 		</Adnotacje>
 		<RodzajFaktury>VAT</RodzajFaktury>
-		<FP>1</FP>
-		<DodatkowyOpis>
-			<Klucz>Uwagi</Klucz>
-			<Wartosc>Testowe uwagi</Wartosc>
-		</DodatkowyOpis>
 		<FaWiersz>
 			<NrWierszaFa>1</NrWierszaFa>
-			<UU_ID>aaaa111133339990</UU_ID>
-			<P_7>lodówka Zimnotech mk1</P_7>
-			<P_8A>szt.</P_8A>
+			<P_7>test123</P_7>
+			<P_8A>szt</P_8A>
 			<P_8B>1</P_8B>
-			<P_9A>1626.01</P_9A>
-			<P_11>1626.01</P_11>
+			<P_9A>500</P_9A>
+			<P_11>500</P_11>
 			<P_12>23</P_12>
-		</FaWiersz>
-		<FaWiersz>
-			<NrWierszaFa>2</NrWierszaFa>
-			<UU_ID>aaaa111133339991</UU_ID>
-			<P_7>wniesienie sprzętu</P_7>
-			<P_8A>szt.</P_8A>
-			<P_8B>1</P_8B>
-			<P_9A>40.65</P_9A>
-			<P_11>40.65</P_11>
-			<P_12>23</P_12>
-		</FaWiersz>
-		<FaWiersz>
-			<NrWierszaFa>3</NrWierszaFa>
-			<UU_ID>aaaa111133339992</UU_ID>
-			<P_7>promocja lodówka pełna mleka</P_7>
-			<P_8A>szt.</P_8A>
-			<P_8B>1</P_8B>
-			<P_9A>0.95</P_9A>
-			<P_11>0.95</P_11>
-			<P_12>5</P_12>
 		</FaWiersz>
 		<Platnosc>
+			<Zaplacono>1</Zaplacono>
 			<TerminPlatnosci>
-				<Termin>2022-03-15</Termin>
+				<Termin>2024-11-14</Termin>
 			</TerminPlatnosci>
 			<FormaPlatnosci>6</FormaPlatnosci>
-			<RachunekBankowy>
-				<NrRB>73111111111111111111111111</NrRB>
-				<NazwaBanku>Bank 1</NazwaBanku>
-				<OpisRachunku>PLN</OpisRachunku>
-			</RachunekBankowy>
-			<RachunekBankowy>
-				<NrRB>73111111111111111111111111</NrRB>
-				<NazwaBanku>Bank 2</NazwaBanku>
-				<OpisRachunku>PLN</OpisRachunku>
-			</RachunekBankowy>
-			<RachunekBankowy>
-				<NrRB>73111111111111111111111111</NrRB>
-				<NazwaBanku>Bank 3</NazwaBanku>
-				<OpisRachunku>PLN</OpisRachunku>
-			</RachunekBankowy>
-
 		</Platnosc>
 	</Fa>
-	<Stopka>
-		<Informacje>
-			<StopkaFaktury>Kapiał zakładowy 5 000 000</StopkaFaktury>
-		</Informacje>
-		<Rejestry>
-			<KRS>0000099999</KRS>
-			<REGON>999999999</REGON>
-			<BDO>000099999</BDO>
-		</Rejestry>
-	</Stopka>
 </Faktura>
