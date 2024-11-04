@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
+@Slf4j
 class GeneratePdfTest {
 
     @Test
@@ -86,7 +88,6 @@ class GeneratePdfTest {
             Source src = new StreamSource(xml);
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
-                    .currencyDate(LocalDate.of(2024, 1, 1))
                     .build();
             generator.generateInvoice(src, invoiceGenerationParams, out);
         }

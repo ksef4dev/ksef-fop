@@ -65,6 +65,10 @@
 			<P_12>23</P_12>
 		</FaWiersz>
 		<Platnosc>
+			<Zaplacono>1</Zaplacono>
+			<ZaplataCzesciowa>
+				<KwotaZaplatyCzesciowej>615</KwotaZaplatyCzesciowej>
+			</ZaplataCzesciowa>
 			<TerminPlatnosci>
 				<Termin>2024-11-14</Termin>
 			</TerminPlatnosci>

@@ -396,12 +396,17 @@
                                             <xsl:value-of select="crd:Fa/crd:FaWiersz[1]/crd:KursWaluty"/>
                                         </fo:block>
                                     </xsl:if>
-                                    <xsl:if test="$currencyDate">
-                                        <fo:block text-align="left" font-size="8pt">
-                                            <fo:inline font-weight="bold">Data kursu waluty: </fo:inline>
-                                            <xsl:value-of select="$currencyDate"/>
-                                        </fo:block>
-                                    </xsl:if>
+                                    <xsl:choose>
+                                        <xsl:when test="$currencyDate">
+                                            <fo:block text-align="left" font-size="8pt">
+                                                <fo:inline font-weight="bold">Data kursu waluty: </fo:inline>
+                                                <xsl:value-of select="$currencyDate"/>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block></fo:block>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
@@ -723,7 +728,7 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Informacja o płatności:</fo:inline>
                             Zapłata częściowa
