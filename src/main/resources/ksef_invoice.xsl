@@ -5,6 +5,8 @@
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
+    <xsl:include href="invoice-rows.xsl"/>
+
     <!--  Additional parameters that are not included in the xml invoice -->
     <xsl:param name="nrKsef"/>
     <xsl:param name="qrCode"/>
@@ -503,7 +505,7 @@
                                             </fo:block>
                                         </xsl:when>
                                         <xsl:otherwise>
-                                            <fo:block></fo:block>
+                                            <fo:block/>
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </fo:table-cell>
@@ -534,7 +536,7 @@
                                     </fo:table-row>
                                 </fo:table-header>
                                 <fo:table-body>
-                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"></xsl:apply-templates>
+                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"/>
                                 </fo:table-body>
                             </fo:table>
                         </fo:block>
@@ -543,164 +545,44 @@
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
-                    <!-- Main Header for "Pozycje" -->
                     <fo:block text-align="left" space-after="1mm">
                         <fo:inline font-weight="bold" font-size="12pt">Pozycje</fo:inline>
                     </fo:block>
-
+                    <xsl:if test="crd:Fa/crd:KodWaluty != 'PLN'">
+                        <fo:block font-size="8pt" font-weight="bold" text-align="left" space-after="3mm">
+                            <fo:inline>Faktura wystawiona w walucie </fo:inline>
+                            <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                        </fo:block>
+                    </xsl:if>
+                    <xsl:variable name="pierwszyElement" select="crd:Fa/crd:FaWiersz[1]"/>
                     <fo:block>
                         <xsl:choose>
-                            <!-- Condition: Check if both "before correction" and "after correction" rows exist -->
                             <xsl:when test="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1] and crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]">
-
-                                <!-- Subheader and Table for "Pozycje na fakturze przed korektą" -->
                                 <fo:block text-align="left" space-after="1mm">
                                     <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze przed korektą</fo:inline>
                                 </fo:block>
-                                <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
-                                    <fo:table-column column-width="4%"/>
-                                    <fo:table-column column-width="53%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="10%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="8%"/>
-                                    <fo:table-column column-width="10%"/>
-
-                                    <!-- Table Header for "Pozycje na fakturze przed korektą" -->
-                                    <fo:table-header>
-                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Lp.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Nazwa towaru lub usługi</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Ilość</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Jedn.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Cena jedn. netto</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Rabat</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Stawka podatku</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Wartość sprzedaży netto</fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </fo:table-header>
-
-                                    <fo:table-body>
-                                        <xsl:apply-templates select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
-                                    </fo:table-body>
-                                </fo:table>
+                                <!-- Pozycje na FV-->
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
 
                                 <!-- Subheader and Table for "Pozycje na fakturze po korekcie" -->
                                 <fo:block text-align="left" space-after="1mm">
                                     <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze po korekcie</fo:inline>
                                 </fo:block>
-                                <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                                    <fo:table-column column-width="4%"/>
-                                    <fo:table-column column-width="53%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="10%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="8%"/>
-                                    <fo:table-column column-width="10%"/>
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
 
-                                    <!-- Table Header for "Pozycje na fakturze po korekcie" -->
-                                    <fo:table-header>
-                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Lp.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Nazwa towaru lub usługi</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Ilość</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Jedn.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Cena jedn. netto</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Rabat</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Stawka podatku</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Wartość sprzedaży netto</fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </fo:table-header>
-
-                                    <fo:table-body>
-                                        <xsl:apply-templates select="crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]"/>
-                                    </fo:table-body>
-                                </fo:table>
                             </xsl:when>
 
-                            <!-- Fallback: single table if both data sets do not exist -->
                             <xsl:otherwise>
-                                <fo:block text-align="left" space-after="1mm">
-                                    <fo:inline font-weight="bold" font-size="10pt">Pozycje</fo:inline>
-                                </fo:block>
-                                <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                                    <fo:table-column column-width="4%"/>
-                                    <fo:table-column column-width="53%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="10%"/>
-                                    <fo:table-column column-width="5%"/>
-                                    <fo:table-column column-width="8%"/>
-                                    <fo:table-column column-width="10%"/>
-
-                                    <!-- Table Header for the single table -->
-                                    <fo:table-header>
-                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Lp.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Nazwa towaru lub usługi</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Ilość</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Jedn.</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Cena jedn. netto</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Rabat</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Stawka podatku</fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block>Wartość sprzedaży netto</fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </fo:table-header>
-
-                                    <fo:table-body>
-                                        <xsl:apply-templates select="crd:Fa/crd:FaWiersz"/>
-                                    </fo:table-body>
-                                </fo:table>
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
                             </xsl:otherwise>
                         </xsl:choose>
                     </fo:block>
@@ -1038,7 +920,7 @@
                             </fo:table-header>
                             <fo:table-body>
                                 <xsl:apply-templates
-                                        select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"></xsl:apply-templates>
+                                        select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>
                             </fo:table-body>
                         </fo:table>
                     </xsl:if>
