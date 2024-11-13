@@ -5,6 +5,8 @@
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
+    <xsl:include href="invoice-rows.xsl"/>
+
     <!--  Additional parameters that are not included in the xml invoice -->
     <xsl:param name="nrKsef"/>
     <xsl:param name="qrCode"/>
@@ -123,6 +125,79 @@
                             </fo:inline>
                         </fo:block>
                     </xsl:if>
+
+                    <!-- Dane faktury korygowanej -->
+                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej">
+                        <!-- Linia oddzielająca -->
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                            <fo:inline font-weight="bold">Dane faktury korygowanej</fo:inline>
+                        </fo:block>
+                        <fo:table font-size="7pt" space-after="5mm">
+                            <fo:table-column column-width="50%"/>
+                            <fo:table-body>
+                                <!-- Data wystawienia, Numer faktury korygowanej -->
+                                <xsl:if test="crd:Fa/crd:DaneFaKorygowanej">
+
+                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:DataWystFaKorygowanej">
+                                        <fo:table-row space-after="5mm">
+                                            <fo:table-cell padding-bottom="6px">
+                                                <fo:block text-align="left">
+                                                    <fo:inline font-weight="bold">Data wystawienia faktury, której
+                                                        dotyczy faktura korygująca:
+                                                    </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:DataWystFaKorygowanej"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </xsl:if>
+
+                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:NrFaKorygowanej">
+                                        <fo:table-row space-after="5mm">
+                                            <fo:table-cell padding-bottom="6px">
+                                                <fo:block text-align="left">
+                                                    <fo:inline font-weight="bold">Numer faktury korygowanej:
+                                                    </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:NrFaKorygowanej"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </xsl:if>
+
+                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:NrKSeFFaKorygowanej">
+                                        <fo:table-row space-after="5mm">
+                                            <fo:table-cell padding-bottom="6px">
+                                                <fo:block text-align="left">
+                                                    <fo:inline font-weight="bold">Numer KSeF faktury korygowanej:
+                                                    </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:NrKSeFFaKorygowanej"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </xsl:if>
+
+                                </xsl:if>
+
+                                <!-- Data dokonania lub zakończenia dostawy towarów lub wykonania usługi: -->
+                                <xsl:if test="crd:Fa/crd:P_6">
+                                    <fo:table-row>
+                                        <fo:table-cell>
+                                            <fo:block text-align="left">
+                                                <fo:inline font-weight="bold">Data dokonania lub zakończenia dostawy
+                                                    towarów
+                                                    lub wykonania usługi:
+                                                </fo:inline>
+                                                <xsl:value-of select="crd:Fa/crd:P_6"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                            </fo:table-body>
+                        </fo:table>
+                    </xsl:if>
+
+
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm"/>
                     <!-- Sprzedawca / Nabywca -->
@@ -382,6 +457,32 @@
                                             <xsl:value-of select="crd:Fa/crd:P_6"/>
                                         </fo:block>
                                     </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:PrzyczynaKorekty">
+                                        <fo:block font-size="8pt" text-align="left">
+                                            <fo:inline font-weight="bold">Przyczyna korekty:
+                                            </fo:inline>
+                                            <xsl:value-of select="crd:Fa/crd:PrzyczynaKorekty"/>
+                                        </fo:block>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:TypKorekty">
+                                        <fo:block font-size="8pt" text-align="left">
+                                            <fo:inline font-weight="bold">Typ korekty:</fo:inline>
+                                            <xsl:choose>
+                                                <xsl:when test="crd:Fa/crd:TypKorekty = 1">
+                                                    <xsl:text>Korekta skutkująca w dacie ujęcia faktury pierwotnej</xsl:text>
+                                                </xsl:when>
+                                                <xsl:when test="crd:Fa/crd:TypKorekty = 2">
+                                                    <xsl:text>Korekta skutkująca w dacie wystawienia faktury korygującej</xsl:text>
+                                                </xsl:when>
+                                                <xsl:when test="crd:Fa/crd:TypKorekty = 3">
+                                                    <xsl:text>Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:text/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </fo:block>
+                                    </xsl:if>
                                 </fo:table-cell>
                                 <fo:table-cell padding-left="6pt">
                                     <xsl:if test="crd:Fa/crd:P_1M">
@@ -404,7 +505,7 @@
                                             </fo:block>
                                         </xsl:when>
                                         <xsl:otherwise>
-                                            <fo:block></fo:block>
+                                            <fo:block/>
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </fo:table-cell>
@@ -435,7 +536,7 @@
                                     </fo:table-row>
                                 </fo:table-header>
                                 <fo:table-body>
-                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"></xsl:apply-templates>
+                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"/>
                                 </fo:table-body>
                             </fo:table>
                         </fo:block>
@@ -444,107 +545,91 @@
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
-                    <fo:block>
-                        <fo:block text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold">Pozycje</fo:inline>
+                    <fo:block text-align="left" space-after="1mm">
+                        <fo:inline font-weight="bold" font-size="12pt">Pozycje</fo:inline>
+                    </fo:block>
+                    <xsl:if test="crd:Fa/crd:KodWaluty != 'PLN'">
+                        <fo:block font-size="8pt" font-weight="bold" text-align="left" space-after="3mm">
+                            <fo:inline>Faktura wystawiona w walucie </fo:inline>
+                            <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
                         </fo:block>
-                        <xsl:if test="crd:Fa/crd:KodWaluty != 'PLN'">
-                            <fo:block font-size="8pt" font-weight="bold" text-align="left" space-after="3mm">
-                                <fo:inline>Faktura wystawiona w walucie </fo:inline>
-                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                    </xsl:if>
+                    <xsl:variable name="pierwszyElement" select="crd:Fa/crd:FaWiersz[1]"/>
+                    <fo:block>
+                        <xsl:choose>
+                            <xsl:when test="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1] and crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]">
+                                <fo:block text-align="left" space-after="1mm">
+                                    <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze przed korektą</fo:inline>
+                                </fo:block>
+                                <!-- Pozycje na FV-->
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
+
+                                <!-- Subheader and Table for "Pozycje na fakturze po korekcie" -->
+                                <fo:block text-align="left" space-after="1mm">
+                                    <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze po korekcie</fo:inline>
+                                </fo:block>
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
+
+                            </xsl:when>
+
+                            <xsl:otherwise>
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz"/>
+                                    <xsl:with-param name="pierwszyElement" select="$pierwszyElement"/>
+                                </xsl:call-template>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </fo:block>
+
+                    <!-- Kwota należności ogółem -->
+
+                    <!-- Conditional block for displaying correction amounts only when RodzajFaktury = 'KOR' -->
+                    <xsl:if test="crd:Fa/crd:RodzajFaktury = 'KOR'">
+                        <!-- Optional block for Kwota brutto przed korektą -->
+                        <xsl:if test="boolean(sum(crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]/crd:P_11A))">
+                            <fo:block color="#6c757d" font-size="8pt" text-align="right" space-before="2mm">
+                                <fo:inline font-weight="bold">Kwota brutto przed korektą: </fo:inline>
+                                <fo:inline>
+                                    <xsl:value-of select="translate(format-number(sum(crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]/crd:P_11A), '#,##0.00'), ',.', ' ,')"/>
+                                    <xsl:text> </xsl:text>
+                                    <fo:inline>
+                                        <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                                    </fo:inline>
+                                </fo:inline>
                             </fo:block>
                         </xsl:if>
-                        <xsl:variable name="pierwszyElement" select="crd:Fa/crd:FaWiersz[1]"/>
-                        <!-- Pozycje na FV-->
-                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                            <fo:table-column column-width="4%"/> <!-- Lp. -->
-                            <fo:table-column column-width="53%"/> <!-- Nazwa -->
-                            <fo:table-column column-width="5%"/> <!-- Ilość -->
-                            <fo:table-column column-width="5%"/> <!-- Jednostka -->
-                            <xsl:if test="$pierwszyElement/crd:P_9A">
-                                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
-                            </xsl:if>
-                            <xsl:if test="$pierwszyElement/crd:P_9B">
-                                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
-                            </xsl:if>
-                            <fo:table-column column-width="5%"/> <!-- Rabat -->
-                            <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
-                            <xsl:if test="$pierwszyElement/crd:P_11">
-                                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
-                            </xsl:if>
-                            <xsl:if test="$pierwszyElement/crd:P_11A">
-                                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
-                            </xsl:if>
-                            <fo:table-header>
-                                <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Lp.</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Nazwa towaru lub usługi</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Ilość</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Jedn.</fo:block>
-                                    </fo:table-cell>
-                                    <xsl:if test="$pierwszyElement/crd:P_9A">
-                                        <fo:table-cell
-                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                            <fo:block>Cena jedn. netto</fo:block>
-                                        </fo:table-cell>
-                                    </xsl:if>
-                                    <xsl:if test="$pierwszyElement/crd:P_9B">
-                                        <fo:table-cell
-                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                            <fo:block>Cena jedn. brutto</fo:block>
-                                        </fo:table-cell>
-                                    </xsl:if>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Rabat</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Stawka podatku</fo:block>
-                                    </fo:table-cell>
 
-                                    <xsl:if test="$pierwszyElement/crd:P_11">
-                                        <fo:table-cell
-                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                            <fo:block>Wartość sprzedaży netto</fo:block>
-                                        </fo:table-cell>
-                                    </xsl:if>
-                                    <xsl:if test="$pierwszyElement/crd:P_11A">
-                                        <fo:table-cell
-                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                            <fo:block>Wartość sprzedaży brutto</fo:block>
-                                        </fo:table-cell>
-                                    </xsl:if>
-                                </fo:table-row>
-                            </fo:table-header>
-                            <fo:table-body>
-                                <xsl:apply-templates select="crd:Fa/crd:FaWiersz"></xsl:apply-templates>
-                            </fo:table-body>
-                        </fo:table>
-                    </fo:block>
-                    <!-- Kwota należności ogółem -->
+                        <!-- Optional block for Kwota brutto po korekcie -->
+                        <xsl:if test="boolean(sum(crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]/crd:P_11A))">
+                            <fo:block color="#6c757d" font-size="8pt" text-align="right">
+                                <fo:inline font-weight="bold">Kwota brutto po korekcie: </fo:inline>
+                                <fo:inline>
+                                    <xsl:value-of select="translate(format-number(sum(crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]/crd:P_11A), '#,##0.00'), ',.', ' ,')"/>
+                                    <xsl:text> </xsl:text>
+                                    <fo:inline>
+                                        <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                                    </fo:inline>
+                                </fo:inline>
+                            </fo:block>
+                        </xsl:if>
+                    </xsl:if>
                     <fo:block color="#343a40" font-size="10pt" text-align="right" space-before="3mm">
                         <fo:inline font-weight="bold">Kwota należności ogółem: </fo:inline>
                         <fo:inline>
-                            <xsl:value-of
-                                    select="translate(format-number(number(crd:Fa/crd:P_15), '#,##0.00'), ',.', ' ,')"/>
-                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
+                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_15), '#,##0.00'), ',.', ' ,')"/>
+                            <xsl:text> </xsl:text>
                             <fo:inline>
                                 <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
                             </fo:inline>
                         </fo:inline>
                     </fo:block>
+
 
                     <!-- Podsumowanie stawek podatku-->
                     <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_13_2|crd:Fa/crd:P_13_3">
@@ -835,7 +920,7 @@
                             </fo:table-header>
                             <fo:table-body>
                                 <xsl:apply-templates
-                                        select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"></xsl:apply-templates>
+                                        select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>
                             </fo:table-body>
                         </fo:table>
                     </xsl:if>

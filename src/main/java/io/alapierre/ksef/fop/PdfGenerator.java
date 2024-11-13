@@ -12,6 +12,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -139,7 +140,14 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
 
         TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_invoice.xsl")));
+
+        String xslFileName = "ksef_invoice.xsl";
+        InputStream xslInputStream = loadResource(xslFileName);
+        URL xslUrl = getClass().getClassLoader().getResource(xslFileName);
+
+        StreamSource xslSource = new StreamSource(xslInputStream, xslUrl.toExternalForm());
+
+        Transformer transformer = factory.newTransformer(xslSource);
 
         insertAdditionalInvoiceData(params, duplicateDate, transformer);
 
