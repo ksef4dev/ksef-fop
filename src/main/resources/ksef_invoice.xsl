@@ -15,6 +15,7 @@
     <xsl:param name="showFooter"/>
     <xsl:param name="duplicateDate"/>
     <xsl:param name="currencyDate"/>
+    <xsl:param name="issuerUser"/>
 
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
@@ -1020,6 +1021,14 @@
                                     </fo:table-row>
                                 </fo:table-body>
                             </fo:table>
+                        </fo:block>
+                    </xsl:if>
+                    <xsl:if test="$issuerUser">
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block font-size="10pt" text-align="left">
+                            <fo:inline font-weight="bold">Osoba wystawiająca: </fo:inline>
+                            <xsl:value-of select="$issuerUser"/>
                         </fo:block>
                     </xsl:if>
                 </fo:flow>
