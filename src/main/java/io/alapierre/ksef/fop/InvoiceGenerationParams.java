@@ -22,7 +22,7 @@ public class InvoiceGenerationParams {
     /**
      * @deprecated This constructor is deprecated because the parameters in this class may change in future versions, making it difficult to maintain compatibility.
      * It is recommended to use the builder pattern instead, which provides flexibility and helps accommodate future changes more easily.
-     * Use {@link InvoiceGenerationParamsBuilder} to construct instances of this class.
+     * Use InvoiceGenerationParamsBuilder to construct instances of this class.
      */
     @Deprecated
     public InvoiceGenerationParams(@Nullable String ksefNumber, @Nullable String verificationLink, byte[] qrCode, byte[] logo, @Nullable LocalDate currencyDate) {
