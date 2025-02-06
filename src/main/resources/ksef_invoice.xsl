@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
@@ -1045,7 +1045,11 @@
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
-                    <xsl:value-of select="crd:Wartosc"/> <!-- Wartosc dodatkowego opisu -->
+                    <xsl:for-each select="tokenize(crd:Wartosc, '\\n')">
+                        <fo:block>
+                            <xsl:value-of select="."/>
+                        </fo:block>
+                    </xsl:for-each>
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>

@@ -54,6 +54,10 @@
 				<P_PMarzyN>1</P_PMarzyN>
 			</PMarzy>
 		</Adnotacje>
+		<DodatkowyOpis>
+			<Klucz>Uwagi</Klucz>
+			<Wartosc>Pierwsza linia\nDruga linia</Wartosc>
+		</DodatkowyOpis>
 		<RodzajFaktury>VAT</RodzajFaktury>
 		<FaWiersz>
 			<NrWierszaFa>1</NrWierszaFa>
