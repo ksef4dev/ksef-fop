@@ -222,7 +222,7 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>saxon-he</artifactId>
-            <version>12.5</version>  <!-- Sprawdź najnowszą wersję na Maven Repository -->
+            <version>12.5</version>
         </dependency>
     </dependencies>
 
