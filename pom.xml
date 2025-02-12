@@ -221,7 +221,7 @@
 
         <dependency>
             <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-he</artifactId>
+            <artifactId>Saxon-HE</artifactId>
             <version>12.5</version>
         </dependency>
     </dependencies>
