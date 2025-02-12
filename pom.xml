@@ -219,6 +219,11 @@
             <version>24.1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>12.5</version>
+        </dependency>
     </dependencies>
 
     <profiles>

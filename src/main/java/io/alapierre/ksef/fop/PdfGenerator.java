@@ -1,6 +1,7 @@
 package io.alapierre.ksef.fop;
 
 import lombok.val;
+import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.fop.apps.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
@@ -139,7 +140,7 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
 
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory = new TransformerFactoryImpl();
 
         String xslFileName = "ksef_invoice.xsl";
         InputStream xslInputStream = loadResource(xslFileName);
