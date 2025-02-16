@@ -30,8 +30,8 @@
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
             <!-- Define table columns -->
             <fo:table-column column-width="4%"/> <!-- Lp. -->
-            <fo:table-column column-width="53%"/> <!-- Nazwa -->
-            <fo:table-column column-width="5%"/> <!-- Ilość -->
+            <fo:table-column column-width="50%"/> <!-- Nazwa -->
+            <fo:table-column column-width="8%"/> <!-- Ilość -->
             <fo:table-column column-width="5%"/> <!-- Jednostka -->
             <xsl:if test="$pierwszyElement/crd:P_9A">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
