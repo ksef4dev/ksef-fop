@@ -202,7 +202,7 @@
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm"/>
                     <!-- Sprzedawca / Nabywca -->
-                    <fo:table font-size="7pt">
+                    <fo:table font-size="7pt" table-layout="fixed">
                         <fo:table-column column-width="33%"/>
                         <fo:table-column column-width="33%"/>
                         <fo:table-column column-width="33%"/>
@@ -235,8 +235,19 @@
                             <!-- Dane sprzedawcy -->
                             <fo:table-row>
                                 <fo:table-cell>
-                                    <fo:table font-size="7pt">
+                                    <fo:table font-size="7pt" table-layout="fixed">
                                         <fo:table-body>
+                                            <xsl:if test="crd:Podmiot1/crd:NrEORI">
+                                                <fo:table-row>
+                                                    <fo:table-cell>
+                                                        <fo:block text-align="left" padding-bottom="3px">
+                                                            <fo:inline font-weight="600">Numer EORI: </fo:inline>
+                                                            <xsl:value-of
+                                                                    select="crd:Podmiot1/crd:NrEORI"/>
+                                                        </fo:block>
+                                                    </fo:table-cell>
+                                                </fo:table-row>
+                                            </xsl:if>
                                             <fo:table-row>
                                                 <fo:table-cell>
                                                     <fo:block text-align="left" padding-bottom="3px">
@@ -312,17 +323,30 @@
 
                                 <!-- Dane nabywcy -->
                                 <fo:table-cell>
-                                    <fo:table font-size="7pt">
+                                    <fo:table font-size="7pt" table-layout="fixed">
                                         <fo:table-body>
-                                            <fo:table-row>
-                                                <fo:table-cell>
-                                                    <fo:block text-align="left" padding-bottom="3px">
-                                                        <fo:inline font-weight="600">NIP: </fo:inline>
-                                                        <xsl:value-of
-                                                                select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                            </fo:table-row>
+                                            <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE">
+                                                <fo:table-row>
+                                                    <fo:table-cell>
+                                                        <fo:block text-align="left" padding-bottom="3px">
+                                                            <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
+                                                            <xsl:value-of
+                                                                    select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                                                        </fo:block>
+                                                    </fo:table-cell>
+                                                </fo:table-row>
+                                            </xsl:if>
+                                            <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP">
+                                                <fo:table-row>
+                                                    <fo:table-cell>
+                                                        <fo:block text-align="left" padding-bottom="3px">
+                                                            <fo:inline font-weight="600">NIP: </fo:inline>
+                                                            <xsl:value-of
+                                                                    select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                                        </fo:block>
+                                                    </fo:table-cell>
+                                                </fo:table-row>
+                                            </xsl:if>
                                             <fo:table-row>
                                                 <fo:table-cell>
                                                     <fo:block text-align="left">
@@ -438,7 +462,7 @@
                     <fo:block font-size="12pt" text-align="left" space-after="5mm">
                         <fo:inline font-weight="bold">Szczegóły</fo:inline>
                     </fo:block>
-                    <fo:table space-after="5mm">
+                    <fo:table space-after="5mm" table-layout="fixed">
                         <fo:table-column column-width="50%" />
                         <fo:table-column column-width="50%" />
                         <fo:table-body>
@@ -490,6 +514,12 @@
                                         <fo:block font-size="8pt" text-align="left">
                                             <fo:inline font-weight="bold">Miejsce wystawienia: </fo:inline>
                                             <xsl:value-of select="crd:Fa/crd:P_1M"/>
+                                        </fo:block>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:KursWalutyZ">
+                                        <fo:block text-align="left" font-size="8pt">
+                                            <fo:inline font-weight="bold">Kurs waluty: </fo:inline>
+                                            <xsl:value-of select="crd:Fa/crd:KursWalutyZ"/>
                                         </fo:block>
                                     </xsl:if>
                                     <xsl:if test="crd:Fa/crd:FaWiersz[1]/crd:KursWaluty">
@@ -633,7 +663,7 @@
 
 
                     <!-- Podsumowanie stawek podatku-->
-                    <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_13_2|crd:Fa/crd:P_13_3">
+                    <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_13_2 | crd:Fa/crd:P_13_3">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="3mm"/>
 
@@ -799,6 +829,22 @@
                         </fo:table>
                     </xsl:if>
 
+                    <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_18 = 1">
+
+                        <!-- Adnotacje -->
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                            <fo:inline font-weight="bold">Adnotacje</fo:inline>
+                        </fo:block>
+
+                        <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_18 = 1">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold">Odwrotne obciążenie</fo:inline>
+                            </fo:block>
+                        </xsl:if>
+
+                    </xsl:if>
                     <!-- Płatność -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
@@ -830,36 +876,45 @@
                     </xsl:if>
 
                     <!-- Forma płatności -->
-                    <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                        <fo:inline font-weight="bold">Forma płatności:</fo:inline>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
-                            Gotówka
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
-                            Karta
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
-                            Bon
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
-                            Czek
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
-                            Kredyt
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
-                            Przelew
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
-                            Mobilna
-                        </xsl:if>
-                    </fo:block>
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Forma płatności:</fo:inline>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
+                                Gotówka
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
+                                Karta
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
+                                Bon
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
+                                Czek
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
+                                Kredyt
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
+                                Przelew
+                            </xsl:if>
+                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
+                                Mobilna
+                            </xsl:if>
+                        </fo:block>
+                    </xsl:if>
                     <!-- Termin płatności -->
 
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Termin płatności: </fo:inline>
                             <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin"/>
+                        </fo:block>
+                    </xsl:if>
+
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis">
+                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                            <fo:inline font-weight="bold">Opis płatności: </fo:inline>
+                            <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis"/>
                         </fo:block>
                     </xsl:if>
 
@@ -891,7 +946,6 @@
                         </fo:block>
                     </xsl:if>
 
-                    <!-- Warunki transakcji -->
                     <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
                         <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
 
@@ -899,32 +953,248 @@
                             <fo:inline font-weight="bold">Warunki transakcji</fo:inline>
                         </fo:block>
 
-                        <!-- Zamówienie -->
-                        <fo:block font-size="7pt" text-align="left" space-after="2mm">
-                            <fo:inline font-weight="bold">Zamówienie</fo:inline>
-                        </fo:block>
+                        <!-- Sprawdzamy, czy istnieją Umowy i Zamówienia -->
+                        <xsl:variable name="hasUmowy" select="count(crd:Fa/crd:WarunkiTransakcji/crd:Umowy) > 0"/>
+                        <xsl:variable name="hasZamowienia" select="count(crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia) > 0"/>
 
-                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                            <fo:table-column column-width="25%"/> <!-- Data zamowienia -->
-                            <fo:table-column column-width="25%"/> <!-- Numer zamowienia -->
-                            <fo:table-header>
-                                <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Data zamówienia</fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell
-                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                        <fo:block>Numer zamówienia</fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                            </fo:table-header>
-                            <fo:table-body>
-                                <xsl:apply-templates
-                                        select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>
-                            </fo:table-body>
-                        </fo:table>
+                        <xsl:choose>
+<!--                         Zamowienia i umowy-->
+                            <xsl:when test="$hasUmowy and $hasZamowienia">
+                                <fo:table table-layout="fixed" width="100%">
+                                    <fo:table-column column-width="50%"/> <!-- Kolumna dla Umowy -->
+                                    <fo:table-column column-width="50%"/> <!-- Kolumna dla Zamówienia -->
+                                    <fo:table-body>
+                                        <fo:table-row>
+                                            <!-- Umowy -->
+                                            <fo:table-cell xsl:use-attribute-sets="table.cell.padding">
+                                                <xsl:if test="count(crd:Fa/crd:WarunkiTransakcji/crd:Umowy) > 0">
+                                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                                        <fo:inline font-weight="bold">Umowa</fo:inline>
+                                                    </fo:block>
+
+                                                    <fo:table table-layout="fixed" width="100%">
+                                                        <fo:table-column column-width="50%"/> <!-- Data umowy -->
+                                                        <fo:table-column column-width="50%"/> <!-- Numer umowy -->
+                                                        <fo:table-header>
+                                                            <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                                    <fo:block>Data umowy</fo:block>
+                                                                </fo:table-cell>
+                                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                                    <fo:block>Numer umowy</fo:block>
+                                                                </fo:table-cell>
+                                                            </fo:table-row>
+                                                        </fo:table-header>
+                                                        <fo:table-body>
+                                                            <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Umowy"/>
+                                                        </fo:table-body>
+                                                    </fo:table>
+                                                </xsl:if>
+                                            </fo:table-cell>
+
+                                            <!-- Zamówienia -->
+                                            <fo:table-cell xsl:use-attribute-sets="table.cell.padding">
+                                                <xsl:if test="count(crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia) > 0">
+                                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                                        <fo:inline font-weight="bold">Zamówienie</fo:inline>
+                                                    </fo:block>
+
+                                                    <fo:table table-layout="fixed" width="100%">
+                                                        <fo:table-column column-width="50%"/> <!-- Data zamówienia -->
+                                                        <fo:table-column column-width="50%"/> <!-- Numer zamówienia -->
+                                                        <fo:table-header>
+                                                            <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                                    <fo:block>Data zamówienia</fo:block>
+                                                                </fo:table-cell>
+                                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                                    <fo:block>Numer zamówienia</fo:block>
+                                                                </fo:table-cell>
+                                                            </fo:table-row>
+                                                        </fo:table-header>
+                                                        <fo:table-body>
+                                                            <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>
+                                                        </fo:table-body>
+                                                    </fo:table>
+                                                </xsl:if>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </fo:table-body>
+                                </fo:table>
+                            </xsl:when>
+<!--                            Tylko umowy-->
+                            <xsl:when test="$hasUmowy and not($hasZamowienia)">
+                                <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                    <fo:inline font-weight="bold">Umowa</fo:inline>
+                                </fo:block>
+
+                                <fo:table table-layout="fixed" width="100%">
+                                    <fo:table-column column-width="25%"/> <!-- Data umowy -->
+                                    <fo:table-column column-width="25%"/> <!-- Numer umowy -->
+                                    <fo:table-header>
+                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block>Data umowy</fo:block>
+                                            </fo:table-cell>
+                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block>Numer umowy</fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </fo:table-header>
+                                    <fo:table-body>
+                                        <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Umowy"/>
+                                    </fo:table-body>
+                                </fo:table>
+                            </xsl:when>
+<!--                            Tylko zamowienia-->
+                            <xsl:when test="$hasZamowienia and not($hasUmowy)">
+                                <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                    <fo:inline font-weight="bold">Zamowienia</fo:inline>
+                                </fo:block>
+
+                                <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                                    <fo:table-column column-width="25%"/> <!-- Data zamowienia -->
+                                    <fo:table-column column-width="25%"/> <!-- Numer zamowienia -->
+                                    <fo:table-header>
+                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                            <fo:table-cell
+                                                    xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block>Data zamówienia</fo:block>
+                                            </fo:table-cell>
+                                            <fo:table-cell
+                                                    xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block>Numer zamówienia</fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </fo:table-header>
+                                    <fo:table-body>
+                                        <xsl:apply-templates
+                                                select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>
+                                    </fo:table-body>
+                                </fo:table>
+                            </xsl:when>
+                        </xsl:choose>
+
+                        <!-- Warunki dostawy -->
+                        <xsl:if test="crd:Fa/crd:WarunkiTransakcji/crd:WarunkiDostawy">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm" space-before="3mm">
+                                <fo:inline font-weight="bold">Warunki dostawy towarów: </fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:WarunkiTransakcji/crd:WarunkiDostawy"/>
+                            </fo:block>
+                        </xsl:if>
                     </xsl:if>
+
+<!--                        -->
+<!--                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">-->
+<!--                            <fo:table-column column-width="50%"/> &lt;!&ndash; Pierwsza kolumna &ndash;&gt;-->
+<!--                            <fo:table-column column-width="50%"/> &lt;!&ndash; Druga kolumna &ndash;&gt;-->
+<!--                            <fo:table-body>-->
+<!--                                <fo:table-row>-->
+<!--                                        &lt;!&ndash; Jeśli są i Umowy, i Zamówienia, wyświetl w dwóch kolumnach &ndash;&gt;-->
+<!--                                        <xsl:when test="$hasUmowy and $hasZamowienia">-->
+<!--                                            &lt;!&ndash; Umowy &ndash;&gt;-->
+<!--                                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">-->
+<!--                                                <fo:block font-size="7pt" text-align="left" space-after="2mm">-->
+<!--                                                    <fo:inline font-weight="bold">Umowa</fo:inline>-->
+<!--                                                </fo:block>-->
+<!--                                                <fo:table table-layout="fixed" width="100%">-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-header>-->
+<!--                                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Data umowy</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Numer umowy</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                        </fo:table-row>-->
+<!--                                                    </fo:table-header>-->
+<!--                                                    <fo:table-body>-->
+<!--                                                        <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Umowy"/>-->
+<!--                                                    </fo:table-body>-->
+<!--                                                </fo:table>-->
+<!--                                            </fo:table-cell>-->
+
+<!--                                            &lt;!&ndash; Zamówienia &ndash;&gt;-->
+<!--                                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">-->
+<!--                                                <fo:block font-size="7pt" text-align="left" space-after="2mm">-->
+<!--                                                    <fo:inline font-weight="bold">Zamówienie</fo:inline>-->
+<!--                                                </fo:block>-->
+<!--                                                <fo:table table-layout="fixed" width="100%">-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-header>-->
+<!--                                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Data zamówienia</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Numer zamówienia</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                        </fo:table-row>-->
+<!--                                                    </fo:table-header>-->
+<!--                                                    <fo:table-body>-->
+<!--                                                        <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>-->
+<!--                                                    </fo:table-body>-->
+<!--                                                </fo:table>-->
+<!--                                            </fo:table-cell>-->
+<!--                                        </xsl:when>-->
+
+<!--                                        &lt;!&ndash; Jeśli istnieją tylko Umowy &ndash;&gt;-->
+<!--                                        <xsl:when test="$hasUmowy">-->
+<!--                                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding" number-columns-spanned="2">-->
+<!--                                                <fo:block font-size="7pt" text-align="left" space-after="2mm">-->
+<!--                                                    <fo:inline font-weight="bold">Umowa</fo:inline>-->
+<!--                                                </fo:block>-->
+<!--                                                <fo:table table-layout="fixed" width="100%">-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-header>-->
+<!--                                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Data umowy</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Numer umowy</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                        </fo:table-row>-->
+<!--                                                    </fo:table-header>-->
+<!--                                                    <fo:table-body>-->
+<!--                                                        <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Umowy"/>-->
+<!--                                                    </fo:table-body>-->
+<!--                                                </fo:table>-->
+<!--                                            </fo:table-cell>-->
+<!--                                        </xsl:when>-->
+
+<!--                                        &lt;!&ndash; Jeśli istnieją tylko Zamówienia &ndash;&gt;-->
+<!--                                        <xsl:when test="$hasZamowienia">-->
+<!--                                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding" number-columns-spanned="2">-->
+<!--                                                <fo:block font-size="7pt" text-align="left" space-after="2mm">-->
+<!--                                                    <fo:inline font-weight="bold">Zamówienie</fo:inline>-->
+<!--                                                </fo:block>-->
+<!--                                                <fo:table table-layout="fixed" width="100%">-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-column column-width="50%"/>-->
+<!--                                                    <fo:table-header>-->
+<!--                                                        <fo:table-row background-color="#f5f5f5" font-weight="bold">-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Data zamówienia</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">-->
+<!--                                                                <fo:block>Numer zamówienia</fo:block>-->
+<!--                                                            </fo:table-cell>-->
+<!--                                                        </fo:table-row>-->
+<!--                                                    </fo:table-header>-->
+<!--                                                    <fo:table-body>-->
+<!--                                                        <xsl:apply-templates select="crd:Fa/crd:WarunkiTransakcji/crd:Zamowienia"/>-->
+<!--                                                    </fo:table-body>-->
+<!--                                                </fo:table>-->
+<!--                                            </fo:table-cell>-->
+<!--                                        </xsl:when>-->
+<!--                                </fo:table-row>-->
+<!--                            </fo:table-body>-->
+<!--                        </fo:table>-->
 
                     <!-- Rachunki bankowe -->
                     <xsl:if test="count(crd:Fa/crd:Platnosc/crd:RachunekBankowy) > 0">
@@ -974,6 +1244,73 @@
                                 </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
+                    </xsl:if>
+
+                    <!-- Rejestry  -->
+                    <xsl:if test="count(crd:Stopka/crd:Rejestry) > 0">
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block>
+                            <fo:block text-align="left" space-after="3mm">
+                                <fo:inline font-weight="bold">Rejestry</fo:inline>
+                            </fo:block>
+                            <!-- Rekord rejestru-->
+                            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                                <fo:table-column column-width="55%"/> <!-- Pełna nazwa-->
+                                <fo:table-column column-width="15%"/> <!-- KRS -->
+                                <fo:table-column column-width="15%"/> <!-- REGON -->
+                                <fo:table-column column-width="15%"/> <!-- BDO -->
+                                <fo:table-header>
+                                    <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Pełna nazwa</fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>KRS</fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>REGON</fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>BDO</fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-header>
+                                <fo:table-body>
+                                    <xsl:apply-templates select="crd:Stopka/crd:Rejestry"/>
+                                </fo:table-body>
+                            </fo:table>
+                        </fo:block>
+                    </xsl:if>
+
+                    <!-- Pozostałe informacje  -->
+                    <xsl:if test="count(crd:Stopka/crd:Informacje) > 0">
+                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+
+                        <fo:block>
+                            <fo:block text-align="left" space-after="3mm">
+                                <fo:inline font-weight="bold">Pozostałe informacje</fo:inline>
+                            </fo:block>
+                            <!-- Rekord pozostałych informacji -->
+                            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                                <fo:table-column column-width="100%"/> <!-- Stopka faktury-->
+                                <fo:table-header>
+                                    <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block>Stopka faktury</fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-header>
+                                <fo:table-body>
+                                    <xsl:apply-templates select="crd:Stopka/crd:Informacje"/>
+                                </fo:table-body>
+                            </fo:table>
+                        </fo:block>
                     </xsl:if>
 
                     <xsl:if test="$verificationLink and $nrKsef and $qrCode">
@@ -1054,6 +1391,41 @@
             </fo:table-cell>
         </fo:table-row>
     </xsl:template>
+    <xsl:template match="crd:Stopka/crd:Informacje">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:StopkaFaktury"/> <!-- Stopka faktury -->
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+
+    <xsl:template match="crd:Stopka/crd:Rejestry">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:PelnaNazwa"/> <!-- Pelna nazwa -->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:KRS"/> <!-- KRS  -->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:REGON"/> <!-- REGON -->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:BDO"/> <!--BDO -->
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+
     <xsl:template match="crd:Fa/crd:FaWiersz">
         <fo:table-row>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
@@ -1108,8 +1480,14 @@
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
-                    <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->
-                    %
+                    <xsl:choose>
+                        <xsl:when test="number(crd:P_12) = number(crd:P_12)">
+                            <xsl:value-of select="crd:P_12"/>%
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="crd:P_12"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </fo:block>
             </fo:table-cell>
             <xsl:if test="crd:P_11">
@@ -1128,6 +1506,22 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
+        </fo:table-row>
+
+    </xsl:template>
+
+    <xsl:template match="crd:Fa/crd:WarunkiTransakcji/crd:Umowy">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                <fo:block>
+                    <xsl:value-of select="crd:DataUmowy"/> <!-- DataUmowy -->
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" padding-left="3pt">
+                <fo:block>
+                    <xsl:value-of select="crd:NrUmowy"/> <!-- NrUmowy -->
+                </fo:block>
+            </fo:table-cell>
         </fo:table-row>
 
     </xsl:template>
@@ -1244,6 +1638,20 @@
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>
                                 <xsl:value-of select="$bankAccountNode/crd:NrRB"/>
+                            </fo:block>
+                        </fo:table-cell>
+                    </fo:table-row>
+                </xsl:if>
+                <xsl:if test="$bankAccountNode/crd:SWIFT">
+                    <fo:table-row padding-right="8pt">
+                        <fo:table-cell background-color="#f5f5f5"
+                                       font-weight="bold"
+                                       xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>Kod SWIFT</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>
+                                <xsl:value-of select="$bankAccountNode/crd:SWIFT"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
