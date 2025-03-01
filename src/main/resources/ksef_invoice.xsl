@@ -202,7 +202,7 @@
                     <!-- Linia oddzielająca -->
                     <fo:block border-bottom="solid 1px grey" space-after="5mm"/>
                     <!-- Sprzedawca / Nabywca -->
-                    <fo:table font-size="7pt" table-layout="fixed">
+                    <fo:table font-size="7pt" table-layout="fixed" width="100%">
                         <fo:table-column column-width="33%"/>
                         <fo:table-column column-width="33%"/>
                         <fo:table-column column-width="33%"/>
@@ -235,7 +235,7 @@
                             <!-- Dane sprzedawcy -->
                             <fo:table-row>
                                 <fo:table-cell>
-                                    <fo:table font-size="7pt" table-layout="fixed">
+                                    <fo:table font-size="7pt" table-layout="fixed" width="100%">
                                         <fo:table-body>
                                             <xsl:if test="crd:Podmiot1/crd:NrEORI">
                                                 <fo:table-row>
@@ -323,7 +323,7 @@
 
                                 <!-- Dane nabywcy -->
                                 <fo:table-cell>
-                                    <fo:table font-size="7pt" table-layout="fixed">
+                                    <fo:table font-size="7pt" table-layout="fixed" width="100%">
                                         <fo:table-body>
                                             <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE">
                                                 <fo:table-row>
@@ -462,7 +462,7 @@
                     <fo:block font-size="12pt" text-align="left" space-after="5mm">
                         <fo:inline font-weight="bold">Szczegóły</fo:inline>
                     </fo:block>
-                    <fo:table space-after="5mm" table-layout="fixed">
+                    <fo:table space-after="5mm" table-layout="fixed" width="100%">
                         <fo:table-column column-width="50%" />
                         <fo:table-column column-width="50%" />
                         <fo:table-body>
@@ -705,7 +705,7 @@
                                 </fo:table-row>
                             </fo:table-header>
                             <fo:table-body>
-                                <xsl:if test="crd:Fa/crd:P_13_1|crd:Fa/crd:P_14_1">
+                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 > 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -745,7 +745,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_2|crd:Fa/crd:P_14_2">
+                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 > 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -785,7 +785,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_3|crd:Fa/crd:P_14_3">
+                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 > 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -823,6 +823,384 @@
                                                 </fo:block>
                                             </fo:table-cell>
                                         </xsl:if>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>4%</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_4), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_14_4), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_4) + number(crd:Fa/crd:P_14_4), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(crd:Fa/crd:P_14_4W), '#,##0.00'), ',.', ' ,')"/>  <!-- Kwota podatku PLN -->
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_5 | crd:Fa/crd:P_14_5  and crd:Fa/crd:P_13_5 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>np z wyłączeniem art. 100 ust 1 pkt ustawy</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_5), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_14_5), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_5) + number(crd:Fa/crd:P_14_5), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of></xsl:value-of>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_6_1 and crd:Fa/crd:P_13_6_1 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>0% - krajowe</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_1), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_1) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_6_2 and crd:Fa/crd:P_13_6_2 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>0% - WDT</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_2), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_2) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_6_3 and crd:Fa/crd:P_13_6_3 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>0% - eksport</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_3), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_6_3) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_7 and crd:Fa/crd:P_13_7 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>zwolnione z opodatkowania</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_7), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_7) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_8 and crd:Fa/crd:P_13_8 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>np z wyłączeniem art. 100 ust 1 pkt 4 ustawy</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_8), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_8) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_9 and crd:Fa/crd:P_13_9 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>np na podstawie art. 100 ust 1 pkt 4 ustawy</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_9), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_9) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_10 and crd:Fa/crd:P_13_10 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>odwrotne obciążenie</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_10), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_10) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:P_13_11 and crd:Fa/crd:P_13_11 > 0">
+                                    <fo:table-row>
+                                        <fo:table-cell
+                                                xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                            <fo:block>
+                                                <xsl:text>marża</xsl:text>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_11), '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                                <xsl:value-of
+                                                        select="translate(format-number(number(crd:Fa/crd:P_13_11) + 0, '#,##0.00'), ',.', ' ,')"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                       text-align="right">
+                                            <fo:block>
+                                            </fo:block>
+                                        </fo:table-cell>
                                     </fo:table-row>
                                 </xsl:if>
                             </fo:table-body>
@@ -1629,7 +2007,7 @@
             <fo:table-column column-width="45mm"/>
             <fo:table-body>
                 <xsl:if test="$bankAccountNode/crd:NrRB">
-                    <fo:table-row padding-right="8pt">
+                    <fo:table-row>
                         <fo:table-cell background-color="#f5f5f5"
                                        font-weight="bold"
                                        xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
@@ -1643,7 +2021,7 @@
                     </fo:table-row>
                 </xsl:if>
                 <xsl:if test="$bankAccountNode/crd:SWIFT">
-                    <fo:table-row padding-right="8pt">
+                    <fo:table-row>
                         <fo:table-cell background-color="#f5f5f5"
                                        font-weight="bold"
                                        xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
