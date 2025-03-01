@@ -696,7 +696,7 @@
                                             xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                         <fo:block>Kwota brutto</fo:block>
                                     </fo:table-cell>
-                                    <xsl:if test="crd:Fa/crd:P_14_1W|crd:Fa/crd:P_14_2W|crd:Fa/crd:P_14_3W">
+                                    <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                             <fo:block>Kwota podatku PLN</fo:block>
@@ -894,12 +894,14 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_5) + number(crd:Fa/crd:P_14_5), '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of></xsl:value-of>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of></xsl:value-of>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_6_1 and crd:Fa/crd:P_13_6_1 > 0">
@@ -931,13 +933,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_6_1) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_6_2 and crd:Fa/crd:P_13_6_2 > 0">
@@ -969,13 +973,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_6_2) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_6_3 and crd:Fa/crd:P_13_6_3 > 0">
@@ -1007,13 +1013,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_6_3) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_7 and crd:Fa/crd:P_13_7 > 0">
@@ -1045,13 +1053,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_7) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_8 and crd:Fa/crd:P_13_8 > 0">
@@ -1083,13 +1093,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_8) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_9 and crd:Fa/crd:P_13_9 > 0">
@@ -1121,13 +1133,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_9) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_10 and crd:Fa/crd:P_13_10 > 0">
@@ -1159,13 +1173,15 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_10) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                                <xsl:value-of
-                                                        select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                    <xsl:value-of
+                                                            select="translate(format-number(number(0), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                                 <xsl:if test="crd:Fa/crd:P_13_11 and crd:Fa/crd:P_13_11 > 0">
@@ -1196,11 +1212,13 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_11) + 0, '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
-                                                       text-align="right">
-                                            <fo:block>
-                                            </fo:block>
-                                        </fo:table-cell>
+                                        <xsl:if test="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W">
+                                            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
+                                                           text-align="right">
+                                                <fo:block>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
                             </fo:table-body>

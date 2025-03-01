@@ -22,12 +22,13 @@
 	</Podmiot1>
 	<Podmiot2>
 		<DaneIdentyfikacyjne>
-			<NIP>5450001143</NIP>
-			<Nazwa>PRZEDSIĘBIORSTWO USŁUGOWO-HANDLOWE JAN XXXXXXXX</Nazwa>
+			<NIP>1111111111</NIP>
+			<Nazwa>F.H.U. Jan Kowalski</Nazwa>
 		</DaneIdentyfikacyjne>
 		<Adres>
 			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Test-Krucza 32 Dąbrowa Białostocka 16-200 Dąbrowa Białostocka</AdresL1>
+			<AdresL1>ul. Polna 1</AdresL1>
+			<AdresL2>00-001 Warszawa</AdresL2>
 		</Adres>
 	</Podmiot2>
 	<Fa>
