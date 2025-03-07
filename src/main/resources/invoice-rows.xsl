@@ -24,27 +24,48 @@
     <!-- Template for rendering the positions table -->
     <xsl:template name="positionsTable">
         <xsl:param name="faWiersz"/>
-        <xsl:param name="pierwszyElement"/>
+
+        <!-- Calculate column width for name based on presence of other columns -->
+        <xsl:variable name="nameColumnWidth">
+            <xsl:choose>
+                <!-- Base width is 31% -->
+                <!-- Check all combinations of P_11Vat, P_11A and P_9B -->
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B">22%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B)">31%</xsl:when>
+                
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B">32%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B)">41%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B">29%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B)">38%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B">39%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B)">48%</xsl:when>
+            </xsl:choose>
+        </xsl:variable>
 
         <!-- Define the table structure -->
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
             <!-- Define table columns -->
             <fo:table-column column-width="4%"/> <!-- Lp. -->
-            <fo:table-column column-width="50%"/> <!-- Nazwa -->
+            <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa - dynamiczna szerokość -->
             <fo:table-column column-width="8%"/> <!-- Ilość -->
             <fo:table-column column-width="5%"/> <!-- Jednostka -->
-            <xsl:if test="$pierwszyElement/crd:P_9A">
+            <xsl:if test="$faWiersz/crd:P_9A">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
-            <xsl:if test="$pierwszyElement/crd:P_9B">
+            <xsl:if test="$faWiersz/crd:P_9B">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
             </xsl:if>
-            <fo:table-column column-width="5%"/> <!-- Rabat -->
+            <fo:table-column column-width="7%"/> <!-- Rabat -->
             <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
-            <xsl:if test="$pierwszyElement/crd:P_11">
+            <xsl:if test="$faWiersz/crd:P_11">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
             </xsl:if>
-            <xsl:if test="$pierwszyElement/crd:P_11A">
+            <xsl:if test="$faWiersz/crd:P_11Vat">
+                <fo:table-column column-width="7%"/> <!-- Kwota VAT-->
+            </xsl:if>
+            <xsl:if test="$faWiersz/crd:P_11A">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
             </xsl:if>
 
@@ -63,12 +84,12 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block>Jedn.</fo:block>
                     </fo:table-cell>
-                    <xsl:if test="$pierwszyElement/crd:P_9A">
+                    <xsl:if test="$faWiersz/crd:P_9A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Cena jedn. netto</fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$pierwszyElement/crd:P_9B">
+                    <xsl:if test="$faWiersz/crd:P_9B">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Cena jedn. brutto</fo:block>
                         </fo:table-cell>
@@ -79,12 +100,17 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block>Stawka podatku</fo:block>
                     </fo:table-cell>
-                    <xsl:if test="$pierwszyElement/crd:P_11">
+                    <xsl:if test="$faWiersz/crd:P_11">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Wartość sprzedaży netto</fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$pierwszyElement/crd:P_11A">
+                    <xsl:if test="$faWiersz/crd:P_11Vat">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>Kwota VAT</fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$faWiersz/crd:P_11A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Wartość sprzedaży brutto</fo:block>
                         </fo:table-cell>
@@ -123,17 +149,31 @@
                     <xsl:value-of select="crd:P_8A"/> <!-- Jednostka -->
                 </fo:block>
             </fo:table-cell>
-            <xsl:if test="crd:P_9A">
+            <xsl:if test="//crd:FaWiersz/crd:P_9A">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
-                        <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/> <!-- Cena netto -->
+                        <xsl:choose>
+                            <xsl:when test="crd:P_9A">
+                                <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży brutto -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="crd:P_9B">
+            <xsl:if test="//crd:FaWiersz/crd:P_9B">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
-                        <xsl:value-of select="translate(format-number(number(crd:P_9B), '#,##0.00'), ',.', ' ,')"/> <!-- Cena brutto -->
+                        <xsl:choose>
+                            <xsl:when test="crd:P_9B">
+                                <xsl:value-of select="translate(format-number(number(crd:P_9B), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży brutto -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
@@ -154,17 +194,45 @@
                     <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->%
                 </fo:block>
             </fo:table-cell>
-            <xsl:if test="crd:P_11">
+            <xsl:if test="//crd:FaWiersz/crd:P_11">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
-                        <xsl:value-of select="translate(format-number(number(crd:P_11), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży netto -->
+                        <xsl:choose>
+                            <xsl:when test="crd:P_11">
+                                <xsl:value-of select="translate(format-number(number(crd:P_11), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży netto -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="crd:P_11A">
+            <xsl:if test="//crd:FaWiersz/crd:P_11Vat">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
-                        <xsl:value-of select="translate(format-number(number(crd:P_11A), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży brutto -->
+                        <xsl:choose>
+                            <xsl:when test="crd:P_11Vat">
+                                <xsl:value-of select="translate(format-number(number(crd:P_11Vat), '#,##0.00'), ',.', ' ,')"/> <!-- Kwota VAT-->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="//crd:FaWiersz/crd:P_11A">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:choose>
+                            <xsl:when test="crd:P_11A">
+                                <xsl:value-of select="translate(format-number(number(crd:P_11A), '#,##0.00'), ',.', ' ,')"/> <!-- Wartość sprzedaży brutto -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>

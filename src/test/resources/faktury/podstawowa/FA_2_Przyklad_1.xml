@@ -1,44 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Faktura
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-		xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Naglowek>
 		<KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
 		<WariantFormularza>2</WariantFormularza>
-		<DataWytworzeniaFa>2024-10-31T14:16:25.548619+01:00</DataWytworzeniaFa>
-		<SystemInfo>Aplikacja Podatnika KSeF</SystemInfo>
+		<DataWytworzeniaFa>2025-03-06T12:33:09.368939</DataWytworzeniaFa>
+		<SystemInfo>ITrust</SystemInfo>
 	</Naglowek>
 	<Podmiot1>
-		<PrefiksPodatnika>PL</PrefiksPodatnika>
+		<DaneIdentyfikacyjne>
+			<NIP>5260307689</NIP>
+			<Nazwa>Apcoa Parking Polska Sp. z o.o.</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<AdresL1>Rondo ONZ 1</AdresL1>
+			<AdresL2>00-124 Warszawa</AdresL2>
+		</Adres>
+	</Podmiot1>
+	<Podmiot2>
 		<DaneIdentyfikacyjne>
 			<NIP>5451824119</NIP>
 			<Nazwa>Codeque Karol Bryzgiel</Nazwa>
 		</DaneIdentyfikacyjne>
 		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>Adres</AdresL1>
+			<AdresL1>ul. Batalionu "Zośka" 18A</AdresL1>
+			<AdresL2>05-800 Pruszków</AdresL2>
 		</Adres>
-	</Podmiot1>
-	<Podmiot2>
-		<DaneIdentyfikacyjne>
-			<NIP>1111111111</NIP>
-			<Nazwa>F.H.U. Jan Kowalski</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
-		</Adres>
+		<NrKlienta>112400000001</NrKlienta>
 	</Podmiot2>
 	<Fa>
 		<KodWaluty>PLN</KodWaluty>
-		<P_1>2024-10-31</P_1>
-		<P_2>5/test/2024</P_2>
-		<P_6>2024-10-31</P_6>
-		<P_13_1>500</P_13_1>
-		<P_14_1>115</P_14_1>
-		<P_15>615</P_15>
+		<P_1>2025-03-06</P_1>
+		<P_2>9/WPL/2025</P_2>
+		<P_6>2025-03-06</P_6>
+		<P_13_1>170.73</P_13_1>
+		<P_14_1>39.27</P_14_1>
+		<P_15>210.00</P_15>
 		<Adnotacje>
 			<P_16>2</P_16>
 			<P_17>2</P_17>
@@ -55,18 +51,16 @@
 				<P_PMarzyN>1</P_PMarzyN>
 			</PMarzy>
 		</Adnotacje>
-		<DodatkowyOpis>
-			<Klucz>Uwagi</Klucz>
-			<Wartosc>Pierwsza linia\nDruga linia</Wartosc>
-		</DodatkowyOpis>
 		<RodzajFaktury>VAT</RodzajFaktury>
 		<FaWiersz>
 			<NrWierszaFa>1</NrWierszaFa>
 			<P_7>test123</P_7>
 			<P_8A>szt</P_8A>
-			<P_8B>1</P_8B>
-			<P_9A>500</P_9A>
-			<P_11>500</P_11>
+			<P_8B>7</P_8B>
+			<P_9A>24.39</P_9A>
+			<P_11>170.73</P_11>
+			<P_11Vat>39.27</P_11Vat>
+			<P_11A>210.00</P_11A>
 			<P_12>23</P_12>
 		</FaWiersz>
 		<Platnosc>
