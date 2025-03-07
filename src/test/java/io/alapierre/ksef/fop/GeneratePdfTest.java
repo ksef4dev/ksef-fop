@@ -129,7 +129,19 @@ class GeneratePdfTest {
         byte[] logo = Files.readAllBytes(logoFile.toPath());
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
         Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
+        testForFolder(invoiceFolder, ksefNumber, verificationLink, qrCode, logo, generator);
 
+        Path correctionFolder = Paths.get("src/test/resources/faktury/korygujaca");
+        testForFolder(correctionFolder, ksefNumber, verificationLink, qrCode, logo, generator);
+
+    }
+
+    private void testForFolder(Path invoiceFolder,
+                               String ksefNumber,
+                               String verificationLink,
+                               byte[] qrCode,
+                               byte[] logo,
+                               PdfGenerator generator) throws Exception {
         // Pobieranie wszystkich plików XML z folderu
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(invoiceFolder, "*.xml")) {
             for (Path entry : stream) {

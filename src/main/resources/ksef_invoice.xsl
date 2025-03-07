@@ -701,7 +701,7 @@
                                 </fo:table-row>
                             </fo:table-header>
                             <fo:table-body>
-                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -741,7 +741,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -781,7 +781,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -821,7 +821,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -861,7 +861,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_5 | crd:Fa/crd:P_14_5  and crd:Fa/crd:P_13_5 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_5 | crd:Fa/crd:P_14_5  and crd:Fa/crd:P_13_5 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -900,7 +900,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_6_1 and crd:Fa/crd:P_13_6_1 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_6_1 and crd:Fa/crd:P_13_6_1 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -940,7 +940,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_6_2 and crd:Fa/crd:P_13_6_2 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_6_2 and crd:Fa/crd:P_13_6_2 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -980,7 +980,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_6_3 and crd:Fa/crd:P_13_6_3 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_6_3 and crd:Fa/crd:P_13_6_3 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1020,7 +1020,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_7 and crd:Fa/crd:P_13_7 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_7 and crd:Fa/crd:P_13_7 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1060,7 +1060,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_8 and crd:Fa/crd:P_13_8 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_8 and crd:Fa/crd:P_13_8 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1100,7 +1100,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_9 and crd:Fa/crd:P_13_9 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_9 and crd:Fa/crd:P_13_9 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1140,7 +1140,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_10 and crd:Fa/crd:P_13_10 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_10 and crd:Fa/crd:P_13_10 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
