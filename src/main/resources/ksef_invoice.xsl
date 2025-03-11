@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
+    <!-- Załadowanie schematu XSD jako dokument XML -->
+    <xsl:variable name="kodyKrajowXSD" select="document('http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/KodyKrajow_v10-0E.xsd')"/>
+
+    <!-- Szablon do mapowania kodu kraju na nazwę -->
+    <xsl:template name="mapKodKrajuToNazwa">
+        <xsl:param name="kodKraju"/>
+
+        <!-- Szukanie elementu enumeration z odpowiednim value -->
+        <xsl:variable name="enumeration" select="$kodyKrajowXSD//xsd:enumeration[@value=$kodKraju]"/>
+
+        <!-- Pobieranie tekstu z elementu documentation -->
+        <xsl:variable name="nazwaKraju" select="$enumeration/xsd:annotation/xsd:documentation/text()"/>
+
+        <xsl:choose>
+            <xsl:when test="$nazwaKraju != ''">
+                <xsl:value-of select="$nazwaKraju"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$kodKraju"/> <!-- Zwraca kod, jeśli nie znaleziono mapowania -->
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     <xsl:include href="invoice-rows.xsl"/>
 
     <!--  Additional parameters that are not included in the xml invoice -->
@@ -272,13 +295,17 @@
                                                         <fo:inline font-weight="bold">Adres</fo:inline>
                                                     </fo:block>
                                                     <fo:block text-align="left">
-                                                        <xsl:if test="crd:Adres/crd:KodKraju">
-                                                            <xsl:value-of select="crd:Adres/crd:KodKraju"/>
-                                                        </xsl:if>
                                                         <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:AdresL1"/>
                                                         <xsl:if test="crd:Podmiot1/crd:Adres/crd:AdresL2">
-                                                            <fo:inline>,</fo:inline>
+                                                            <fo:inline>, </fo:inline>
                                                             <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:AdresL2"/>
+                                                        </xsl:if>
+                                                        <xsl:if test="crd:Podmiot1/crd:Adres/crd:KodKraju">
+                                                            <fo:block>
+                                                                <xsl:call-template name="mapKodKrajuToNazwa">
+                                                                    <xsl:with-param name="kodKraju" select="crd:Podmiot1/crd:Adres/crd:KodKraju"/>
+                                                                </xsl:call-template>
+                                                            </fo:block>
                                                         </xsl:if>
                                                     </fo:block>
                                                 </fo:table-cell>
@@ -333,8 +360,8 @@
                                                     <fo:table-cell>
                                                         <fo:block text-align="left" padding-bottom="3px">
                                                             <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
-                                                            <xsl:value-of
-                                                                    select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                                                            <xsl:value-of select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:KodUE"/>
+                                                            <xsl:value-of select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
                                                         </fo:block>
                                                     </fo:table-cell>
                                                 </fo:table-row>
@@ -367,8 +394,15 @@
                                                     <fo:block text-align="left">
                                                         <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL1"/>
                                                         <xsl:if test="crd:Podmiot2/crd:Adres/crd:AdresL2">
-                                                            <fo:inline>,</fo:inline>
+                                                            <fo:inline>, </fo:inline>
                                                             <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL2"/>
+                                                        </xsl:if>
+                                                        <xsl:if test="crd:Podmiot2/crd:Adres/crd:KodKraju">
+                                                            <fo:block>
+                                                                <xsl:call-template name="mapKodKrajuToNazwa">
+                                                                    <xsl:with-param name="kodKraju" select="crd:Podmiot2/crd:Adres/crd:KodKraju"/>
+                                                                </xsl:call-template>
+                                                            </fo:block>
                                                         </xsl:if>
                                                     </fo:block>
                                                 </fo:table-cell>
@@ -2033,9 +2067,16 @@
             </xsl:otherwise>
         </xsl:choose>
         <fo:block text-align="left" padding-bottom="3px">
-            <fo:inline font-weight="600">NIP: </fo:inline>
-            <xsl:value-of
-                    select="crd:DaneIdentyfikacyjne/crd:NIP"/>
+            <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrVatUE">
+                <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
+                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:KodUE"/>
+                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+            </xsl:if>
+            <xsl:if test="crd:DaneIdentyfikacyjne/crd:NIP">
+                <fo:inline font-weight="600">NIP: </fo:inline>
+                <xsl:value-of
+                        select="crd:DaneIdentyfikacyjne/crd:NIP"/>
+            </xsl:if>
         </fo:block>
         <fo:block text-align="left">
             <fo:inline font-weight="600">Nazwa: </fo:inline>
@@ -2046,13 +2087,17 @@
             <fo:inline font-weight="bold">Adres</fo:inline>
         </fo:block>
         <fo:block text-align="left">
-            <xsl:if test="crd:Adres/crd:KodKraju">
-                <xsl:value-of select="crd:Adres/crd:KodKraju"/>
-            </xsl:if>
             <xsl:value-of select="crd:Adres/crd:AdresL1"/>
             <xsl:if test="crd:Adres/crd:AdresL2">
-                <fo:inline>,</fo:inline>
+                <fo:inline>, </fo:inline>
                 <xsl:value-of select="crd:Adres/crd:AdresL2"/>
+            </xsl:if>
+            <xsl:if test="crd:Adres/crd:KodKraju">
+                <fo:block>
+                    <xsl:call-template name="mapKodKrajuToNazwa">
+                        <xsl:with-param name="kodKraju" select="crd:Adres/crd:KodKraju"/>
+                    </xsl:call-template>
+                </fo:block>
             </xsl:if>
         </fo:block>
         <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon">

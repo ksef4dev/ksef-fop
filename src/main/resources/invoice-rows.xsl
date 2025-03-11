@@ -209,7 +209,15 @@
             </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
-                    <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->%
+                    <xsl:variable name="taxRate" select="crd:P_12"/>
+                    <xsl:choose>
+                        <xsl:when test="number($taxRate) = $taxRate and $taxRate != ''">
+                            <xsl:value-of select="$taxRate"/>%
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$taxRate"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </fo:block>
             </fo:table-cell>
             <xsl:if test="//crd:FaWiersz/crd:P_11">
