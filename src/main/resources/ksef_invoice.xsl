@@ -272,6 +272,9 @@
                                                         <fo:inline font-weight="bold">Adres</fo:inline>
                                                     </fo:block>
                                                     <fo:block text-align="left">
+                                                        <xsl:if test="crd:Adres/crd:KodKraju">
+                                                            <xsl:value-of select="crd:Adres/crd:KodKraju"/>
+                                                        </xsl:if>
                                                         <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:AdresL1"/>
                                                         <xsl:if test="crd:Podmiot1/crd:Adres/crd:AdresL2">
                                                             <fo:inline>,</fo:inline>
@@ -552,10 +555,30 @@
                             </fo:block>
                             <!-- Dodatkowe opisy-->
                             <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                                <fo:table-column column-width="50%"/> <!-- Rodzaj informacji -->
-                                <fo:table-column column-width="50%"/> <!-- Treść informacji -->
+                                <xsl:variable name="dodatkowyOpisElements" select="crd:Fa/crd:DodatkowyOpis"/>
+                                <xsl:variable name="hasNrWiersza" select="boolean($dodatkowyOpisElements/crd:NrWiersza[normalize-space()])"/>
+                                
+                                <!-- Dynamiczne szerokości kolumn w zależności od obecności NrWiersza -->
+                                <xsl:choose>
+                                    <xsl:when test="$hasNrWiersza">
+                                        <fo:table-column column-width="10%"/> <!-- Nr wiersza -->
+                                        <fo:table-column column-width="45%"/> <!-- Rodzaj informacji -->
+                                        <fo:table-column column-width="45%"/> <!-- Treść informacji -->
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <fo:table-column column-width="50%"/> <!-- Rodzaj informacji  -->
+                                        <fo:table-column column-width="50%"/> <!-- Treść informacji -->
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                
                                 <fo:table-header>
                                     <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                                        <xsl:if test="$hasNrWiersza">
+                                            <fo:table-cell
+                                                    xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block>Nr Wiersza</fo:block>
+                                            </fo:table-cell>
+                                        </xsl:if>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                                             <fo:block>Rodzaj informacji</fo:block>
@@ -567,7 +590,9 @@
                                     </fo:table-row>
                                 </fo:table-header>
                                 <fo:table-body>
-                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis"/>
+                                    <xsl:apply-templates select="crd:Fa/crd:DodatkowyOpis">
+                                        <xsl:with-param name="hasNrWiersza" select="$hasNrWiersza"/>
+                                    </xsl:apply-templates>
                                 </fo:table-body>
                             </fo:table>
                         </fo:block>
@@ -1766,7 +1791,15 @@
     </xsl:template>
 
     <xsl:template match="crd:Fa/crd:DodatkowyOpis">
+        <xsl:param name="hasNrWiersza"/>
         <fo:table-row>
+            <xsl:if test="$hasNrWiersza">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                    <fo:block>
+                        <xsl:value-of select="crd:NrWiersza"/> <!-- Nr wiersza -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
                     <xsl:value-of select="crd:Klucz"/> <!-- Klucz dodatkowego opisu -->
@@ -2013,6 +2046,9 @@
             <fo:inline font-weight="bold">Adres</fo:inline>
         </fo:block>
         <fo:block text-align="left">
+            <xsl:if test="crd:Adres/crd:KodKraju">
+                <xsl:value-of select="crd:Adres/crd:KodKraju"/>
+            </xsl:if>
             <xsl:value-of select="crd:Adres/crd:AdresL1"/>
             <xsl:if test="crd:Adres/crd:AdresL2">
                 <fo:inline>,</fo:inline>

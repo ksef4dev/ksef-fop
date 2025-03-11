@@ -29,18 +29,30 @@
         <xsl:variable name="nameColumnWidth">
             <xsl:choose>
                 <!-- Base width is 31% -->
-                <!-- Check all combinations of P_11Vat, P_11A and P_9B -->
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B">22%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B)">31%</xsl:when>
+                <!-- Check all combinations of P_11Vat, P_11A, P_9B and P_10 -->
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">22%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">29%</xsl:when>
                 
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B">32%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B)">41%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">31%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">38%</xsl:when>
                 
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B">29%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B)">38%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">32%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">39%</xsl:when>
                 
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B">39%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B)">48%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">41%</xsl:when>
+                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">48%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">29%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">36%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">38%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">45%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">39%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">46%</xsl:when>
+                
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">48%</xsl:when>
+                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">55%</xsl:when>
             </xsl:choose>
         </xsl:variable>
 
@@ -57,7 +69,9 @@
             <xsl:if test="$faWiersz/crd:P_9B">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
             </xsl:if>
-            <fo:table-column column-width="7%"/> <!-- Rabat -->
+            <xsl:if test="$faWiersz/crd:P_10">
+                <fo:table-column column-width="7%"/> <!-- Rabat -->
+            </xsl:if>
             <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
             <xsl:if test="$faWiersz/crd:P_11">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
@@ -94,9 +108,11 @@
                             <fo:block>Cena jedn. brutto</fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Rabat</fo:block>
-                    </fo:table-cell>
+                    <xsl:if test="$faWiersz/crd:P_10">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>Rabat</fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block>Stawka podatku</fo:block>
                     </fo:table-cell>
@@ -177,18 +193,20 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <xsl:choose>
-                    <xsl:when test="crd:P_10">
-                        <fo:block>
-                            <xsl:value-of select="translate(format-number(number(crd:P_10), '#,##0.00'), ',.', ' ,')"/> <!-- Rabat-->
-                        </fo:block>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <fo:block/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </fo:table-cell>
+            <xsl:if test="//crd:FaWiersz/crd:P_10">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:choose>
+                            <xsl:when test="crd:P_10">
+                                <xsl:value-of select="translate(format-number(number(crd:P_10), '#,##0.00'), ',.', ' ,')"/> <!-- Rabat-->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <fo:block/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
                     <xsl:value-of select="crd:P_12"/> <!-- Stawka podatku-->%
