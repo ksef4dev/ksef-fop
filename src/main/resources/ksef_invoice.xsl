@@ -664,7 +664,15 @@
                                 </xsl:call-template>
 
                             </xsl:when>
-
+                            <xsl:when test="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1] and not(crd:Fa/crd:FaWiersz[not(crd:StanPrzed)])">
+                                <fo:block text-align="left" space-after="1mm">
+                                    <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze przed korektą</fo:inline>
+                                </fo:block>
+                                <!-- Tylko pozycje przed korektą -->
+                                <xsl:call-template name="positionsTable">
+                                    <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
+                                </xsl:call-template>
+                            </xsl:when>
                             <xsl:otherwise>
                                 <xsl:call-template name="positionsTable">
                                     <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz"/>
@@ -718,7 +726,17 @@
 
 
                     <!-- Podsumowanie stawek podatku-->
-                    <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_13_2 | crd:Fa/crd:P_13_3">
+                    <xsl:variable name="hasAnyTaxRates" select="crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1 != 0 or 
+                                                               crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2 != 0 or 
+                                                               crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3 != 0 or 
+                                                               crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4 != 0 or 
+                                                               crd:Fa/crd:P_13_5 != 0 or crd:Fa/crd:P_14_5 != 0 or 
+                                                               crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or 
+                                                               crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or 
+                                                               crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or 
+                                                               crd:Fa/crd:P_13_11 != 0"/>
+                    
+                    <xsl:if test="$hasAnyTaxRates">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="3mm"/>
 
@@ -760,6 +778,26 @@
                                 </fo:table-row>
                             </fo:table-header>
                             <fo:table-body>
+                                <!-- Sprawdzenie, czy istnieją jakiekolwiek dane do wyświetlenia -->
+                                <xsl:variable name="hasAnyTaxRates" select="crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1 != 0 or 
+                                                                           crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2 != 0 or 
+                                                                           crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3 != 0 or 
+                                                                           crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4 != 0 or 
+                                                                           crd:Fa/crd:P_13_5 != 0 or crd:Fa/crd:P_14_5 != 0 or 
+                                                                           crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or 
+                                                                           crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or 
+                                                                           crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or 
+                                                                           crd:Fa/crd:P_13_11 != 0"/>
+                                
+                                <!-- Jeśli nie ma żadnych stawek podatku, wyświetl informację -->
+                                <xsl:if test="not($hasAnyTaxRates)">
+                                    <fo:table-row>
+                                        <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" number-columns-spanned="100">
+                                            <fo:block text-align="center">Brak danych do wyświetlenia</fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:if>
+                                
                                 <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
