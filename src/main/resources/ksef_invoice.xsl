@@ -271,6 +271,18 @@
                                                     </fo:table-cell>
                                                 </fo:table-row>
                                             </xsl:if>
+                                            <xsl:if test="crd:Podmiot1/crd:PrefiksPodatnika">
+                                                <fo:table-row>
+                                                    <fo:table-cell>
+                                                        <fo:block text-align="left" padding-bottom="3px">
+                                                            <fo:inline font-weight="600">Prefiks VAT: </fo:inline>
+                                                            <xsl:call-template name="mapKodKrajuToNazwa">
+                                                                <xsl:with-param name="kodKraju" select="crd:Podmiot1/crd:PrefiksPodatnika"/>
+                                                            </xsl:call-template>
+                                                        </fo:block>
+                                                    </fo:table-cell>
+                                                </fo:table-row>
+                                            </xsl:if>
                                             <fo:table-row>
                                                 <fo:table-cell>
                                                     <fo:block text-align="left" padding-bottom="3px">
@@ -2134,11 +2146,15 @@
                         select="crd:DaneIdentyfikacyjne/crd:NIP"/>
             </xsl:if>
         </fo:block>
-        <fo:block text-align="left">
+        <fo:block text-align="left" padding-bottom="3px">
             <fo:inline font-weight="600">Nazwa: </fo:inline>
             <xsl:value-of
                     select="crd:DaneIdentyfikacyjne/crd:Nazwa"/>
         </fo:block>
+        <xsl:if test="crd:Udzial">
+            <fo:inline font-weight="600">Udział: </fo:inline>
+            <xsl:value-of select="crd:Udzial"/>%
+        </xsl:if>
         <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
             <fo:inline font-weight="bold">Adres</fo:inline>
         </fo:block>
