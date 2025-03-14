@@ -153,7 +153,7 @@
                     <!-- Dane faktury korygowanej -->
                     <xsl:if test="crd:Fa/crd:DaneFaKorygowanej">
                         <!-- Linia oddzielająca -->
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="12pt" text-align="left" space-after="5mm">
                             <fo:inline font-weight="bold">Dane faktury korygowanej</fo:inline>
@@ -392,7 +392,7 @@
                     </xsl:choose>
 
 <!--                    Linia oddzielająca-->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                   <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                     <!-- Sprzedawca / Wystawca / Nabywca -->
                     <fo:table font-size="7pt" table-layout="fixed" width="100%">
@@ -529,10 +529,10 @@
                     </xsl:if>
 
                     <!-- Linia oddzielająca -->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                   <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                     <!-- Szczegóły -->
-                    <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                    <fo:block font-size="12pt" text-align="left" space-after="3mm">
                         <fo:inline font-weight="bold">Szczegóły</fo:inline>
                     </fo:block>
                     <fo:table space-after="5mm" table-layout="fixed" width="100%">
@@ -620,7 +620,7 @@
                     <!--                    Dodatkowy opis-->
                     <xsl:if test="count(crd:Fa/crd:DodatkowyOpis) > 0">
                         <fo:block>
-                            <fo:block text-align="left" space-after="3mm">
+                            <fo:block text-align="left" space-after="2mm">
                                 <fo:inline font-weight="bold">Dodatkowy opis</fo:inline>
                             </fo:block>
                             <!-- Dodatkowe opisy-->
@@ -669,9 +669,9 @@
                     </xsl:if>
 
                     <!-- Linia oddzielająca -->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                   <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
-                    <fo:block text-align="left" space-after="1mm">
+                    <fo:block text-align="left" space-after="2mm">
                         <fo:inline font-weight="bold" font-size="12pt">Pozycje</fo:inline>
                     </fo:block>
                     <xsl:if test="crd:Fa/crd:KodWaluty != 'PLN'">
@@ -774,9 +774,9 @@
 
                     <xsl:if test="$hasAnyTaxRates">
                         <!-- Linia oddzielająca -->
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="3mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
-                        <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                        <fo:block font-size="12pt" text-align="left" space-after="2mm">
                             <fo:inline font-weight="bold">Podsumowanie stawek podatku</fo:inline>
                         </fo:block>
                         <fo:table table-layout="fixed" width="100%" border-collapse="separate">
@@ -1357,7 +1357,7 @@
                     <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_18 = 1">
 
                         <!-- Adnotacje -->
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="12pt" text-align="left" space-after="5mm">
                             <fo:inline font-weight="bold">Adnotacje</fo:inline>
@@ -1371,9 +1371,9 @@
 
                     </xsl:if>
                     <!-- Płatność -->
-                    <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                   <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
-                    <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                    <fo:block font-size="12pt" text-align="left" space-after="2mm">
                         <fo:inline font-weight="bold">Płatność</fo:inline>
                     </fo:block>
 
@@ -1472,7 +1472,7 @@
                     </xsl:if>
 
                     <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="12pt" text-align="left" space-after="4mm">
                             <fo:inline font-weight="bold">Warunki transakcji</fo:inline>
@@ -1724,7 +1724,7 @@
                     <!-- Rachunki bankowe -->
                     <xsl:if test="count(crd:Fa/crd:Platnosc/crd:RachunekBankowy) > 0">
                         <!-- Blok tytułu -->
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
                         <fo:block font-size="12pt" text-align="left">
                             <fo:inline font-weight="bold">Numer rachunku bankowego</fo:inline>
                         </fo:block>
@@ -1773,7 +1773,7 @@
 
                     <!-- Rejestry  -->
                     <xsl:if test="count(crd:Stopka/crd:Rejestry) > 0">
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block>
                             <fo:block text-align="left" space-after="3mm">
@@ -1814,7 +1814,7 @@
 
                     <!-- Pozostałe informacje  -->
                     <xsl:if test="count(crd:Stopka/crd:Informacje) > 0">
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block>
                             <fo:block text-align="left" space-after="3mm">
@@ -1840,7 +1840,7 @@
 
                     <xsl:if test="$verificationLink and $nrKsef and $qrCode">
                         <!-- Kod QR -->
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="2mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="12pt" text-align="left">
                             <fo:inline font-weight="bold">Sprawdź, czy Twoja faktura znajduje się w KSeF</fo:inline>
@@ -1886,7 +1886,7 @@
                         </fo:block>
                     </xsl:if>
                     <xsl:if test="$issuerUser">
-                        <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="5mm"/>
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="10pt" text-align="left">
                             <fo:inline font-weight="bold">Osoba wystawiająca: </fo:inline>
@@ -2407,7 +2407,7 @@
 
     <xsl:template name="renderBankAccountTable">
         <xsl:param name="bankAccountNode"/>
-        <fo:table table-layout="fixed" width="100%" border-collapse="separate" padding-top="16px">
+        <fo:table table-layout="fixed" width="100%" border-collapse="separate" padding-top="2mm">
             <fo:table-column column-width="45mm"/>
             <fo:table-column column-width="45mm"/>
             <fo:table-body>
