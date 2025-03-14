@@ -355,6 +355,17 @@
                                 <fo:table-cell>
                                     <fo:table font-size="7pt" table-layout="fixed" width="100%">
                                         <fo:table-body>
+                                            <xsl:if test="crd:Podmiot2/crd:NrEORI">
+                                                <fo:table-row>
+                                                    <fo:table-cell>
+                                                        <fo:block text-align="left" padding-bottom="3px">
+                                                            <fo:inline font-weight="600">Numer EORI: </fo:inline>
+                                                            <xsl:value-of
+                                                                    select="crd:Podmiot2/crd:NrEORI"/>
+                                                        </fo:block>
+                                                    </fo:table-cell>
+                                                </fo:table-row>
+                                            </xsl:if>
                                             <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE">
                                                 <fo:table-row>
                                                     <fo:table-cell>
@@ -2104,6 +2115,13 @@
                 </fo:block>
             </xsl:otherwise>
         </xsl:choose>
+        <fo:block text-align="left" padding-bottom="3px">
+        <xsl:if test="crd:NrEORI">
+            <fo:inline font-weight="600">Numer EORI: </fo:inline>
+            <xsl:value-of
+                    select="crd:NrEORI"/>
+        </xsl:if>
+        </fo:block>
         <fo:block text-align="left" padding-bottom="3px">
             <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrVatUE">
                 <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
