@@ -695,7 +695,7 @@
                                 <!-- Add differences table when showCorrectionDifferences is true -->
                                 <xsl:if test="$showCorrectionDifferences">
                                     <fo:block text-align="left" space-after="1mm">
-                                        <fo:inline font-weight="bold" font-size="10pt">Różnice po korekcie</fo:inline>
+                                        <fo:inline font-weight="bold" font-size="10pt">Różnica</fo:inline>
                                     </fo:block>
                                     <xsl:call-template name="differencesTable">
                                         <xsl:with-param name="faWierszBefore" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
