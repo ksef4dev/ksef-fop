@@ -18,6 +18,7 @@ public class InvoiceGenerationParams {
     @Nullable
     private LocalDate currencyDate;
     @Nullable private String issuerUser;
+    private boolean showCorrectionDifferences;
 
     /**
      * @deprecated This constructor is deprecated because the parameters in this class may change in future versions, making it difficult to maintain compatibility.

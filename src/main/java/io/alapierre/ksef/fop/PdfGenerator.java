@@ -173,6 +173,7 @@ public class PdfGenerator {
         setParameterIfNotNull("verificationLink", params.getVerificationLink(), transformer);
         setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);
         setParameterIfNotNull("issuerUser", params.getIssuerUser(), transformer);
+        setParameterIfNotNull("showCorrectionDifferences", params.isShowCorrectionDifferences(), transformer);
     }
 
     private void setParameterIfNotNull(@NotNull String name,

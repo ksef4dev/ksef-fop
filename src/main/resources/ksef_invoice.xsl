@@ -39,6 +39,7 @@
     <xsl:param name="duplicateDate"/>
     <xsl:param name="currencyDate"/>
     <xsl:param name="issuerUser"/>
+    <xsl:param name="showCorrectionDifferences"/>
 
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
@@ -691,6 +692,17 @@
                                     <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
                                 </xsl:call-template>
 
+                                <!-- Add differences table when showCorrectionDifferences is true -->
+                                <xsl:if test="$showCorrectionDifferences">
+                                    <fo:block text-align="left" space-after="1mm">
+                                        <fo:inline font-weight="bold" font-size="10pt">Różnica</fo:inline>
+                                    </fo:block>
+                                    <xsl:call-template name="differencesTable">
+                                        <xsl:with-param name="faWierszBefore" select="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1]"/>
+                                        <xsl:with-param name="faWierszAfter" select="crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]"/>
+                                    </xsl:call-template>
+                                </xsl:if>
+
                                 <!-- Subheader and Table for "Pozycje na fakturze po korekcie" -->
                                 <fo:block text-align="left" space-after="1mm">
                                     <fo:inline font-weight="bold" font-size="10pt">Pozycje na fakturze po korekcie</fo:inline>
@@ -698,7 +710,6 @@
                                 <xsl:call-template name="positionsTable">
                                     <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz[not(crd:StanPrzed)]"/>
                                 </xsl:call-template>
-
                             </xsl:when>
                             <xsl:when test="crd:Fa/crd:FaWiersz[crd:StanPrzed = 1] and not(crd:Fa/crd:FaWiersz[not(crd:StanPrzed)])">
                                 <fo:block text-align="left" space-after="1mm">
