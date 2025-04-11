@@ -172,6 +172,7 @@ public class PdfGenerator {
         setParameterIfNotNull("nrKsef", params.getKsefNumber(), transformer);
         setParameterIfNotNull("verificationLink", params.getVerificationLink(), transformer);
         setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);
+        setParameterIfNotNull("useExtendedDecimalPlaces", invoicePdfConfig.isUseExtendedPriceDecimalPlaces(), transformer);
         setParameterIfNotNull("issuerUser", params.getIssuerUser(), transformer);
         setParameterIfNotNull("showCorrectionDifferences", params.isShowCorrectionDifferences(), transformer);
     }
