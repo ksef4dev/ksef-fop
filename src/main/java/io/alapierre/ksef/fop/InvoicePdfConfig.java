@@ -20,4 +20,11 @@ public class InvoicePdfConfig {
      * If {@code false}, the footer will not be included. (default)
      */
     private boolean showFooter = false;
+    
+    /**
+     * Indicates whether to use extended decimal places (4 places) for unit prices.
+     * If {@code true}, unit prices (P_9A, P_9B) will be displayed with 4 decimal places.
+     * If {@code false}, unit prices will be displayed with 2 decimal places. (default)
+     */
+    private boolean useExtendedPriceDecimalPlaces = false;
 }

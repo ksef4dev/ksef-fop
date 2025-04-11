@@ -4,6 +4,9 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
 
+    <!-- Parameter for controlling decimal places in unit prices -->
+    <xsl:param name="useExtendedDecimalPlaces" select="false()"/>
+
     <!-- Attribute sets required for table styling -->
     <xsl:attribute-set name="tableBorder">
         <xsl:attribute name="border">solid 0.2mm black</xsl:attribute>
@@ -170,7 +173,16 @@
                     <fo:block>
                         <xsl:choose>
                             <xsl:when test="crd:P_9A">
-                                <xsl:variable name="formattedNumber" select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                <xsl:variable name="formattedNumber">
+                                    <xsl:choose>
+                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                            <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.0000'), ',.', ' ,')"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="translate(format-number(number(crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
                                 <xsl:choose>
                                     <xsl:when test="string-length($formattedNumber) > 8">
                                         <fo:inline font-size="6pt"><xsl:value-of select="$formattedNumber"/></fo:inline>
@@ -192,7 +204,16 @@
                     <fo:block>
                         <xsl:choose>
                             <xsl:when test="crd:P_9B">
-                                <xsl:variable name="formattedNumber" select="translate(format-number(number(crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                <xsl:variable name="formattedNumber">
+                                    <xsl:choose>
+                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                            <xsl:value-of select="translate(format-number(number(crd:P_9B), '#,##0.0000'), ',.', ' ,')"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="translate(format-number(number(crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
                                 <xsl:choose>
                                     <xsl:when test="string-length($formattedNumber) > 8">
                                         <fo:inline font-size="6pt"><xsl:value-of select="$formattedNumber"/></fo:inline>
@@ -488,13 +509,34 @@
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
                                                 <xsl:when test="$before/crd:P_9A and $after/crd:P_9A and $before/crd:P_9A != $after/crd:P_9A">
-                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_9A) - number($before/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A) - number($before/crd:P_9A), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A) - number($before/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:when test="not($before/crd:P_9A) and $after/crd:P_9A">
-                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:when test="$before/crd:P_9A and not($after/crd:P_9A)">
-                                                    <xsl:value-of select="translate(format-number(-number($before/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_9A), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:otherwise>0,00</xsl:otherwise>
                                             </xsl:choose>
@@ -519,13 +561,34 @@
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
                                                 <xsl:when test="$before/crd:P_9B and $after/crd:P_9B and $before/crd:P_9B != $after/crd:P_9B">
-                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_9B) - number($before/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B) - number($before/crd:P_9B), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B) - number($before/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:when test="not($before/crd:P_9B) and $after/crd:P_9B">
-                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:when test="$before/crd:P_9B and not($after/crd:P_9B)">
-                                                    <xsl:value-of select="translate(format-number(-number($before/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_9B), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
                                                 </xsl:when>
                                                 <xsl:otherwise>0,00</xsl:otherwise>
                                             </xsl:choose>
