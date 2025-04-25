@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ <Naglowek>
+  <KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
+  <WariantFormularza>2</WariantFormularza>
+  <DataWytworzeniaFa>2025-04-23T12:15:02.727166</DataWytworzeniaFa>
+  <SystemInfo>ITrust</SystemInfo>
+ </Naglowek>
+ <Podmiot1>
+  <DaneIdentyfikacyjne>
+   <NIP>5260307689</NIP>
+   <Nazwa>Apcoa Parking Polska Sp. z o.o.</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <AdresL1>Rondo ONZ 1</AdresL1>
+   <AdresL2>00-124 Warszawa</AdresL2>
+  </Adres>
+ </Podmiot1>
+ <Podmiot2>
+  <DaneIdentyfikacyjne>
+   <NIP>4660430720</NIP>
+   <Nazwa>ITrust sp. z o.o</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <AdresL1>Tadeusza Kościuszki 22</AdresL1>
+   <AdresL2>87-600 Lipno</AdresL2>
+  </Adres>
+  <NrKlienta>C123456</NrKlienta>
+ </Podmiot2>
+ <Fa>
+  <KodWaluty>PLN</KodWaluty>
+  <P_1>2025-04-23</P_1>
+  <P_1M>Flow v2 Apcoa parking</P_1M>
+  <P_2>APC/EV/2/8000/2025</P_2>
+  <P_6>2025-04-23</P_6>
+  <P_15>0.00</P_15>
+  <Adnotacje>
+   <P_16>2</P_16>
+   <P_17>2</P_17>
+   <P_18>2</P_18>
+   <P_18A>2</P_18A>
+   <Zwolnienie>
+    <P_19N>1</P_19N>
+   </Zwolnienie>
+   <NoweSrodkiTransportu>
+    <P_22N>1</P_22N>
+   </NoweSrodkiTransportu>
+   <P_23>2</P_23>
+   <PMarzy>
+    <P_PMarzyN>1</P_PMarzyN>
+   </PMarzy>
+  </Adnotacje>
+  <RodzajFaktury>KOR</RodzajFaktury>
+  <FaWiersz>
+   <NrWierszaFa>1</NrWierszaFa>
+   <P_7>Opłata za ładowanie pojazdu</P_7>
+   <P_8A>szt.</P_8A>
+   <P_8B>1.0</P_8B>
+   <P_9A>180.0000</P_9A>
+   <P_10>14.40</P_10>
+   <P_11Vat>41.40</P_11Vat>
+   <P_11>180.00</P_11>
+   <P_11A>221.40</P_11A>
+   <P_12>23</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>1</NrWierszaFa>
+   <P_7>Opłata za ładowanie pojazdu</P_7>
+   <P_8A>szt.</P_8A>
+   <P_8B>1.0</P_8B>
+   <P_9A>180.0000</P_9A>
+   <P_10>14.40</P_10>
+   <P_11Vat>41.40</P_11Vat>
+   <P_11>180.00</P_11>
+   <P_11A>221.40</P_11A>
+   <P_12>23</P_12>
+   <StanPrzed>1</StanPrzed>
+  </FaWiersz>
+  <Platnosc>
+   <Zaplacono>1</Zaplacono>
+   <DataZaplaty>2025-04-23</DataZaplaty>
+   <TerminPlatnosci>
+    <Termin>2025-04-23</Termin>
+   </TerminPlatnosci>
+   <FormaPlatnosci>2</FormaPlatnosci>
+   <ZaplataCzesciowa>
+    <KwotaZaplatyCzesciowej>0.00</KwotaZaplatyCzesciowej>
+   </ZaplataCzesciowa>
+  </Platnosc>
+  <PrzyczynaKorekty>pomyłki co do ceny, stawki, kwot podatku lub pozycji</PrzyczynaKorekty>
+  <TypKorekty>2</TypKorekty>
+  <DaneFaKorygowanej>
+   <DataWystFaKorygowanej>2025-04-23</DataWystFaKorygowanej>
+   <NrFaKorygowanej>APC/EV/3/8000/2025</NrFaKorygowanej>
+  </DaneFaKorygowanej>
+ </Fa>
+</Faktura>

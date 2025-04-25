@@ -129,16 +129,20 @@ class GeneratePdfTest {
         byte[] logo = Files.readAllBytes(logoFile.toPath());
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
         Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
-        testForFolder(invoiceFolder, ksefNumber, verificationLink, qrCode, logo, generator);
+        testForFolder(invoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
 
         Path correctionFolder = Paths.get("src/test/resources/faktury/korygujaca");
-        testForFolder(correctionFolder, ksefNumber, verificationLink, qrCode, logo, generator);
+        testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
+
+        Path correctionFolderWithCorrectionDifferences = Paths.get("src/test/resources/faktury/korygujaca");
+        testForFolder(correctionFolderWithCorrectionDifferences, ksefNumber, verificationLink, true, qrCode, logo, generator);
 
     }
 
     private void testForFolder(Path invoiceFolder,
                                String ksefNumber,
                                String verificationLink,
+                               boolean showCorrectionDifferences,
                                byte[] qrCode,
                                byte[] logo,
                                PdfGenerator generator) throws Exception {
@@ -156,6 +160,7 @@ class GeneratePdfTest {
                             .verificationLink(verificationLink)
                             .qrCode(qrCode)
                             .logo(logo)
+                            .showCorrectionDifferences(showCorrectionDifferences)
                             .build();
 
                     generator.generateInvoice(src, invoiceGenerationParams, out);
