@@ -450,14 +450,8 @@
                     <xsl:variable name="after" select="."/>
                     <xsl:variable name="before" select="$faWierszBefore[crd:NrWierszaFa = $lineNum]"/>
                     
-                    <!-- Only include rows where there are actual differences -->
-                    <xsl:if test="$before/crd:P_11 != $after/crd:P_11 or 
-                                  $before/crd:P_9A != $after/crd:P_9A or 
-                                  $before/crd:P_8B != $after/crd:P_8B or
-                                  $before/crd:P_10 != $after/crd:P_10 or
-                                  $before/crd:P_11Vat != $after/crd:P_11Vat or
-                                  $before/crd:P_11A != $after/crd:P_11A or
-                                  $before/crd:P_9B != $after/crd:P_9B">
+                    <!-- New flag to determine if this is a new row not in "before" -->
+                    <xsl:variable name="isNewRow" select="not($before)"/>
                         <fo:table-row>
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
                                 <fo:block><xsl:value-of select="$lineNum"/></fo:block>
@@ -466,11 +460,14 @@
                                 <fo:block><xsl:value-of select="$after/crd:P_7"/></fo:block>
                             </fo:table-cell>
                             
-                            <!-- Quantity difference - always show a value with font-size adjustment -->
+                            <!-- Quantity - for new rows, show exact "after" value, otherwise show difference -->
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                 <fo:block>
                                     <xsl:variable name="formattedNumber">
                                         <xsl:choose>
+                                            <xsl:when test="$isNewRow">
+                                                <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
+                                            </xsl:when>
                                             <xsl:when test="$before/crd:P_8B and $after/crd:P_8B">
                                                 <xsl:value-of select="translate(format-number(number($after/crd:P_8B) - number($before/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
                                             </xsl:when>
@@ -508,6 +505,16 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_9A">
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9A), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_9A and $after/crd:P_9A and $before/crd:P_9A != $after/crd:P_9A">
                                                     <xsl:choose>
                                                         <xsl:when test="$useExtendedDecimalPlaces">
@@ -560,6 +567,16 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_9B">
+                                                    <xsl:choose>
+                                                        <xsl:when test="$useExtendedDecimalPlaces">
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B), '#,##0.0000'), ',.', ' ,')"/>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <xsl:value-of select="translate(format-number(number($after/crd:P_9B), '#,##0.00'), ',.', ' ,')"/>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_9B and $after/crd:P_9B and $before/crd:P_9B != $after/crd:P_9B">
                                                     <xsl:choose>
                                                         <xsl:when test="$useExtendedDecimalPlaces">
@@ -612,6 +629,9 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_10">
+                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_10), '#,##0.00'), ',.', ' ,')"/>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_10 and $after/crd:P_10 and $before/crd:P_10 != $after/crd:P_10">
                                                     <xsl:value-of select="translate(format-number(number($after/crd:P_10) - number($before/crd:P_10), '#,##0.00'), ',.', ' ,')"/>
                                                 </xsl:when>
@@ -658,6 +678,9 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_11">
+                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_11), '#,##0.00'), ',.', ' ,')"/>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_11 and $after/crd:P_11 and $before/crd:P_11 != $after/crd:P_11">
                                                     <xsl:value-of select="translate(format-number(number($after/crd:P_11) - number($before/crd:P_11), '#,##0.00'), ',.', ' ,')"/>
                                                 </xsl:when>
@@ -689,6 +712,9 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_11Vat">
+                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_11Vat), '#,##0.00'), ',.', ' ,')"/>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_11Vat and $after/crd:P_11Vat and $before/crd:P_11Vat != $after/crd:P_11Vat">
                                                     <xsl:value-of select="translate(format-number(number($after/crd:P_11Vat) - number($before/crd:P_11Vat), '#,##0.00'), ',.', ' ,')"/>
                                                 </xsl:when>
@@ -720,6 +746,9 @@
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
                                             <xsl:choose>
+                                                <xsl:when test="$isNewRow and $after/crd:P_11A">
+                                                    <xsl:value-of select="translate(format-number(number($after/crd:P_11A), '#,##0.00'), ',.', ' ,')"/>
+                                                </xsl:when>
                                                 <xsl:when test="$before/crd:P_11A and $after/crd:P_11A and $before/crd:P_11A != $after/crd:P_11A">
                                                     <xsl:value-of select="translate(format-number(number($after/crd:P_11A) - number($before/crd:P_11A), '#,##0.00'), ',.', ' ,')"/>
                                                 </xsl:when>
@@ -745,7 +774,6 @@
                                 </fo:table-cell>
                             </xsl:if>
                         </fo:table-row>
-                    </xsl:if>
                 </xsl:for-each>
             </fo:table-body>
         </fo:table>
