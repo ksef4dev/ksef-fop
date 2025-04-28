@@ -84,7 +84,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_1.xml");
+            InputStream xml = new FileInputStream("src/test/resources/faktury/rozliczeniowa/Fa_2_Przykład_17.xml");
             Source src = new StreamSource(xml);
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
@@ -130,6 +130,12 @@ class GeneratePdfTest {
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
         Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
         testForFolder(invoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
+
+        Path zaliczkowaInvoiceFolder = Paths.get("src/test/resources/faktury/zaliczkowa");
+        testForFolder(zaliczkowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
+
+        Path rozliczeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/rozliczeniowa");
+        testForFolder(rozliczeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
 
         Path correctionFolder = Paths.get("src/test/resources/faktury/korygujaca");
         testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
