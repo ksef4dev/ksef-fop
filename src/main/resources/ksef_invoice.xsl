@@ -636,7 +636,7 @@
                     </fo:table>
 
                     <!-- Numery wcześniejszych faktur zaliczkowych -->
-                    <xsl:if test="count(crd:Fa/crd:FakturaZaliczkowa/crd:NrKSeFFaZaliczkowej) > 0">
+                    <xsl:if test="count(crd:Fa/crd:FakturaZaliczkowa/crd:NrKSeFFaZaliczkowej) > 0 or count(crd:Fa/crd:FakturaZaliczkowa/crd:NrFaZaliczkowej) > 0">
                         <fo:block padding-bottom="16px">
                             <!-- Numery faktur-->
                             <fo:table table-layout="fixed" width="100%" border-collapse="separate">
@@ -652,6 +652,15 @@
                                 </fo:table-header>
                                 <fo:table-body>
                                         <xsl:for-each select="crd:Fa/crd:FakturaZaliczkowa/crd:NrKSeFFaZaliczkowej">
+                                            <fo:table-row>
+                                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                                    <fo:block text-align="left">
+                                                        <xsl:value-of select="."/>
+                                                    </fo:block>
+                                                </fo:table-cell>
+                                            </fo:table-row>
+                                        </xsl:for-each>
+                                        <xsl:for-each select="crd:Fa/crd:FakturaZaliczkowa/crd:NrFaZaliczkowej">
                                             <fo:table-row>
                                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
                                                     <fo:block text-align="left">
