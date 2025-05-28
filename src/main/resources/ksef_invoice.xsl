@@ -136,7 +136,7 @@
                             Faktura uproszczona
                         </xsl:if>
                         <xsl:if test="crd:Fa/crd:RodzajFaktury = 'KOR_ZAL'">
-                            Faktura zaliczkowa korygująca
+                            Faktura korygująca zaliczkową
                         </xsl:if>
                         <xsl:if test="crd:Fa/crd:RodzajFaktury = 'KOR_ROZ'">
                             Faktura rozliczeniowa korygująca
@@ -783,7 +783,7 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:choose>
-                                    <xsl:when test="crd:Fa/crd:RodzajFaktury = 'ZAL'">
+                                    <xsl:when test="crd:Fa/crd:RodzajFaktury = 'ZAL' or crd:Fa/crd:RodzajFaktury = 'KOR_ZAL'">
                                         <xsl:call-template name="zamowienieTable">
                                             <xsl:with-param name="zamowienieWiersz" select="crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz"/>
                                         </xsl:call-template>

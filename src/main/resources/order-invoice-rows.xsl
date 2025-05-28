@@ -34,18 +34,29 @@
         <xsl:variable name="showP11NettoZ" select="boolean($zamowienieWiersz[crd:P_11NettoZ])"/>
         <xsl:variable name="showP11VatZ" select="boolean($zamowienieWiersz[crd:P_11VatZ])"/>
         <xsl:variable name="showUU_IDZ" select="boolean($zamowienieWiersz[crd:UU_IDZ])"/>
+        
+        <!-- Check if any record has StanPrzedZ value -->
+        <xsl:variable name="showStanPrzed" select="boolean($zamowienieWiersz[crd:StanPrzedZ])"/>
 
         <!-- Calculate column width for name based on presence of other columns -->
         <xsl:variable name="nameColumnWidth">
             <xsl:choose>
-                <xsl:when test="$showP11VatZ and $showP9AZ and $showUU_IDZ">20%</xsl:when>
-                <xsl:when test="$showP11VatZ and not($showP9AZ) and $showUU_IDZ">30%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and $showP9AZ and $showUU_IDZ">27%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and not($showP9AZ) and $showUU_IDZ">37%</xsl:when>
-                <xsl:when test="$showP11VatZ and $showP9AZ and not($showUU_IDZ)">35%</xsl:when>
-                <xsl:when test="$showP11VatZ and not($showP9AZ) and not($showUU_IDZ)">45%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and $showP9AZ and not($showUU_IDZ)">42%</xsl:when>
-                <xsl:otherwise>52%</xsl:otherwise>
+                <xsl:when test="$showP11VatZ and $showP9AZ and $showUU_IDZ and $showStanPrzed">16%</xsl:when>
+                <xsl:when test="$showP11VatZ and $showP9AZ and $showUU_IDZ and not($showStanPrzed)">22%</xsl:when>
+                <xsl:when test="$showP11VatZ and not($showP9AZ) and $showUU_IDZ and $showStanPrzed">24%</xsl:when>
+                <xsl:when test="$showP11VatZ and not($showP9AZ) and $showUU_IDZ and not($showStanPrzed)">32%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and $showP9AZ and $showUU_IDZ and $showStanPrzed">22%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and $showP9AZ and $showUU_IDZ and not($showStanPrzed)">29%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and not($showP9AZ) and $showUU_IDZ and $showStanPrzed">30%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and not($showP9AZ) and $showUU_IDZ and not($showStanPrzed)">39%</xsl:when>
+                <xsl:when test="$showP11VatZ and $showP9AZ and not($showUU_IDZ) and $showStanPrzed">28%</xsl:when>
+                <xsl:when test="$showP11VatZ and $showP9AZ and not($showUU_IDZ) and not($showStanPrzed)">36%</xsl:when>
+                <xsl:when test="$showP11VatZ and not($showP9AZ) and not($showUU_IDZ) and $showStanPrzed">36%</xsl:when>
+                <xsl:when test="$showP11VatZ and not($showP9AZ) and not($showUU_IDZ) and not($showStanPrzed)">46%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and $showP9AZ and not($showUU_IDZ) and $showStanPrzed">34%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and $showP9AZ and not($showUU_IDZ) and not($showStanPrzed)">44%</xsl:when>
+                <xsl:when test="not($showP11VatZ) and not($showP9AZ) and not($showUU_IDZ) and $showStanPrzed">44%</xsl:when>
+                <xsl:otherwise>54%</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
 
@@ -54,10 +65,10 @@
             <!-- Define table columns -->
             <fo:table-column column-width="4%"/> <!-- Lp. -->
             <xsl:if test="$showUU_IDZ">
-                <fo:table-column column-width="15%"/> <!-- Unikalny numer wiersza -->
+                <fo:table-column column-width="14%"/> <!-- Unikalny numer wiersza -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
-            <fo:table-column column-width="13%"/> <!-- Ilość -->
+            <fo:table-column column-width="12%"/> <!-- Ilość -->
             <fo:table-column column-width="6%"/> <!-- Jednostka -->
             <xsl:if test="$showP9AZ">
                 <fo:table-column column-width="12%"/> <!-- Cena jednostkowa netto -->
@@ -68,6 +79,9 @@
             </xsl:if>
             <xsl:if test="$showP11VatZ">
                 <fo:table-column column-width="10%"/> <!-- Kwota VAT -->
+            </xsl:if>
+            <xsl:if test="$showStanPrzed">
+                <fo:table-column column-width="8%"/> <!-- Stan przed -->
             </xsl:if>
 
             <!-- Table header -->
@@ -106,6 +120,11 @@
                     <xsl:if test="$showP11VatZ">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Kwota VAT</fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$showStanPrzed">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>Stan przed</fo:block>
                         </fo:table-cell>
                     </xsl:if>
                 </fo:table-row>
@@ -188,6 +207,15 @@
                                         <fo:block>
                                             <xsl:if test="crd:P_11VatZ">
                                                 <xsl:value-of select="translate(format-number(number(crd:P_11VatZ), '#,##0.00'), ',.', ' ,')"/>
+                                            </xsl:if>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:if>
+                                <xsl:if test="$showStanPrzed">
+                                    <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                                        <fo:block>
+                                            <xsl:if test="crd:StanPrzedZ = '1'">
+                                                Tak
                                             </xsl:if>
                                         </fo:block>
                                     </fo:table-cell>
@@ -308,6 +336,15 @@
                                 <fo:block/>
                             </xsl:otherwise>
                         </xsl:choose>
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="//crd:ZamowienieWiersz/crd:StanPrzedZ">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
+                    <fo:block>
+                        <xsl:if test="crd:StanPrzedZ = '1'">
+                            Tak
+                        </xsl:if>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
