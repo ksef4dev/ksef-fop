@@ -160,73 +160,46 @@
                         <fo:block font-size="12pt" text-align="left" space-after="5mm">
                             <fo:inline font-weight="bold">Dane faktury korygowanej</fo:inline>
                         </fo:block>
-                        <fo:table font-size="7pt" space-after="5mm">
+                        <fo:table table-layout="fixed" width="100%" font-size="7pt" space-after="5mm">
+                            <fo:table-column column-width="50%"/>
                             <fo:table-column column-width="50%"/>
                             <fo:table-body>
-                                <!-- Data wystawienia, Numer faktury korygowanej -->
-                                <xsl:if test="crd:Fa/crd:DaneFaKorygowanej">
-
-                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:DataWystFaKorygowanej">
-                                        <fo:table-row space-after="5mm">
-                                            <fo:table-cell padding-bottom="6px">
-                                                <fo:block text-align="left">
-                                                    <fo:inline font-weight="bold">Data wystawienia faktury, której
-                                                        dotyczy faktura korygująca:
-                                                    </fo:inline>
-                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:DataWystFaKorygowanej"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </xsl:if>
-
-                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:NrFaKorygowanej">
-                                        <fo:table-row space-after="5mm">
-                                            <fo:table-cell padding-bottom="6px">
-                                                <fo:block text-align="left">
-                                                    <fo:inline font-weight="bold">Numer faktury korygowanej:
-                                                    </fo:inline>
-                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:NrFaKorygowanej"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </xsl:if>
-
-                                    <xsl:if test="crd:Fa/crd:DaneFaKorygowanej/crd:NrKSeFFaKorygowanej">
-                                        <fo:table-row space-after="5mm">
-                                            <fo:table-cell padding-bottom="6px">
-                                                <fo:block text-align="left">
-                                                    <fo:inline font-weight="bold">Numer KSeF faktury korygowanej:
-                                                    </fo:inline>
-                                                    <xsl:value-of select="crd:Fa/crd:DaneFaKorygowanej/crd:NrKSeFFaKorygowanej"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </xsl:if>
-
-                                </xsl:if>
-
-                                <!-- Data dokonania lub zakończenia dostawy towarów lub wykonania usługi: -->
-                                <xsl:if test="crd:Fa/crd:P_6">
+                                <!-- Iterujemy przez wszystkie elementy DaneFaKorygowanej, zaczynając od pierwszego elementu -->
+                                <xsl:for-each select="crd:Fa/crd:DaneFaKorygowanej[position() mod 2 = 1]">
                                     <fo:table-row>
-                                        <fo:table-cell>
-                                            <fo:block text-align="left">
-                                                <xsl:choose>
-                                                    <xsl:when test="crd:Fa/crd:RodzajFaktury = 'ZAL'">
-                                                        <fo:inline font-weight="bold">Data otrzymania zapłaty:
-                                                        </fo:inline>
-                                                    </xsl:when>
-                                                    <xsl:otherwise>
-                                                        <fo:inline font-weight="bold">Data dokonania lub zakończenia dostawy
-                                                            towarów
-                                                            lub wykonania usługi:
-                                                        </fo:inline>
-                                                    </xsl:otherwise>
-                                                </xsl:choose>
-                                                <xsl:value-of select="crd:Fa/crd:P_6"/>
+                                        <!-- Pierwsza komórka w wierszu -->
+                                        <fo:table-cell padding-right="5px" padding-bottom="8px" vertical-align="top">
+                                            <fo:block>
+                                                <xsl:call-template name="DaneFaKorygowanejTemplate">
+                                                    <xsl:with-param name="faktura" select="."/>
+                                                    <xsl:with-param name="numer" select="position() * 2 - 1"/>
+                                                    <xsl:with-param name="pokazNagłówek" select="count(../crd:DaneFaKorygowanej) > 1"/>
+                                                </xsl:call-template>
                                             </fo:block>
                                         </fo:table-cell>
+
+                                        <!-- Druga komórka, jeśli istnieje element na następnej pozycji -->
+                                        <xsl:choose>
+                                            <xsl:when test="following-sibling::crd:DaneFaKorygowanej[1]">
+                                                <fo:table-cell padding-left="5px" vertical-align="top">
+                                                    <fo:block>
+                                                        <xsl:call-template name="DaneFaKorygowanejTemplate">
+                                                            <xsl:with-param name="faktura" select="following-sibling::crd:DaneFaKorygowanej[1]"/>
+                                                            <xsl:with-param name="numer" select="position() * 2"/>
+                                                            <xsl:with-param name="pokazNagłówek" select="count(../crd:DaneFaKorygowanej) > 1"/>
+                                                        </xsl:call-template>
+                                                    </fo:block>
+                                                </fo:table-cell>
+                                            </xsl:when>
+                                            <!-- Jeśli nie ma następnego elementu, dodajemy pustą komórkę -->
+                                            <xsl:otherwise>
+                                                <fo:table-cell>
+                                                    <fo:block/>
+                                                </fo:table-cell>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </fo:table-row>
-                                </xsl:if>
+                                </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
                     </xsl:if>
@@ -2578,6 +2551,39 @@
                 </xsl:if>
             </fo:table-body>
         </fo:table>
+    </xsl:template>
+
+    <xsl:template name="DaneFaKorygowanejTemplate">
+        <xsl:param name="faktura"/>
+        <xsl:param name="numer"/>
+        <xsl:param name="pokazNagłówek"/>
+        
+        <xsl:if test="$pokazNagłówek">
+            <fo:block text-align="left" font-weight="bold" font-size="10pt" space-after="3mm">
+                Dane identyfikacyjne faktury korygowanej <xsl:value-of select="$numer"/>
+            </fo:block>
+        </xsl:if>
+
+        <xsl:if test="$faktura/crd:DataWystFaKorygowanej">
+            <fo:block text-align="left" space-after="1mm">
+                <fo:inline font-weight="600">Data wystawienia faktury, której dotyczy faktura korygująca: </fo:inline>
+                <xsl:value-of select="$faktura/crd:DataWystFaKorygowanej"/>
+            </fo:block>
+        </xsl:if>
+
+        <xsl:if test="$faktura/crd:NrFaKorygowanej">
+            <fo:block text-align="left" space-after="1mm">
+                <fo:inline font-weight="600">Numer faktury korygowanej: </fo:inline>
+                <xsl:value-of select="$faktura/crd:NrFaKorygowanej"/>
+            </fo:block>
+        </xsl:if>
+
+        <xsl:if test="$faktura/crd:NrKSeFFaKorygowanej">
+            <fo:block text-align="left">
+                <fo:inline font-weight="600">Numer KSeF faktury korygowanej: </fo:inline>
+                <xsl:value-of select="$faktura/crd:NrKSeFFaKorygowanej"/>
+            </fo:block>
+        </xsl:if>
     </xsl:template>
 
 
