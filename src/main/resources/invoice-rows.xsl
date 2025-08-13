@@ -75,7 +75,9 @@
             <xsl:if test="$faWiersz/crd:P_10">
                 <fo:table-column column-width="7%"/> <!-- Rabat -->
             </xsl:if>
-            <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+            <xsl:if test="$faWiersz/crd:P_12">
+                <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+            </xsl:if>
             <xsl:if test="$faWiersz/crd:P_11">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
             </xsl:if>
@@ -116,9 +118,11 @@
                             <fo:block>Rabat</fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Stawka podatku</fo:block>
-                    </fo:table-cell>
+                    <xsl:if test="$faWiersz/crd:P_12">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block>Stawka podatku</fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
                     <xsl:if test="$faWiersz/crd:P_11">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block>Wartość sprzedaży netto</fo:block>
@@ -137,11 +141,11 @@
                 </fo:table-row>
             </fo:table-header>
 
-            <!-- Table body -->
-            <fo:table-body>
-                <!-- Apply templates to each position -->
-                <xsl:apply-templates select="$faWiersz"/>
-            </fo:table-body>
+                    <!-- Table body -->
+        <fo:table-body>
+            <!-- Apply templates to each position -->
+            <xsl:apply-templates select="$faWiersz"/>
+        </fo:table-body>
         </fo:table>
     </xsl:template>
 
@@ -252,19 +256,21 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <fo:block>
-                    <xsl:variable name="taxRate" select="crd:P_12"/>
-                    <xsl:choose>
-                        <xsl:when test="number($taxRate) = $taxRate and $taxRate != ''">
-                            <xsl:value-of select="$taxRate"/>%
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$taxRate"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </fo:block>
-            </fo:table-cell>
+            <xsl:if test="//crd:FaWiersz/crd:P_12">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:variable name="taxRate" select="crd:P_12"/>
+                        <xsl:choose>
+                            <xsl:when test="number($taxRate) = $taxRate and $taxRate != ''">
+                                <xsl:value-of select="$taxRate"/>%
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$taxRate"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
             <xsl:if test="//crd:FaWiersz/crd:P_11">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
