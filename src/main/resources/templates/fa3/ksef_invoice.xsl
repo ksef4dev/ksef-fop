@@ -3,7 +3,7 @@
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
+                xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
     <!-- Załadowanie schematu XSD jako dokument XML -->
@@ -1532,7 +1532,7 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Informacja o płatności:</fo:inline>
                             Zapłata częściowa
@@ -1590,34 +1590,45 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="
-                    crd:Fa/crd:Platnosc/crd:Zaplacono != 1
-                    and
-                    crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold">Opłacono: </fo:inline>
-                            <xsl:value-of select="translate(format-number(number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej),  '#,##0.00'), ',.', ' ,')"/>
-                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
-                            <fo:inline>
-                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
-                            </fo:inline>
+                    <!-- Tabela płatności częściowych -->
+                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
+                        <fo:block space-before="2mm" space-after="2mm">
+                            <fo:table table-layout="fixed" width="100%">
+                                <fo:table-column column-width="25%"/>
+                                <fo:table-column column-width="25%"/>
+                                <fo:table-header>
+                                    <fo:table-row background-color="#f0f0f0">
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding" >
+                                            <fo:block font-size="7pt" font-weight="bold" text-align="left">
+                                                Data zapłaty częściowej
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                            <fo:block font-size="7pt" font-weight="bold" text-align="left">
+                                                Kwota zapłaty częściowej
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-header>
+                                <fo:table-body>
+                                    <xsl:for-each select="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
+                                        <fo:table-row>
+                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block font-size="7pt" text-align="left">
+                                                    <xsl:value-of select="crd:DataZaplatyCzesciowej"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                <fo:block font-size="7pt" text-align="right">
+                                                    <xsl:value-of select="translate(format-number(number(crd:KwotaZaplatyCzesciowej), '#,##0.00'), ',.', ' ,')"/>
+                                                </fo:block>
+                                            </fo:table-cell>
+                                        </fo:table-row>
+                                    </xsl:for-each>
+                                </fo:table-body>
+                            </fo:table>
                         </fo:block>
                     </xsl:if>
-
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and
-                    crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa and
-                     number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej) >= 0">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold">Pozostało do zapłaty: </fo:inline>
-                            <xsl:value-of
-                                    select="translate(format-number(number(crd:Fa/crd:P_15) - number(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej), '#,##0.00'), ',.', ' ,')"/>
-                            <xsl:text> </xsl:text> <!-- Dodanie spacji -->
-                            <fo:inline>
-                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
-                            </fo:inline>
-                        </fo:block>
-                    </xsl:if>
-
                     <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 

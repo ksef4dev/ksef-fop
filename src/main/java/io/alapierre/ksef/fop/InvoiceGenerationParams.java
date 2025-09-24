@@ -1,6 +1,7 @@
 package io.alapierre.ksef.fop;
 
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
@@ -12,13 +13,17 @@ import java.time.LocalDate;
 public class InvoiceGenerationParams {
     @Nullable
     private String ksefNumber;
-    @Nullable private String verificationLink;
+    @Nullable
+    private String verificationLink;
     private byte[] qrCode;
     private byte[] logo;
     @Nullable
     private LocalDate currencyDate;
-    @Nullable private String issuerUser;
+    @Nullable
+    private String issuerUser;
     private boolean showCorrectionDifferences;
+    @NotNull
+    private InvoiceSchema schema;
 
     /**
      * @deprecated This constructor is deprecated because the parameters in this class may change in future versions, making it difficult to maintain compatibility.

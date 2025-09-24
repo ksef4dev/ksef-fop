@@ -67,21 +67,20 @@
 			<P_12>23</P_12>
 			<KursWaluty>4.3200</KursWaluty>
 		</FaWiersz>
-		<Platnosc>
-			<TerminPlatnosci>
-				<Termin>2024-10-21</Termin>
-			</TerminPlatnosci>
-			<FormaPlatnosci>6</FormaPlatnosci>
-			<RachunekBankowy>
-				<NrRB>03188000090000001150606006</NrRB>
-				<NazwaBanku>mBank S.A</NazwaBanku>
-				<OpisRachunku>Kwota netto czynszu płatna w EUR na rachunek bankowy</OpisRachunku>
-			</RachunekBankowy>
-			<RachunekBankowy>
-				<NrRB>93114010100000542800001001</NrRB>
-				<NazwaBanku>mBank S.A</NazwaBanku>
-				<OpisRachunku>Kwota podatku VAT płatna w PLN na ten rachunek bankowy</OpisRachunku>
-			</RachunekBankowy>
-		</Platnosc>
+        <Platnosc>
+            <ZnacznikZaplatyCzesciowej>1</ZnacznikZaplatyCzesciowej>
+            <ZaplataCzesciowa>
+                <KwotaZaplatyCzesciowej>100</KwotaZaplatyCzesciowej>
+                <DataZaplatyCzesciowej>2025-01-01</DataZaplatyCzesciowej>
+            </ZaplataCzesciowa>
+            <ZaplataCzesciowa>
+                <KwotaZaplatyCzesciowej>200</KwotaZaplatyCzesciowej>
+                <DataZaplatyCzesciowej>2025-02-01</DataZaplatyCzesciowej>
+            </ZaplataCzesciowa>
+            <ZaplataCzesciowa>
+                <KwotaZaplatyCzesciowej>300</KwotaZaplatyCzesciowej>
+                <DataZaplatyCzesciowej>2025-03-01</DataZaplatyCzesciowej>
+            </ZaplataCzesciowa>
+        </Platnosc>
 	</Fa>
 </Faktura>

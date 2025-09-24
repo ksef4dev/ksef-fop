@@ -69,7 +69,7 @@ class GeneratePdfTest {
 
             Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
             TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(new StreamSource("src/main/resources/ksef_upo.fop"));
+            Transformer transformer = factory.newTransformer(new StreamSource("src/main/resources/templates/ksef_upo.fop"));
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
@@ -79,15 +79,32 @@ class GeneratePdfTest {
     }
 
     @Test
-    void generateInvoicePdf() throws Exception {
+    void generateFa2InvoicePdf() throws Exception {
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/zaliczkowa_korekta/5501234_2024.XML");
+            InputStream xml = new FileInputStream("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_4.xml");
             Source src = new StreamSource(xml);
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA2_1_0_E)
+                    .build();
+            generator.generateInvoice(src, invoiceGenerationParams, out);
+        }
+    }
+
+    @Test
+    void generateFa3InvoicePdf() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml");
+            Source src = new StreamSource(xml);
+
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA3_1_0_E)
                     .build();
             generator.generateInvoice(src, invoiceGenerationParams, out);
         }
@@ -106,13 +123,14 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
+            InputStream xml = new FileInputStream("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .ksefNumber(ksefNumber)
                     .verificationLink(verificationLink)
                     .qrCode(qrCode)
                     .logo(logo)
+                    .schema(InvoiceSchema.FA2_1_0_E)
                     .build();
 
             generator.generateInvoice(src, invoiceGenerationParams, out);
@@ -128,20 +146,27 @@ class GeneratePdfTest {
         File logoFile = new File("src/test/resources/Logo.svg");
         byte[] logo = Files.readAllBytes(logoFile.toPath());
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
-        Path invoiceFolder = Paths.get("src/test/resources/faktury/podstawowa");
-        testForFolder(invoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
 
-        Path zaliczkowaInvoiceFolder = Paths.get("src/test/resources/faktury/zaliczkowa");
-        testForFolder(zaliczkowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
+        Path fa2InvoiceFolder = Paths.get("src/test/resources/faktury/fa2/podstawowa");
+        testForFolder(fa2InvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
 
-        Path rozliczeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/rozliczeniowa");
-        testForFolder(rozliczeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
+        Path fa3InvoiceFolder = Paths.get("src/test/resources/faktury/fa3/podstawowa");
+        testForFolder(fa3InvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
-        Path correctionFolder = Paths.get("src/test/resources/faktury/korygujaca");
-        testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, generator);
 
-        Path correctionFolderWithCorrectionDifferences = Paths.get("src/test/resources/faktury/korygujaca");
-        testForFolder(correctionFolderWithCorrectionDifferences, ksefNumber, verificationLink, true, qrCode, logo, generator);
+        Path zaliczkowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa2/zaliczkowa");
+        testForFolder(zaliczkowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+
+        Path rozliczeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa2/rozliczeniowa");
+        testForFolder(rozliczeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+
+        Path correctionFolder = Paths.get("src/test/resources/faktury/fa2/korygujaca");
+        testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+
+        Path correctionFolderWithCorrectionDifferences = Paths.get("src/test/resources/faktury/fa2/korygujaca");
+        testForFolder(correctionFolderWithCorrectionDifferences, ksefNumber, verificationLink, true, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+
+
 
     }
 
@@ -151,6 +176,7 @@ class GeneratePdfTest {
                                boolean showCorrectionDifferences,
                                byte[] qrCode,
                                byte[] logo,
+                               InvoiceSchema schema,
                                PdfGenerator generator) throws Exception {
         // Pobieranie wszystkich plików XML z folderu
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(invoiceFolder, "*.xml")) {
@@ -167,6 +193,7 @@ class GeneratePdfTest {
                             .qrCode(qrCode)
                             .logo(logo)
                             .showCorrectionDifferences(showCorrectionDifferences)
+                            .schema(schema)
                             .build();
 
                     generator.generateInvoice(src, invoiceGenerationParams, out);

@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.fop.apps.*;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
+@Slf4j
 public class PdfGenerator {
 
     private final FopFactory fopFactory;
@@ -81,7 +83,7 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
         TransformerFactory factory = TransformerFactory.newInstance();
 
-        Transformer transformer = factory.newTransformer(new StreamSource(loadResource("ksef_upo.fop")));
+        Transformer transformer = factory.newTransformer(new StreamSource(loadResource("templates/ksef_upo.fop")));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(upoXML, res);
     }
@@ -135,14 +137,18 @@ public class PdfGenerator {
      * @throws IOException If an I/O error occurs.
      * @throws TransformerException If an error occurs during the XSLT transformation.
      */
-    private void generatePdfInvoice(@NotNull Source invoiceXml, InvoiceGenerationParams params, @Nullable LocalDate duplicateDate, OutputStream out)
+    private void generatePdfInvoice(@NotNull Source invoiceXml,
+                                    InvoiceGenerationParams params,
+                                    @Nullable LocalDate duplicateDate,
+                                    OutputStream out)
             throws FOPException, IOException, TransformerException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
 
         TransformerFactory factory = new TransformerFactoryImpl();
 
-        String xslFileName = "ksef_invoice.xsl";
+        String xslFileName = getXslTemplatePathForSchema(params);
+
         InputStream xslInputStream = loadResource(xslFileName);
         URL xslUrl = getClass().getClassLoader().getResource(xslFileName);
 
@@ -154,6 +160,19 @@ public class PdfGenerator {
 
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(invoiceXml, res);
+    }
+
+    private static @NotNull String getXslTemplatePathForSchema(InvoiceGenerationParams params) {
+        String xslFileName;
+        switch (params.getSchema()) {
+            case FA2_1_0_E -> xslFileName = "templates/fa2/ksef_invoice.xsl";
+            case FA3_1_0_E -> xslFileName = "templates/fa3/ksef_invoice.xsl";
+            default -> {
+                log.warn("Schema is not provided in InvoiceGenerationParams or not supported, using default FA2");
+                xslFileName = "templates/fa2/ksef_invoice.xsl";
+            }
+        }
+        return xslFileName;
     }
 
     private void insertAdditionalInvoiceData(InvoiceGenerationParams params, @Nullable LocalDate duplicateDate, @NotNull Transformer transformer) {
