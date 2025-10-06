@@ -20,7 +20,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -30,28 +29,74 @@ import java.time.LocalDate;
 class GeneratePdfTest {
 
     @Test
-    void genByService() throws Exception {
+    void genV3ByService() throws Exception {
 
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo.pdf"))) {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v3-service.pdf"))) {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
-            generator.generateUpo(src, out);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V3)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
         }
     }
 
     @Test
-    void genWithConfFromClasspath() throws Exception {
+    void genV3WithConfFromClasspath() throws Exception {
 
         PdfGenerator generator = new PdfGenerator("fop.xconf");
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo.pdf"))) {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v3-classpath.pdf"))) {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
-            generator.generateUpo(src, out);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V3)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
+        }
+    }
+
+    @Test
+    void genV4_2ByService() throws Exception {
+
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-2-service.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
+            Source src = new StreamSource(xml);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V4_2)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
+        }
+    }
+
+    @Test
+    void genV4_2WithConfFromClasspath() throws Exception {
+
+        PdfGenerator generator = new PdfGenerator("fop.xconf");
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-2-classpath.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
+            Source src = new StreamSource(xml);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V4_2)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
         }
     }
 
@@ -69,7 +114,7 @@ class GeneratePdfTest {
 
             Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
             TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(new StreamSource("src/main/resources/templates/ksef_upo.fop"));
+            Transformer transformer = factory.newTransformer(new StreamSource("src/main/resources/templates/upo_v3/ksef_upo.fop"));
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
