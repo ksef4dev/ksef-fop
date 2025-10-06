@@ -24,8 +24,13 @@
         </developer>
         <developer>
             <name>Karol Bryzgiel</name>
-            <email>karol.bryzgiel@soft-project.pl</email>
+            <email>karol.bryzgiel@itrust.dev</email>
         </developer>
+        <developer>
+            <name>Karol Niewiadomski</name>
+            <email>karol.niewiadomski@itrust.dev</email>
+        </developer>
+
     </developers>
 
     <scm>
@@ -36,10 +41,10 @@
     </scm>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>2.0.9</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <annotations.version>24.0.1</annotations.version>
         <sonar.organization>ksef4dev</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -204,7 +209,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>1.18.42</version>
         </dependency>
 
         <dependency>
@@ -216,7 +221,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.13</version>
+            <version>1.5.19</version>
             <scope>test</scope>
         </dependency>
 
@@ -229,7 +234,8 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.1.0</version>
+            <version>26.0.2</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
