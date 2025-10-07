@@ -175,7 +175,14 @@
                     </fo:block>
 
                     <fo:block font-size="6pt" line-height="inherit" space-before="14pt">
-                        <fo:table>
+                        <fo:table table-layout="auto" width="100%">
+                            <fo:table-column column-width="10%"/> <!-- Nip sprzedawcy z faktury (Podmiot 1) -->
+                            <fo:table-column column-width="18%"/> <!-- Numer identyfikujący fakturę w KSeF -->
+                            <fo:table-column column-width="14%"/> <!-- Nummer faktury -->
+                            <fo:table-column column-width="6%"/> <!-- Data wystawienia faktury -->
+                            <fo:table-column column-width="13%"/> <!-- Data przeslania dokumentu do systemu KSeF -->
+                            <fo:table-column column-width="13%"/> <!-- Czas i data wygenerowania numeru KSeF -->
+                            <fo:table-column column-width="26%"/> <!-- Wartość funkcji skrótu złożonego dokumentu -->
                             <fo:table-header background-color="#f6f7fa">
 
                                 <fo:table-row border-width="1px" border-style="solid" border-color="#bababa" border-bottom="2px solid #000000">
@@ -214,7 +221,7 @@
                                         </fo:block>
                                     </fo:table-cell>
                                     <fo:table-cell padding="5pt" border-bottom="2px solid #000000">
-                                        <fo:block>
+                                        <fo:block wrap-option="wrap">
                                             Wartość funkcji skrótu złożonego
                                             dokumentu
                                         </fo:block>
@@ -233,7 +240,7 @@
                                     </fo:table-cell>
 
                                         <fo:table-cell padding="5pt" border-right="1px solid #bababa">
-                                        <fo:block>
+                                        <fo:block wrap-option="wrap">
                                             <xsl:value-of select="./n1:NumerKSeFDokumentu"/>
                                         </fo:block>
                                     </fo:table-cell>
@@ -260,8 +267,8 @@
                                             <xsl:value-of select="./n1:DataNadaniaNumeruKSeF"/>
                                         </fo:block>
                                     </fo:table-cell>
-                                    <fo:table-cell padding="5pt">
-                                        <fo:block>
+                                    <fo:table-cell padding="3pt">
+                                        <fo:block wrap-option="wrap">
                                             <xsl:value-of select="./n1:SkrotDokumentu"/>
                                         </fo:block>
                                     </fo:table-cell>
