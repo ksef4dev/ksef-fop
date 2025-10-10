@@ -62,10 +62,7 @@ buildNumber.properties
 *.iml
 out
 gen
-/src/test/resources/upo.pdf
-/src/test/resources/invoice.pdf
-/src/test/resources/invoice_online_qr.pdf
-/src/test/resources/invoice_offline_qr.pdf
-/src/test/resources/invoice_multiple_qr.pdf
+/src/test/resources/upo**.pdf
+/src/test/resources/invoice**.pdf
 
 /.mvn/

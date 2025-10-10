@@ -25,6 +25,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -34,7 +35,7 @@ import java.nio.file.Paths;
 class GeneratePdfTest {
 
     @Test
-    void genV3ByService() throws Exception {
+    void genV3UpoByService() throws Exception {
 
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
@@ -52,7 +53,7 @@ class GeneratePdfTest {
     }
 
     @Test
-    void genV3WithConfFromClasspath() throws Exception {
+    void genV3UpoWithConfFromClasspath() throws Exception {
 
         PdfGenerator generator = new PdfGenerator("fop.xconf");
 
@@ -70,7 +71,7 @@ class GeneratePdfTest {
     }
 
     @Test
-    void genV4_2ByService() throws Exception {
+    void genV4_2UpoByService() throws Exception {
 
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
@@ -88,7 +89,7 @@ class GeneratePdfTest {
     }
 
     @Test
-    void genV4_2WithConfFromClasspath() throws Exception {
+    void genV4_2UpoWithConfFromClasspath() throws Exception {
 
         PdfGenerator generator = new PdfGenerator("fop.xconf");
 

@@ -186,27 +186,6 @@ public class PdfGenerator {
         return templateFileName;
     }
 
-    private void insertAdditionalInvoiceData(InvoiceGenerationParams params, @Nullable LocalDate duplicateDate, @NotNull Transformer transformer) {
-        Optional.ofNullable(params.getQrCode())
-                .map(Base64.getEncoder()::encodeToString)
-                .ifPresent(encodedQrCode -> setParameterIfNotNull("qrCode", encodedQrCode, transformer));
-        Optional.ofNullable(params.getLogo())
-                .map(Base64.getEncoder()::encodeToString)
-                .ifPresent(encodedLogo -> setParameterIfNotNull("logo", encodedLogo, transformer));
-        Optional.ofNullable(duplicateDate)
-                .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
-                .ifPresent(formattedDate -> setParameterIfNotNull("duplicateDate", formattedDate, transformer));
-        Optional.ofNullable(params.getCurrencyDate())
-                .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
-                .ifPresent(formattedDate -> setParameterIfNotNull("currencyDate", formattedDate, transformer));
-        setParameterIfNotNull("nrKsef", params.getKsefNumber(), transformer);
-        setParameterIfNotNull("verificationLink", params.getVerificationLink(), transformer);
-        setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);
-        setParameterIfNotNull("useExtendedDecimalPlaces", invoicePdfConfig.isUseExtendedPriceDecimalPlaces(), transformer);
-        setParameterIfNotNull("issuerUser", params.getIssuerUser(), transformer);
-        setParameterIfNotNull("showCorrectionDifferences", params.isShowCorrectionDifferences(), transformer);
-    }
-
     private void applyParameters(InvoiceGenerationParams params,
                                  @Nullable List<QrCodeData> qrCodes,
                                  @Nullable LocalDate duplicateDate,
