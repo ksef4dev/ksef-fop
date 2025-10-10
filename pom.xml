@@ -43,6 +43,8 @@
         <annotations.version>24.0.1</annotations.version>
         <sonar.organization>ksef4dev</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <zxing.version>3.5.2</zxing.version>
+
     </properties>
 
     <build>
@@ -60,6 +62,7 @@
                 <version>3.2.2</version>
             </plugin>
 
+            <!-- Temporarily disabled due to Java 21 compatibility issues
             <plugin>
                 <groupId>se.eris</groupId>
                 <artifactId>notnull-instrumenter-maven-plugin</artifactId>
@@ -80,6 +83,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -189,6 +193,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>1.82</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.1</version>
@@ -204,7 +214,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
+            <version>1.18.34</version>
         </dependency>
 
         <dependency>
@@ -236,6 +246,18 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
             <version>12.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing.version}</version>
         </dependency>
     </dependencies>
 

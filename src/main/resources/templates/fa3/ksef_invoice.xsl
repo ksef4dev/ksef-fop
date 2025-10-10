@@ -28,6 +28,59 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+    <!-- Template for rendering a single QR code -->
+    <xsl:template name="renderQrCode">
+        <xsl:param name="qrCodeImage"/>
+        <xsl:param name="qrCodeLabel"/>
+        <xsl:param name="qrCodeVerificationLink"/>
+        <xsl:param name="qrCodeVerificationLinkTitle"/>
+
+        <xsl:if test="$qrCodeImage and $qrCodeVerificationLink">
+            <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+            
+            <fo:block>
+                <fo:table width="100%">
+                    <fo:table-column column-width="35%"/>
+                    <fo:table-column column-width="65%"/>
+                    <fo:table-body>
+                        <fo:table-row>
+                            <!-- Komórka z obrazkiem QR -->
+                            <fo:table-cell display-align="center" height="auto" font-size="7pt">
+                                <fo:block text-align="center" font-weight="600">
+                                    <fo:external-graphic
+                                            content-width="170pt"
+                                            content-height="170pt"
+                                            src="url('data:image/png;base64,{$qrCodeImage}')"/>
+                                </fo:block>
+                                <xsl:if test="$qrCodeLabel">
+                                    <fo:block text-align="center" font-weight="600">
+                                        <xsl:value-of select="$qrCodeLabel"/>
+                                    </fo:block>
+                                </xsl:if>
+                            </fo:table-cell>
+                            <!-- Komórka z tekstem -->
+                            <fo:table-cell display-align="center" height="auto">
+                                <fo:block font-size="7pt" display-align="center">
+                                    <fo:block font-weight="600" space-after="2mm">
+                                        <xsl:value-of select="$qrCodeVerificationLinkTitle"/>
+
+                                    </fo:block>
+                                    <fo:block display-align="center" space-after="2mm">
+                                        <fo:basic-link
+                                                external-destination="{$qrCodeVerificationLink}" color="blue">
+                                            <xsl:value-of select="$qrCodeVerificationLink"/>
+                                        </fo:basic-link>
+                                    </fo:block>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
+            </fo:block>
+        </xsl:if>
+    </xsl:template>
+    
     <xsl:include href="invoice-rows.xsl"/>
     <xsl:include href="order-invoice-rows.xsl"/>
 
@@ -41,6 +94,21 @@
     <xsl:param name="currencyDate"/>
     <xsl:param name="issuerUser"/>
     <xsl:param name="showCorrectionDifferences"/>
+
+    <!-- New parameters for multiple QR codes -->
+    <xsl:param name="qrCodesCount" select="0"/>
+
+    <!-- QR Code 0 parameters -->
+    <xsl:param name="qrCode0"/>
+    <xsl:param name="qrCodeLabel0"/>
+    <xsl:param name="verificationLink0"/>
+    <xsl:param name="verificationLinkTitle0"/>
+
+    <!-- QR Code 1 parameters -->
+    <xsl:param name="qrCode1"/>
+    <xsl:param name="qrCodeLabel1"/>
+    <xsl:param name="verificationLink1"/>
+    <xsl:param name="verificationLinkTitle1"/>
 
     <!-- Attribute used for table border -->
     <xsl:attribute-set name="tableBorder">
@@ -1996,53 +2064,6 @@
                         </fo:block>
                     </xsl:if>
 
-                    <xsl:if test="$verificationLink and $nrKsef and $qrCode">
-                        <!-- Kod QR -->
-                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-
-                        <fo:block font-size="12pt" text-align="left">
-                            <fo:inline font-weight="bold">Sprawdź, czy Twoja faktura znajduje się w KSeF</fo:inline>
-                        </fo:block>
-                        <fo:block>
-                            <fo:table width="100%">
-                                <fo:table-column column-width="35%"/>
-                                <fo:table-column column-width="65%"/>
-                                <fo:table-body>
-                                    <fo:table-row>
-                                        <!-- Komórka z obrazkiem QR -->
-                                        <fo:table-cell display-align="center" height="auto" font-size="7pt">
-                                            <fo:block text-align="center" font-weight="600">
-                                                <fo:external-graphic
-                                                        content-width="170pt"
-                                                        content-height="170pt"
-                                                        src="url('data:image/png;base64,{$qrCode}')"/>
-                                            </fo:block>
-                                            <xsl:if test="$nrKsef">
-                                                <fo:block text-align="center" font-weight="600">
-                                                    <xsl:value-of select="$nrKsef"/>
-                                                </fo:block>
-                                            </xsl:if>
-                                        </fo:table-cell>
-                                        <!-- Komórka z tekstem -->
-                                        <fo:table-cell display-align="center" height="auto">
-                                            <fo:block font-size="7pt" display-align="center">
-                                                <fo:block font-weight="600" space-after="2mm">
-                                                    Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i
-                                                    przejdź do weryfikacji faktury.
-                                                </fo:block>
-                                                <fo:block display-align="center" space-after="2mm">
-                                                    <fo:basic-link
-                                                            external-destination="{$verificationLink}" color="blue">
-                                                        <xsl:value-of select="$verificationLink"/>
-                                                    </fo:basic-link>
-                                                </fo:block>
-                                            </fo:block>
-                                        </fo:table-cell>
-                                    </fo:table-row>
-                                </fo:table-body>
-                            </fo:table>
-                        </fo:block>
-                    </xsl:if>
                     <xsl:if test="$issuerUser">
                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
@@ -2050,6 +2071,36 @@
                             <fo:inline font-weight="bold">Osoba wystawiająca: </fo:inline>
                             <xsl:value-of select="$issuerUser"/>
                         </fo:block>
+                    </xsl:if>
+
+                    <!-- New multiple QR codes approach -->
+                    <xsl:if test="$qrCodesCount > 0">
+
+                        <fo:block font-size="12pt" text-align="left">
+                            <fo:inline font-weight="bold">
+                                Sprawdź, czy Twoja faktura znajduje się w KSeF
+                            </fo:inline>
+                        </fo:block>
+
+                        <!-- Render QR Code 0 if exists -->
+                        <xsl:if test="$qrCode0 and $verificationLink0">
+                            <xsl:call-template name="renderQrCode">
+                                <xsl:with-param name="qrCodeImage" select="$qrCode0"/>
+                                <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel0"/>
+                                <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle0"/>
+                                <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink0"/>
+                            </xsl:call-template>
+                        </xsl:if>
+
+                        <!-- Render QR Code 1 if exists -->
+                        <xsl:if test="$qrCode1 and $verificationLink1">
+                            <xsl:call-template name="renderQrCode">
+                                <xsl:with-param name="qrCodeImage" select="$qrCode1"/>
+                                <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel1"/>
+                                <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle1"/>
+                                <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink1"/>
+                            </xsl:call-template>
+                        </xsl:if>
                     </xsl:if>
                 </fo:flow>
             </fo:page-sequence>

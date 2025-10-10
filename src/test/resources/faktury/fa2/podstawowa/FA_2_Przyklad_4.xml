@@ -1,72 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Faktura
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-		xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
-	<Naglowek>
-		<KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
-		<WariantFormularza>2</WariantFormularza>
-		<DataWytworzeniaFa>2024-10-21T14:24:32.6463481+02:00</DataWytworzeniaFa>
-		<SystemInfo>Aplikacja Podatnika KSeF</SystemInfo>
-	</Naglowek>
-	<Podmiot1>
-		<DaneIdentyfikacyjne>
-			<NIP>5451824119</NIP>
-			<Nazwa>Codeque Karol Bryzgiel</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>Adres</AdresL1>
-		</Adres>
-	</Podmiot1>
-	<Podmiot2>
-		<DaneIdentyfikacyjne>
-			<NIP>4660430720</NIP>
-			<Nazwa>itrust</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>adres</AdresL1>
-		</Adres>
-	</Podmiot2>
-	<Fa>
-		<KodWaluty>EUR</KodWaluty>
-		<P_1>2024-10-21</P_1>
-		<P_1M>Warszawa</P_1M>
-		<P_2>15/2024</P_2>
-		<P_6>2024-10-21</P_6>
-		<P_13_1>100</P_13_1>
-		<P_14_1>23</P_14_1>
-		<P_14_1W>99.36</P_14_1W>
-		<P_15>123</P_15>
-		<Adnotacje>
-			<P_16>2</P_16>
-			<P_17>2</P_17>
-			<P_18>2</P_18>
-			<P_18A>2</P_18A>
-			<Zwolnienie>
-				<P_19N>1</P_19N>
-			</Zwolnienie>
-			<NoweSrodkiTransportu>
-				<P_22N>1</P_22N>
-			</NoweSrodkiTransportu>
-			<P_23>2</P_23>
-			<PMarzy>
-				<P_PMarzyN>1</P_PMarzyN>
-			</PMarzy>
-		</Adnotacje>
-		<RodzajFaktury>VAT</RodzajFaktury>
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>2</WariantFormularza>
+        <DataWytworzeniaFa>2024-10-21T14:24:32.6463481+02:00</DataWytworzeniaFa>
+        <SystemInfo>Aplikacja Podatnika KSeF</SystemInfo>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>5451824119</NIP>
+            <Nazwa>Codeque Karol Bryzgiel</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>Adres</AdresL1>
+        </Adres>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>4660430720</NIP>
+            <Nazwa>itrust</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>adres</AdresL1>
+        </Adres>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>EUR</KodWaluty>
+        <P_1>2024-10-21</P_1>
+        <P_1M>Warszawa</P_1M>
+        <P_2>15/2024</P_2>
+        <P_6>2024-10-21</P_6>
+        <P_13_1>100</P_13_1>
+        <P_14_1>23</P_14_1>
+        <P_14_1W>99.36</P_14_1W>
+        <P_15>123</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>VAT</RodzajFaktury>
 
-		<FaWiersz>
-			<NrWierszaFa>1</NrWierszaFa>
-			<P_7>test</P_7>
-			<P_8A>szt</P_8A>
-			<P_8B>1</P_8B>
-			<P_9B>123</P_9B>
-			<P_11A>123</P_11A>
-			<P_12>23</P_12>
-			<KursWaluty>4.3200</KursWaluty>
-		</FaWiersz>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>test</P_7>
+            <P_8A>szt</P_8A>
+            <P_8B>1</P_8B>
+            <P_9B>123</P_9B>
+            <P_11A>123</P_11A>
+            <P_12>23</P_12>
+            <KursWaluty>4.3200</KursWaluty>
+        </FaWiersz>
         <Platnosc>
             <ZnacznikZaplatyCzesciowej>1</ZnacznikZaplatyCzesciowej>
             <ZaplataCzesciowa>
@@ -82,5 +82,5 @@
                 <DataZaplatyCzesciowej>2025-03-01</DataZaplatyCzesciowej>
             </ZaplataCzesciowa>
         </Platnosc>
-	</Fa>
+    </Fa>
 </Faktura>

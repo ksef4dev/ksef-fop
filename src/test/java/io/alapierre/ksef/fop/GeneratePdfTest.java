@@ -1,5 +1,10 @@
 package io.alapierre.ksef.fop;
 
+import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
+import io.alapierre.ksef.fop.qr.enums.Environment;
+import io.alapierre.ksef.fop.qr.helpers.CertificateBuilders;
+import io.alapierre.ksef.fop.qr.helpers.SelfSignedCertificate;
+import io.alapierre.ksef.fop.qr.helpers.TestCertificateGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -84,13 +89,12 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_4.xml");
-            Source src = new StreamSource(xml);
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa2/korygujaca/FA_2_Przyklad_2.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA2_1_0_E)
                     .build();
-            generator.generateInvoice(src, invoiceGenerationParams, out);
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
         }
     }
 
@@ -100,22 +104,19 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml");
-            Source src = new StreamSource(xml);
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)
                     .build();
-            generator.generateInvoice(src, invoiceGenerationParams, out);
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
         }
     }
 
     @Test
     void generateInvoicePdfWithAdditionalData() throws Exception {
-        String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
+        String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
         String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";
-        File qrCodeFile = new File("src/test/resources/barcode.png");
-        byte[] qrCode = Files.readAllBytes(qrCodeFile.toPath());
         File logoFile = new File("src/test/resources/Logo.svg");
         byte[] logo = Files.readAllBytes(logoFile.toPath());
 
@@ -123,17 +124,16 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_20.xml");
-            Source src = new StreamSource(xml);
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_20.xml"));
+
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .ksefNumber(ksefNumber)
                     .verificationLink(verificationLink)
-                    .qrCode(qrCode)
                     .logo(logo)
                     .schema(InvoiceSchema.FA2_1_0_E)
                     .build();
 
-            generator.generateInvoice(src, invoiceGenerationParams, out);
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
         }
     }
 
@@ -182,23 +182,109 @@ class GeneratePdfTest {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(invoiceFolder, "*.xml")) {
             for (Path entry : stream) {
                 // Tworzenie strumienia dla każdego pliku XML
-                try (InputStream xml = Files.newInputStream(entry);
-                     OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
-
-                    Source src = new StreamSource(xml);
+                try (OutputStream out = new BufferedOutputStream(new ByteArrayOutputStream())) {
+                    byte[] invoiceXml = Files.readAllBytes(entry);
 
                     InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                             .ksefNumber(ksefNumber)
                             .verificationLink(verificationLink)
-                            .qrCode(qrCode)
                             .logo(logo)
                             .showCorrectionDifferences(showCorrectionDifferences)
                             .schema(schema)
                             .build();
 
-                    generator.generateInvoice(src, invoiceGenerationParams, out);
+                    generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
                 }
             }
+        }
+    }
+
+    @Test
+    void generateInvoicePdfWithCertificateQrCodes() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_multiple_qr.pdf"))) {
+
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+
+            String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
+            String identifier = "6891152920";
+            String serial = "01F20A5D352AE590"; // Example certificate serial in hex format
+            LocalDate issueDate = LocalDate.of(2025, 10, 8);
+
+            // Generate RSA key pair for testing using utility class
+            CertificateBuilders.X500NameHolder x500 = new CertificateBuilders()
+                    .buildForOrganization("Kowalski sp. z o.o", "VATPL-1111111111", "TestEcc", "PL");
+            SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
+
+            InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(
+                    Environment.TEST,
+                    ContextIdentifierType.NIP,
+                    identifier,
+                    identifier,
+                    serial,
+                    cert.getPrivateKey(),
+                    issueDate
+                    );
+
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .ksefNumber(ksefNumber)
+                    .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
+                    .schema(InvoiceSchema.FA3_1_0_E)
+                    .build();
+
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
+        }
+    }
+
+    @Test
+    void generateInvoiceWithOnlineQrCode() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_online_qr.pdf"))) {
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+
+            String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
+            String identifier = "6891152920";
+            LocalDate issueDate = LocalDate.of(2025, 10, 8);
+
+            InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
+                    Environment.TEST,
+                    identifier,
+                    issueDate
+            );
+
+            InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA3_1_0_E)
+                    .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
+                    .ksefNumber(ksefNumber)
+                    .build();
+
+            generator.generateInvoice(invoiceXml, params, out);
+        }
+    }
+
+    @Test
+    void generateInvoiceWithOfflineQrCode() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_offline_qr.pdf"))) {
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+
+            String identifier = "6891152920";
+            LocalDate issueDate = LocalDate.of(2025, 10, 8);
+
+            InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
+                    Environment.TEST,
+                    identifier,
+                    issueDate
+            );
+
+            InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA3_1_0_E)
+                    .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
+                    .build();
+
+            generator.generateInvoice(invoiceXml, params, out);
         }
     }
 }
