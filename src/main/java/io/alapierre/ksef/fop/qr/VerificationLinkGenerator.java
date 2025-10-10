@@ -45,7 +45,7 @@ public final class VerificationLinkGenerator {
     /**
      * Builds a KSeF certificate verification link (CODE II) and signs the path using either RSA-PSS or ECDSA.
      * Signature input is the URL path without protocol and trailing slash, e.g.:
-     *   ksef-test.mf.gov.pl/client-app/certificate/Nip/1111111111/1111111111/01F20A5D352AE590/<hash>
+     *   ksef-test.mf.gov.pl/client-app/certificate/Nip/1111111111/1111111111/01F20A5D352AE590/{hash}
      *
      * @param environment base URL (e.g. <a href="https://ksef-test.mf.gov.pl">...</a>)
      * @param ctxType     context identifier type (Nip, InternalId, NipVatUe, PeppolId)
