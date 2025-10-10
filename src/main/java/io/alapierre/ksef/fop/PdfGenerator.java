@@ -59,24 +59,43 @@ public class PdfGenerator {
     }
 
     /**
-     * Generates UPO PDF from given XML and OutputStream
+     * Generates UPO PDF from given XML and OutputStream (defaults to v3 for backward compatibility)
      * @param upoXML UPO XML
      * @param out    destination OutputStream
      * @throws IOException          throws when IO error occurs
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException         throws when FOP error occurs
+     * @deprecated Use generateUpo(Source, UpoGenerationParams, OutputStream) instead for version control
      */
+    @Deprecated
     public void generateUpo(Source upoXML, OutputStream out) throws IOException, TransformerException, FOPException {
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
-
-        TransformerFactory factory = TransformerFactory.newInstance();
-        try (InputStream xsl = loadResource("templates/ksef_upo.fop")) {
-            Transformer transformer = factory.newTransformer(new StreamSource(xsl));
-            transformer.transform(upoXML, new SAXResult(fop.getDefaultHandler()));
-        }
+        UpoGenerationParams params = UpoGenerationParams.builder()
+                .schema(UpoSchema.UPO_V3)
+                .build();
+        generateUpo(upoXML, params, out);
     }
 
+    /**
+     * Generates UPO PDF from given XML and OutputStream with version support
+     * @param upoXML UPO XML
+     * @param params UPO generation parameters including schema version
+     * @param out    destination OutputStream
+     * @throws IOException          throws when IO error occurs
+     * @throws TransformerException throws when XSLT transformer error occurs
+     * @throws FOPException         throws when FOP error occurs
+     */
+    public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws IOException, TransformerException, FOPException {
+
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+
+        Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
+        TransformerFactory factory = TransformerFactory.newInstance();
+
+        String templatePath = getUpoTemplatePathForSchema(params);
+        Transformer transformer = factory.newTransformer(new StreamSource(loadResource(templatePath)));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(upoXML, res);
+    }
 
     /**
      * Generates a regular invoice PDF based on the input XML, using InvoiceGenerationParams for configurable options.
@@ -152,6 +171,40 @@ public class PdfGenerator {
             Result result = new SAXResult(fop.getDefaultHandler());
             transformer.transform(xmlSource, result);
         }
+    }
+
+    private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {
+        String templateFileName;
+        switch (params.getSchema()) {
+            case UPO_V3 -> templateFileName = "templates/upo_v3/ksef_upo.fop";
+            case UPO_V4_2 -> templateFileName = "templates/upo_v4/ksef_upo.fop";
+            default -> {
+                log.warn("UPO Schema is not provided in UpoGenerationParams or not supported, using default v3");
+                templateFileName = "templates/upo_v3/ksef_upo.fop";
+            }
+        }
+        return templateFileName;
+    }
+
+    private void insertAdditionalInvoiceData(InvoiceGenerationParams params, @Nullable LocalDate duplicateDate, @NotNull Transformer transformer) {
+        Optional.ofNullable(params.getQrCode())
+                .map(Base64.getEncoder()::encodeToString)
+                .ifPresent(encodedQrCode -> setParameterIfNotNull("qrCode", encodedQrCode, transformer));
+        Optional.ofNullable(params.getLogo())
+                .map(Base64.getEncoder()::encodeToString)
+                .ifPresent(encodedLogo -> setParameterIfNotNull("logo", encodedLogo, transformer));
+        Optional.ofNullable(duplicateDate)
+                .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .ifPresent(formattedDate -> setParameterIfNotNull("duplicateDate", formattedDate, transformer));
+        Optional.ofNullable(params.getCurrencyDate())
+                .map(localDate -> localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .ifPresent(formattedDate -> setParameterIfNotNull("currencyDate", formattedDate, transformer));
+        setParameterIfNotNull("nrKsef", params.getKsefNumber(), transformer);
+        setParameterIfNotNull("verificationLink", params.getVerificationLink(), transformer);
+        setParameterIfNotNull("showFooter", invoicePdfConfig.isShowFooter(), transformer);
+        setParameterIfNotNull("useExtendedDecimalPlaces", invoicePdfConfig.isUseExtendedPriceDecimalPlaces(), transformer);
+        setParameterIfNotNull("issuerUser", params.getIssuerUser(), transformer);
+        setParameterIfNotNull("showCorrectionDifferences", params.isShowCorrectionDifferences(), transformer);
     }
 
     private void applyParameters(InvoiceGenerationParams params,
