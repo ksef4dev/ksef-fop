@@ -40,6 +40,25 @@
         <JST>2</JST>
         <GV>2</GV>
     </Podmiot2>
+    <Podmiot3>
+        <IDNabywcy>nabywca12345</IDNabywcy>
+        <DaneIdentyfikacyjne>
+            <NIP>3333333333</NIP>
+            <Nazwa>F.H.U. Grażyna Kowalska</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Polna 1</AdresL1>
+            <AdresL2>00-001 Warszawa</AdresL2>
+        </Adres>
+        <DaneKontaktowe>
+            <Email>jan@kowalski.pl</Email>
+            <Telefon>555777999</Telefon>
+        </DaneKontaktowe>
+        <Rola>4</Rola>
+        <Udzial>50</Udzial>
+        <NrKlienta>nrklienta12345</NrKlienta>
+    </Podmiot3>
     <Fa>
         <KodWaluty>PLN</KodWaluty>
         <P_1>2023-08-31</P_1>

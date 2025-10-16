@@ -148,7 +148,7 @@ class GeneratePdfTest {
     void generateFa3InvoicePdf() throws Exception {
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3.pdf"))) {
 
             byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
 

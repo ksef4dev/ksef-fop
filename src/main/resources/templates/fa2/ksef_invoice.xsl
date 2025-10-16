@@ -2449,6 +2449,18 @@
                             select="crd:DaneKontaktowe/crd:Telefon"/>
                 </fo:block>
             </xsl:if>
+            <xsl:if test="crd:NrKlienta">
+                <fo:block text-align="left" padding-bottom="2px">
+                    <fo:inline font-weight="600">Numer klienta: </fo:inline>
+                    <xsl:value-of select="crd:NrKlienta"/>
+                </fo:block>
+            </xsl:if>
+            <xsl:if test="crd:IDNabywcy">
+                <fo:block text-align="left">
+                    <fo:inline font-weight="600">ID Nabywcy: </fo:inline>
+                    <xsl:value-of select="crd:IDNabywcy"/>
+                </fo:block>
+            </xsl:if>
         </xsl:if>
     </xsl:template>
 
