@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2025-09-01T00:00:00Z</DataWytworzeniaFa>
+        <SystemInfo>Samplofaktur</SystemInfo>
+    </Naglowek>
+    <Podmiot1>
+        <PrefiksPodatnika>PL</PrefiksPodatnika>
+        <DaneIdentyfikacyjne>
+            <NIP>1234567890</NIP>
+            <Nazwa>TEST SP z.o.o.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. testowa 2</AdresL1>
+            <AdresL2>07-410 Test</AdresL2>
+        </Adres>
+        <DaneKontaktowe>
+            <Email>test.pl@test.com</Email>
+            <Telefon>+49123456789</Telefon>
+        </DaneKontaktowe>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <KodUE>PL</KodUE>
+            <NrVatUE>1234560670</NrVatUE>
+            <Nazwa>Nazwa po zmianie sp. z o.o</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>NL</KodKraju>
+            <AdresL1>TEST 167</AdresL1>
+            <AdresL2>2132 TS TEST</AdresL2>
+        </Adres>
+        <DaneKontaktowe>
+            <Email>AP.TEST@test.com</Email>
+            <Telefon>+31123569368</Telefon>
+        </DaneKontaktowe>
+        <NrKlienta>16280</NrKlienta>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1>2023-10-23</P_1>
+        <P_2>29903413</P_2>
+        <P_6>2023-10-23</P_6>
+        <P_13_1>0.00</P_13_1>
+        <P_14_1>0.00</P_14_1>
+        <P_13_2>0.00</P_13_2>
+        <P_14_2>0.00</P_14_2>
+        <P_13_3>0.00</P_13_3>
+        <P_14_3>0.00</P_14_3>
+        <P_13_4>0.00</P_13_4>
+        <P_14_4>0.00</P_14_4>
+        <P_13_5>0.00</P_13_5>
+        <P_13_6_2>0.00</P_13_6_2>
+        <P_13_7>0.00</P_13_7>
+        <P_15>0.00</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>1</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>KOR</RodzajFaktury>
+        <DaneFaKorygowanej>
+            <DataWystFaKorygowanej>2025-03-10</DataWystFaKorygowanej>
+            <NrFaKorygowanej>29903413</NrFaKorygowanej>
+            <NrKSeF>1</NrKSeF>
+            <NrKSeFFaKorygowanej>5210415750-20250310-FF4861C9CC3F-BA</NrKSeFFaKorygowanej>
+        </DaneFaKorygowanej>
+        <Podmiot1K>
+            <PrefiksPodatnika>PL</PrefiksPodatnika>
+            <DaneIdentyfikacyjne>
+                <NIP>1234567890</NIP>
+                <Nazwa>Test test</Nazwa>
+            </DaneIdentyfikacyjne>
+            <Adres>
+                <KodKraju>NL</KodKraju>
+                <AdresL1>TAURUSAVENUE 167</AdresL1>
+                <AdresL2>2132 LS HOOFDDORP</AdresL2>
+            </Adres>
+        </Podmiot1K>
+        <Podmiot2K>
+            <DaneIdentyfikacyjne>
+                <NIP>1234560670</NIP>
+                <Nazwa>Nazwa przed zmianą</Nazwa>
+            </DaneIdentyfikacyjne>
+            <Adres>
+                <KodKraju>NL</KodKraju>
+                <AdresL1>TEST 167</AdresL1>
+                <AdresL2>2132 Nazwa przed zmianą</AdresL2>
+            </Adres>
+        </Podmiot2K>
+        <DodatkowyOpis>
+            <Klucz>Kraj wywozu</Klucz>
+            <Wartosc>Polska</Wartosc>
+        </DodatkowyOpis>
+        <DodatkowyOpis>
+            <NrWiersza>1</NrWiersza>
+            <Klucz>Materiał</Klucz>
+            <Wartosc>9505</Wartosc>
+        </DodatkowyOpis>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>Steelcontainer 800 lt</P_7>
+            <P_8A>ST</P_8A>
+            <P_8B>1.000</P_8B>
+            <P_9A>0.00</P_9A>
+            <P_11>0.00</P_11>
+            <P_12>23</P_12>
+            <StanPrzed>1</StanPrzed>
+        </FaWiersz>
+        <Platnosc>
+            <TerminPlatnosci>
+                <Termin>2024-04-02</Termin>
+                <TerminOpis>Do dnia 02.04.2024 bez rabatu</TerminOpis>
+            </TerminPlatnosci>
+            <RachunekBankowy>
+                <NrRB>50175011070000000038433814</NrRB>
+                <SWIFT>PPABPLPKXXX</SWIFT>
+                <NazwaBanku>BNP Paribas Bank Polska S.A.</NazwaBanku>
+            </RachunekBankowy>
+        </Platnosc>
+        <WarunkiTransakcji>
+            <Umowy>
+                <NrUmowy>PL-EKO-01-003602</NrUmowy>
+            </Umowy>
+            <WarunkiDostawy>DDP Bieruñ (Incoterms 2020)</WarunkiDostawy>
+        </WarunkiTransakcji>
+    </Fa>
+    <Stopka>
+        <Informacje>
+            <StopkaFaktury>Sąd Rejonowy dla m.st. Warszawy, XIV Wydział Gospodarczy Krajowego Rejestru Sądowego Kapitał zakładowy: 7.163.400 zł</StopkaFaktury>
+        </Informacje>
+        <Rejestry>
+            <PelnaNazwa>Agrana Fruit Polska Sp. z o.o. Ławy, ul. Ławska 2 07-410 Ostrołęka, Polska</PelnaNazwa>
+            <KRS>0000056268</KRS>
+            <REGON>010445912</REGON>
+            <BDO>000091118</BDO>
+        </Rejestry>
+    </Stopka>
+</Faktura>

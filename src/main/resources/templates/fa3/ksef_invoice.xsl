@@ -349,7 +349,7 @@
                                     </fo:table-row>
 
                                     <fo:table-row>
-                                        <!-- Treść korygowanay -->
+                                        <!-- Treść korygowana -->
                                         <fo:table-cell>
                                             <xsl:if test="crd:Fa/crd:Podmiot1K/crd:PrefiksPodatnika">
                                                 <fo:block text-align="left" padding-bottom="3px">
@@ -463,11 +463,23 @@
                             <fo:table-row space-after="5mm">
                                 <fo:table-cell padding-bottom="8px">
                                     <xsl:choose>
+                                        <!-- Gdy jest zarówno Podmiot1K jak i Podmiot2K - oba już pokazane wyżej -->
+                                        <xsl:when test="crd:Fa/crd:Podmiot1K and crd:Fa/crd:Podmiot2K">
+                                            <fo:block/>
+                                        </xsl:when>
+                                        <!-- Gdy jest tylko Podmiot1K - sprzedawca pokazany wyżej, tu nabywca -->
                                         <xsl:when test="crd:Fa/crd:Podmiot1K">
                                             <fo:block font-size="12pt" text-align="left">
                                                 <fo:inline font-weight="bold">Nabywca</fo:inline>
                                             </fo:block>
                                         </xsl:when>
+                                        <!-- Gdy jest tylko Podmiot2K - nabywca pokazany wyżej, tu sprzedawca -->
+                                        <xsl:when test="crd:Fa/crd:Podmiot2K">
+                                            <fo:block font-size="12pt" text-align="left">
+                                                <fo:inline font-weight="bold">Sprzedawca</fo:inline>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <!-- Standardowa faktura - sprzedawca w pierwszej kolumnie -->
                                         <xsl:otherwise>
                                             <fo:block font-size="12pt" text-align="left">
                                                 <fo:inline font-weight="bold">Sprzedawca</fo:inline>
@@ -489,10 +501,11 @@
                                 </fo:table-cell>
                                 <fo:table-cell padding-bottom="8px">
                                     <xsl:choose>
-                                        <xsl:when test="crd:Fa/crd:Podmiot1K">
-                                            <fo:block>
-                                            </fo:block>
+                                        <!-- Gdy jest Podmiot1K lub Podmiot2K - trzecia kolumna pusta -->
+                                        <xsl:when test="crd:Fa/crd:Podmiot1K or crd:Fa/crd:Podmiot2K">
+                                            <fo:block/>
                                         </xsl:when>
+                                        <!-- Standardowa faktura - nabywca w trzeciej kolumnie -->
                                         <xsl:otherwise>
                                             <fo:block font-size="12pt" text-align="left">
                                                 <fo:inline font-weight="bold">Nabywca</fo:inline>
@@ -503,13 +516,19 @@
                                 </fo:table-cell>
                             </fo:table-row>
 
-                            <!-- Dane sprzedawcy -->
+                            <!-- Dane w kolumnach -->
                             <fo:table-row>
                                 <fo:table-cell>
                                     <xsl:choose>
+                                        <!-- Gdy jest zarówno Podmiot1K jak i Podmiot2K - pierwsza kolumna pusta -->
+                                        <xsl:when test="crd:Fa/crd:Podmiot1K and crd:Fa/crd:Podmiot2K">
+                                            <fo:block/>
+                                        </xsl:when>
+                                        <!-- Gdy jest tylko Podmiot1K - pokazujemy nabywcę -->
                                         <xsl:when test="crd:Fa/crd:Podmiot1K">
                                             <xsl:apply-templates select="crd:Podmiot2"/>
                                         </xsl:when>
+                                        <!-- Gdy jest tylko Podmiot2K lub standardowa faktura - pokazujemy sprzedawcę -->
                                         <xsl:otherwise>
                                             <xsl:apply-templates select="crd:Podmiot1"/>
                                         </xsl:otherwise>
@@ -533,9 +552,11 @@
                                 <!-- Dane nabywcy -->
                                 <fo:table-cell>
                                     <xsl:choose>
-                                        <xsl:when test="crd:Fa/crd:Podmiot1K">
-                                            <fo:block></fo:block>
+                                        <!-- Gdy jest Podmiot1K lub Podmiot2K - trzecia kolumna pusta -->
+                                        <xsl:when test="crd:Fa/crd:Podmiot1K or crd:Fa/crd:Podmiot2K">
+                                            <fo:block/>
                                         </xsl:when>
+                                        <!-- Standardowa faktura - pokazujemy nabywcę -->
                                         <xsl:otherwise>
                                             <xsl:apply-templates select="crd:Podmiot2"/>
                                         </xsl:otherwise>
@@ -545,6 +566,186 @@
                         </fo:table-body>
                     </fo:table>
 
+                    <!-- Korekta danych nabywcy -->
+                    <xsl:choose >
+                        <xsl:when test="crd:Fa/crd:Podmiot2K" >
+                            <!-- Linia oddzielająca - tylko gdy nie ma Podmiot1K (bo wtedy już jest linia przed główną tabelą) -->
+                            <xsl:if test="not(crd:Fa/crd:Podmiot1K)">
+                                <fo:block border-bottom="solid 1px grey" space-after="5mm" space-before="4mm"/>
+                            </xsl:if>
+
+                            <fo:block font-size="12pt" text-align="left">
+                                <fo:inline font-weight="bold">Nabywca</fo:inline>
+                            </fo:block>
+
+                            <fo:block text-align="left" >
+                                <xsl:if test="crd:Podmiot2/crd:NrEORI" >
+                                    <fo:block font-size="7pt">
+                                        <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+                                            <fo:inline font-weight="bold">Dane identyfikacyjne
+                                            </fo:inline>
+                                        </fo:block>
+                                        <fo:inline font-weight="600" font-size="7pt">Numer EORI: </fo:inline>
+                                        <xsl:value-of select="crd:Podmiot2/crd:NrEORI"/>
+                                    </fo:block>
+                                </xsl:if>
+                            </fo:block>
+                            <xsl:if test="crd:Podmiot2/crd:DaneKontaktowe/crd:Email|crd:Podmiot2/crd:DaneKontaktowe/crd:Telefon|crd:Podmiot2/crd:NrKlienta|crd:Podmiot2/crd:IDNabywcy">
+                                <fo:block text-align="left" padding-bottom="3px" font-size="7pt" padding-top="8px">
+                                    <fo:inline font-weight="bold">Dane kontaktowe
+                                    </fo:inline>
+                                </fo:block>
+                                <xsl:if test="crd:Podmiot2/crd:DaneKontaktowe/crd:Email">
+                                    <fo:block text-align="left" font-size="7pt" padding-bottom="2px">
+                                        <fo:inline font-weight="600">E-mail: </fo:inline>
+                                        <xsl:value-of
+                                                select="crd:Podmiot2/crd:DaneKontaktowe/crd:Email"/>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="crd:Podmiot2/crd:DaneKontaktowe/crd:Telefon">
+                                    <fo:block text-align="left" font-size="7pt" padding-bottom="2px">
+                                        <fo:inline font-weight="600">Tel.: </fo:inline>
+                                        <xsl:value-of
+                                                select="crd:Podmiot2/crd:DaneKontaktowe/crd:Telefon"/>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="crd:Podmiot2/crd:NrKlienta">
+                                    <fo:block text-align="left" font-size="7pt" padding-bottom="2px">
+                                        <fo:inline font-weight="600">Numer klienta: </fo:inline>
+                                        <xsl:value-of select="crd:Podmiot2/crd:NrKlienta"/>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="crd:Podmiot2/crd:IDNabywcy">
+                                    <fo:block text-align="left" font-size="7pt" padding-bottom="2px">
+                                        <fo:inline font-weight="600">ID Nabywcy: </fo:inline>
+                                        <xsl:value-of select="crd:Podmiot2/crd:IDNabywcy"/>
+                                    </fo:block>
+                                </xsl:if>
+                                <!-- Dodatkowy odstęp po danych kontaktowych -->
+                                <fo:block padding-bottom="8px"/>
+                            </xsl:if>
+
+                            <fo:table font-size="7pt" table-layout="fixed" width="100%" padding-top="8px">
+                                <fo:table-column column-width="33%"/>
+                                <fo:table-column column-width="33%"/>
+                                <fo:table-column column-width="33%"/>
+                                <fo:table-body>
+                                    <fo:table-row space-after="5mm">
+                                        <fo:table-cell padding-bottom="8px">
+                                            <fo:block font-size="9pt" text-align="left">
+                                                <fo:inline font-weight="bold">Treść korygowana</fo:inline>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell padding-bottom="8px">
+                                            <fo:block>
+
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell padding-bottom="8px">
+                                            <fo:block font-size="9pt" text-align="left">
+                                                <fo:inline font-weight="bold">Treść korygująca</fo:inline>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+
+                                    <fo:table-row>
+                                        <!-- Treść korygowana -->
+                                        <fo:table-cell>
+                                            <xsl:if test="crd:Fa/crd:Podmiot2K/crd:NrEORI">
+                                                <fo:block text-align="left" padding-bottom="3px">
+                                                    <fo:inline font-weight="600">Numer EORI: </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:NrEORI"/>
+                                                </fo:block>
+                                            </xsl:if>
+                                            <fo:block text-align="left" padding-bottom="3px" font-size="7pt">
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrVatUE">
+                                                    <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:KodUE"/>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                                                </xsl:if>
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NIP">
+                                                    <fo:inline font-weight="600">NIP: </fo:inline>
+                                                    <xsl:value-of
+                                                            select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                                </xsl:if>
+                                            </fo:block>
+                                            <fo:block text-align="left" padding-bottom="3px">
+                                                <fo:inline font-weight="600">Nazwa: </fo:inline>
+                                                <xsl:value-of
+                                                        select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                                            </fo:block>
+                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+                                                <fo:inline font-weight="bold">Adres</fo:inline>
+                                            </fo:block>
+                                            <fo:block text-align="left">
+                                                <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL1"/>
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL2">
+                                                    <fo:inline>, </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL2"/>
+                                                </xsl:if>
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:Adres/crd:KodKraju">
+                                                    <fo:block>
+                                                        <xsl:call-template name="mapKodKrajuToNazwa">
+                                                            <xsl:with-param name="kodKraju" select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:KodKraju"/>
+                                                        </xsl:call-template>
+                                                    </fo:block>
+                                                </xsl:if>
+                                            </fo:block>
+                                        </fo:table-cell>
+
+                                        <fo:table-cell>
+                                            <fo:block>
+
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <!-- Treść korygująca -->
+                                        <fo:table-cell>
+                                            <xsl:if test="crd:Podmiot2/crd:NrEORI">
+                                                <fo:block text-align="left" padding-bottom="3px">
+                                                    <fo:inline font-weight="600">Numer EORI: </fo:inline>
+                                                    <xsl:value-of select="crd:Podmiot2/crd:NrEORI"/>
+                                                </fo:block>
+                                            </xsl:if>
+                                            <fo:block text-align="left" padding-bottom="3px" font-size="7pt">
+                                                <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE">
+                                                    <fo:inline font-weight="600">Numer Vat-UE: </fo:inline>
+                                                    <xsl:value-of select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:KodUE"/>
+                                                    <xsl:value-of select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrVatUE"/>
+                                                </xsl:if>
+                                                <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP">
+                                                    <fo:inline font-weight="600">NIP: </fo:inline>
+                                                    <xsl:value-of
+                                                            select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                                </xsl:if>
+                                            </fo:block>
+                                            <fo:block text-align="left" padding-bottom="3px">
+                                                <fo:inline font-weight="600">Nazwa: </fo:inline>
+                                                <xsl:value-of
+                                                        select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
+                                            </fo:block>
+                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+                                                <fo:inline font-weight="bold">Adres</fo:inline>
+                                            </fo:block>
+                                            <fo:block text-align="left">
+                                                <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL1"/>
+                                                <xsl:if test="crd:Podmiot2/crd:Adres/crd:AdresL2">
+                                                    <fo:inline>, </fo:inline>
+                                                    <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL2"/>
+                                                </xsl:if>
+                                                <xsl:if test="crd:Podmiot2/crd:Adres/crd:KodKraju">
+                                                    <fo:block>
+                                                        <xsl:call-template name="mapKodKrajuToNazwa">
+                                                            <xsl:with-param name="kodKraju" select="crd:Podmiot2/crd:Adres/crd:KodKraju"/>
+                                                        </xsl:call-template>
+                                                    </fo:block>
+                                                </xsl:if>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </fo:table-body>
+                            </fo:table>
+                        </xsl:when>
+                    </xsl:choose>
 
                     <!-- Podmioty inne -->
                     <xsl:if test="crd:Podmiot3[crd:Rola != 5]">
