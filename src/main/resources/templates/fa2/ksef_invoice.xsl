@@ -1749,34 +1749,44 @@
                     </xsl:if>
 
                     <!-- Forma płatności -->
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold">Forma płatności:</fo:inline>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
-                                Gotówka
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
-                                Karta
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
-                                Bon
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
-                                Czek
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
-                                Kredyt
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
-                                Przelew
-                            </xsl:if>
-                            <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
-                                Mobilna
-                            </xsl:if>
-                        </fo:block>
-                    </xsl:if>
-                    <!-- Termin płatności -->
+                    <xsl:choose>
+                        <xsl:when test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold">Forma płatności: </fo:inline>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
+                                    Gotówka
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
+                                    Karta
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
+                                    Bon
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
+                                    Czek
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
+                                    Kredyt
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
+                                    Przelew
+                                </xsl:if>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
+                                    Mobilna
+                                </xsl:if>
+                            </fo:block>
+                        </xsl:when>
+                        <xsl:when test="crd:Fa/crd:Platnosc/crd:PlatnoscInna = 1">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold">Forma płatności: </fo:inline>
+                                <xsl:if test="crd:Fa/crd:Platnosc/crd:OpisPlatnosci">
+                                    <xsl:value-of select="crd:Fa/crd:Platnosc/crd:OpisPlatnosci"/>
+                                </xsl:if>
+                            </fo:block>
+                        </xsl:when>
+                    </xsl:choose>
 
+                    <!-- Termin płatności -->
                     <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin">
                         <fo:block font-size="7pt" text-align="left" space-after="1mm">
                             <fo:inline font-weight="bold">Termin płatności: </fo:inline>
