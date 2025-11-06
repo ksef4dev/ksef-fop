@@ -23,7 +23,7 @@ What do you need to use it in your application:
 3. Dependency `io.alapierre.ksef:ksef-fop` 
 
 # Technologies
-- Java 17
+- Java 21
 - Apache FOP
 
 # Configuration
