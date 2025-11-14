@@ -8,6 +8,8 @@ import java.security.PrivateKey;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static io.alapierre.ksef.fop.qr.CryptoUtils.computeUrlEncodedSignedHash;
+
 @Slf4j
 public final class VerificationLinkGenerator {
 
@@ -63,35 +65,29 @@ public final class VerificationLinkGenerator {
                                                              String certSerial,
                                                              PrivateKey privateKey,
                                                              byte[] invoiceXml) {
-        String invoiceHash = CryptoUtils.computeInvoiceHashBase64Url(invoiceXml);
+        String invoiceHashUrlEncoded = CryptoUtils.computeInvoiceHashBase64Url(invoiceXml);
 
-
-        String base = trimTrailingSlash(environment.getUrl());
+        String baseUrl = trimTrailingSlash(environment.getUrl());
         String normalizedNip = normalizeAndValidateNip(sellerNip);
 
-        // 1) Build unsigned path (without protocol, without trailing slash)
-        //    hostPart + /client-app/certificate/{CtxType}/{CtxValue}/{SellerNip}/{CertSerial}/{Hash}
-        String unsignedPath = String.format("%s/client-app/certificate/%s/%s/%s/%s/%s",
-                        base,
+        String pathToSign = String.format("%s/client-app/certificate/%s/%s/%s/%s/%s",
+                        baseUrl,
                         ctxType.pathPart(),
                         ctxValue,
                         normalizedNip,
                         certSerial,
-                        invoiceHash)
+                        invoiceHashUrlEncoded)
                 .replace("https://", "");
+        String signedHash = computeUrlEncodedSignedHash(pathToSign, privateKey);
 
-        // 2) Sign the path
-        String signature = CryptoUtils.computeUrlEncodedSignedHash(unsignedPath, privateKey);
-
-        // 3) Assemble full URL (with protocol)
         return String.format("%s/client-app/certificate/%s/%s/%s/%s/%s/%s",
-                base,
+                baseUrl,
                 ctxType.pathPart(),
                 ctxValue,
                 normalizedNip,
                 certSerial,
-                invoiceHash,
-                signature);
+                invoiceHashUrlEncoded,
+                signedHash);
     }
 
     private static String trimTrailingSlash(String url) {

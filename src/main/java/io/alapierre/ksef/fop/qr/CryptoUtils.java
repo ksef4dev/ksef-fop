@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 
 @Slf4j
@@ -31,13 +33,13 @@ public final class CryptoUtils {
 
     public static String computeUrlEncodedSignedHash(String pathToSign, PrivateKey privateKey) {
         try {
-            MessageDigest sha256 = MessageDigest.getInstance(SHA_256);
-            byte[] sha = sha256.digest(pathToSign.getBytes(StandardCharsets.UTF_8));
-
+            byte[] data = pathToSign.getBytes(StandardCharsets.UTF_8);
 
             Signature signature;
             if (privateKey instanceof RSAPrivateKey) {
-                signature = Signature.getInstance(SHA_256_WITH_RSA);
+                signature = Signature.getInstance("RSASSA-PSS");
+                PSSParameterSpec pssSpec = new PSSParameterSpec("SHA-256", "MGF1", new MGF1ParameterSpec("SHA-256"), 32, 1);
+                signature.setParameter(pssSpec);
             } else if (privateKey instanceof ECPrivateKey) {
                 signature = Signature.getInstance(SHA_256_WITH_ECDSA);
             } else {
@@ -45,12 +47,10 @@ public final class CryptoUtils {
             }
 
             signature.initSign(privateKey);
-            signature.update(sha);
+            signature.update(data);
             byte[] signedBytes = signature.sign();
-
-
             return Base64.getUrlEncoder().withoutPadding().encodeToString(signedBytes);
-        } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException | InvalidAlgorithmParameterException e) {
             throw new VerificationLinkGenerationException("Cannot compute signature", e);
         }
     }

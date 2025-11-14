@@ -2,9 +2,6 @@ package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
 import io.alapierre.ksef.fop.qr.enums.Environment;
-import io.alapierre.ksef.fop.qr.helpers.CertificateBuilders;
-import io.alapierre.ksef.fop.qr.helpers.SelfSignedCertificate;
-import io.alapierre.ksef.fop.qr.helpers.TestCertificateGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -12,6 +9,16 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMDecryptorProvider;
+import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.Result;
@@ -21,11 +28,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.time.LocalDate;
+import java.util.Arrays;
+
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -33,6 +47,10 @@ import java.time.LocalDate;
  */
 @Slf4j
 class GeneratePdfTest {
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     @Test
     void genV3UpoByService() throws Exception {
@@ -150,7 +168,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/qr_test/nip.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)
@@ -250,30 +268,35 @@ class GeneratePdfTest {
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_multiple_qr.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+            String invoicePath = "src/test/resources/faktury/fa3/qr_test/nip.xml";
 
-            String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
-            String identifier = "6891152920";
-            String serial = "01F20A5D352AE590"; // Example certificate serial in hex format
-            LocalDate issueDate = LocalDate.of(2025, 10, 8);
+            Path certPath = Path.of("src/test/resources/certs/nip_sign.crt");
+            Path keyPath = Path.of("src/test/resources/certs/nip_sign.key");
+            String certPasswordNip = "Lu@P2@3DFDHo@up0";
+            File invoiceFile = new File(invoicePath);
+            byte[] invoiceXml = Files.readAllBytes(invoiceFile.toPath());
+            byte[] certBytes = Files.readAllBytes(certPath);
 
-            // Generate RSA key pair for testing using utility class
-            CertificateBuilders.X500NameHolder x500 = new CertificateBuilders()
-                    .buildForOrganization("Kowalski sp. z o.o", "VATPL-1111111111", "TestEcc", "PL");
-            SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certBytes));
+
+            String serial = extractCertSerial(cert);
+
+            char[] password = certPasswordNip.toCharArray();
+            PrivateKey privateKey = loadEncryptedPrivateKey(keyPath, password);
 
             InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(
                     Environment.TEST,
                     ContextIdentifierType.NIP,
-                    identifier,
-                    identifier,
+                    "3731383632",
+                    "3731383632",
                     serial,
-                    cert.getPrivateKey(),
-                    issueDate
+                    privateKey,
+                    LocalDate.of(2025, 11, 13)
                     );
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
-                    .ksefNumber(ksefNumber)
+                    .ksefNumber("3731383632-20251113-020020F71940-31")
                     .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
                     .schema(InvoiceSchema.FA3_1_0_E)
                     .build();
@@ -333,4 +356,52 @@ class GeneratePdfTest {
             generator.generateInvoice(invoiceXml, params, out);
         }
     }
+
+    public static PrivateKey loadEncryptedPrivateKey(Path keyPath, char[] password) throws Exception {
+        try (Reader reader = Files.newBufferedReader(keyPath, StandardCharsets.UTF_8);
+             PEMParser pemParser = new PEMParser(reader)) {
+
+            Object obj = pemParser.readObject();
+            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
+
+            switch (obj) {
+                case PKCS8EncryptedPrivateKeyInfo encPkcs8 -> {
+                    var decryptorProvider =
+                            new JceOpenSSLPKCS8DecryptorProviderBuilder()
+                                    .setProvider("BC")
+                                    .build(password);
+                    PrivateKeyInfo pkInfo = encPkcs8.decryptPrivateKeyInfo(decryptorProvider);
+                    return converter.getPrivateKey(pkInfo);
+                }
+                case PEMEncryptedKeyPair encKeyPair -> {
+                    PEMDecryptorProvider decProv =
+                            new JcePEMDecryptorProviderBuilder()
+                                    .setProvider("BC")
+                                    .build(password);
+                    PEMKeyPair keyPair = encKeyPair.decryptKeyPair(decProv);
+                    return converter.getKeyPair(keyPair).getPrivate();
+                }
+                case PEMKeyPair keyPair -> {
+                    return converter.getKeyPair(keyPair).getPrivate();
+                }
+                default -> throw new IllegalArgumentException("Unsupported key format: " + obj.getClass());
+            }
+        }
+    }
+
+    public static String extractCertSerial(X509Certificate cert) {
+        byte[] serialBytes = cert.getSerialNumber().toByteArray();
+
+        if (serialBytes.length > 1 && serialBytes[0] == 0x00) {
+            serialBytes = Arrays.copyOfRange(serialBytes, 1, serialBytes.length);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : serialBytes) {
+            sb.append(String.format("%02X", b));
+        }
+
+        return sb.toString();
+    }
+
 }

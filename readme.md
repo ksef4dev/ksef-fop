@@ -96,3 +96,29 @@ File qrCodeFile = new File("src/test/resources/barcode.png");
 # Fop Schema 
 
 https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/fop/src/foschema/fop.xsd
+
+## Test certificates for QR verification link generation
+
+The tests responsible for generating **QR verification links** (used in invoice PDFs) rely on **test-only certificates and private keys**.  
+These certificates were generated exclusively for the **KSeF test environment** and serve **only for signing verification payloads**.  
+They are **not related to any real entities** and must **never be used in production**.
+
+### Important notes
+
+- Certificates stored in `src/test/resources/certs`:
+    - are **dedicated to the KSeF test environment**,
+    - were generated solely for **integration and development tests**,
+    - are **not valid for authentication** (only for signing),
+    - do **not provide access** to any KSeF system areas,
+    - can be safely included in the repository for test reproducibility.
+
+- Encrypted private keys used in the tests are bundled together with test certificates:
+    - the passwords are included directly in the test class **on purpose**,
+    - this is acceptable **only for testing scenarios**,
+    - do not reuse these keys or their structure in real projects.
+
+- Production applications must use **real, trusted certificates** compliant with KSeF requirements.  
+  The certificates included here are **never** meant for production signing or authentication.
+
+- If you need to test QR verification link generation in your project,  
+  you should create **your own dedicated test certificates** instead of reusing the ones from this repository.

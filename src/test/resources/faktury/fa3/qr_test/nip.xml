@@ -8,7 +8,7 @@
     </Naglowek>
     <Podmiot1>
         <DaneIdentyfikacyjne>
-            <NIP>6891152920</NIP>
+            <NIP>3731383632</NIP>
             <Nazwa>ABC AGD sp. z o. o.</Nazwa>
         </DaneIdentyfikacyjne>
         <Adres>
@@ -40,29 +40,10 @@
         <JST>2</JST>
         <GV>2</GV>
     </Podmiot2>
-    <Podmiot3>
-        <IDNabywcy>nabywca12345</IDNabywcy>
-        <DaneIdentyfikacyjne>
-            <NIP>3333333333</NIP>
-            <Nazwa>F.H.U. Grażyna Kowalska</Nazwa>
-        </DaneIdentyfikacyjne>
-        <Adres>
-            <KodKraju>PL</KodKraju>
-            <AdresL1>ul. Polna 1</AdresL1>
-            <AdresL2>00-001 Warszawa</AdresL2>
-        </Adres>
-        <DaneKontaktowe>
-            <Email>jan@kowalski.pl</Email>
-            <Telefon>555777999</Telefon>
-        </DaneKontaktowe>
-        <Rola>4</Rola>
-        <Udzial>50</Udzial>
-        <NrKlienta>nrklienta12345</NrKlienta>
-    </Podmiot3>
     <Fa>
         <KodWaluty>PLN</KodWaluty>
         <P_1>2025-11-13</P_1>
-        <P_2>llcdpk88gk-2025-06-24</P_2>
+        <P_2>test-2025-06-24</P_2>
         <P_13_7>4001.49</P_13_7>
         <P_15>4001.49</P_15>
         <Adnotacje>
