@@ -160,6 +160,7 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
         TransformerFactory factory = new TransformerFactoryImpl();
+        factory.setURIResolver(new ClasspathUriResolver());
         String xslPath = resolveXslTemplate(params);
 
         URL xslUrl = getResourceUrl(xslPath);
