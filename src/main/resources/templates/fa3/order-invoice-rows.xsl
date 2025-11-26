@@ -4,6 +4,7 @@
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/">
 
+    <!-- Note: $labels parameter and kLabels key are defined in the main ksef_invoice.xsl -->
 
     <!-- Attribute sets required for table styling -->
     <xsl:attribute-set name="tableBorder">
@@ -87,43 +88,43 @@
             <fo:table-header>
                 <fo:table-row background-color="#f5f5f5" font-weight="bold">
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Lp.</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.lp', $labels)"/></fo:block>
                     </fo:table-cell>
                     <xsl:if test="$showUU_IDZ">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Unikalny numer wiersza</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.uniqueRowId', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Nazwa towaru lub usługi</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.productName', $labels)"/></fo:block>
                     </fo:table-cell>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Ilość</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.quantity', $labels)"/></fo:block>
                     </fo:table-cell>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Jedn.</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.unit', $labels)"/></fo:block>
                     </fo:table-cell>
                     <xsl:if test="$showP9AZ">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Cena jedn. netto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.unitPriceNet', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Stawka podatku</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.taxRate', $labels)"/></fo:block>
                     </fo:table-cell>
                     <xsl:if test="$showP11NettoZ">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Wartość netto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.netValueShort', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$showP11VatZ">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Kwota VAT</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.vatAmount', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$showStanPrzed">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Stan przed</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.stateBefore', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                 </fo:table-row>
@@ -214,7 +215,7 @@
                                     <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                                         <fo:block>
                                             <xsl:if test="crd:StanPrzedZ = '1'">
-                                                Tak
+                                                <xsl:value-of select="key('kLabels', 'common.yes', $labels)"/>
                                             </xsl:if>
                                         </fo:block>
                                     </fo:table-cell>
@@ -342,7 +343,7 @@
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
                     <fo:block>
                         <xsl:if test="crd:StanPrzedZ = '1'">
-                            Tak
+                            <xsl:value-of select="key('kLabels', 'common.yes', $labels)"/>
                         </xsl:if>
                     </fo:block>
                 </fo:table-cell>
@@ -411,48 +412,48 @@
             <fo:table-header>
                 <fo:table-row background-color="#f5f5f5" font-weight="bold">
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Lp.</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.lp', $labels)"/></fo:block>
                     </fo:table-cell>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Nazwa towaru lub usługi</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.productName', $labels)"/></fo:block>
                     </fo:table-cell>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Ilość</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.quantity', $labels)"/></fo:block>
                     </fo:table-cell>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Jedn.</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.unit', $labels)"/></fo:block>
                     </fo:table-cell>
                     <xsl:if test="$faWierszAfter/crd:P_9A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Cena jedn. netto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.unitPriceNet', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$faWierszAfter/crd:P_9B">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Cena jedn. brutto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.unitPriceGross', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$faWierszAfter/crd:P_10">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Rabat</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.discount', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                        <fo:block>Stawka podatku</fo:block>
+                        <fo:block><xsl:value-of select="key('kLabels', 'row.taxRate', $labels)"/></fo:block>
                     </fo:table-cell>
                     <xsl:if test="$faWierszAfter/crd:P_11">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Wartość sprzedaży netto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.netValue', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$faWierszAfter/crd:P_11Vat">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Kwota VAT</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.vatAmount', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <xsl:if test="$faWierszAfter/crd:P_11A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                            <fo:block>Wartość sprzedaży brutto</fo:block>
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.grossValue', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                 </fo:table-row>

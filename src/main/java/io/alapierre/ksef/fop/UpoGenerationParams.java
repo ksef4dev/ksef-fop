@@ -11,4 +11,7 @@ public class UpoGenerationParams {
     
     @NotNull
     private UpoSchema schema;
+
+    @Builder.Default
+    private Language language = Language.PL;
 }

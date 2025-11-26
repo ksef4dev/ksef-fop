@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop;
 
+import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import io.alapierre.ksef.fop.qr.QrCodeGenerator;
 import io.alapierre.ksef.fop.qr.VerificationLinkGenerator;
@@ -12,7 +13,9 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
@@ -32,14 +35,10 @@ public class PdfGenerator {
 
     private static final String MIME_PDF = "application/pdf";
     private static final int QR_SIZE = 200;
-    private static final String LABEL_OFFLINE = "OFFLINE";
-    private static final String LABEL_CERT = "CERTYFIKAT";
-    private static final String TITLE_ONLINE = "Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji faktury.";
-    private static final String TITLE_CERT = "Weryfikacja certyfikatu - kliknij w link aby przejść do weryfikacji certyfikatu wystawcy faktury.";
-
 
     private final FopFactory fopFactory;
     private InvoicePdfConfig invoicePdfConfig = new InvoicePdfConfig();
+    private final TranslationService translationService = new TranslationService();
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
         this(loadResource(fopConfig));
@@ -93,6 +92,14 @@ public class PdfGenerator {
 
         String templatePath = getUpoTemplatePathForSchema(params);
         Transformer transformer = factory.newTransformer(new StreamSource(loadResource(templatePath)));
+
+        try {
+            Document labels = translationService.getTranslationsAsXml(params.getLanguage().getCode());
+            transformer.setParameter("labels", labels);
+        } catch (Exception e) {
+            log.error("Failed to load translations", e);
+        }
+
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(upoXML, res);
     }
@@ -112,7 +119,8 @@ public class PdfGenerator {
     public void generateInvoice(byte[] invoiceXml,
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws IOException, TransformerException, FOPException {
-        List<QrCodeData> qrCodes = buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml);
+        String langCode = params.getLanguage().getCode();
+        List<QrCodeData> qrCodes = buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, out);
     }
 
@@ -191,6 +199,13 @@ public class PdfGenerator {
                                  @Nullable LocalDate duplicateDate,
                                  @NotNull Transformer transformer) {
 
+        try {
+            Document labels = translationService.getTranslationsAsXml(params.getLanguage().getCode());
+            setParam(transformer, "labels", labels);
+        } catch (Exception e) {
+            log.error("Failed to load translations", e);
+        }
+
         setQrParameters(qrCodes, transformer);
 
         if (params.getLogo() != null) {
@@ -235,30 +250,36 @@ public class PdfGenerator {
 
     private @Nullable List<QrCodeData> buildQrCodes(@Nullable InvoiceQRCodeGeneratorRequest req,
                                                     @Nullable String ksefNumber,
-                                                    byte[] invoiceXmlBytes) {
+                                                    byte[] invoiceXmlBytes,
+                                                    String langCode) {
         if (req == null) return null;
 
-        QrCodeData online = buildOnlineQr(req, ksefNumber, invoiceXmlBytes);
+        QrCodeData online = buildOnlineQr(req, ksefNumber, invoiceXmlBytes, langCode);
         if (req.isOnline()) { // KOD I
             return List.of(online);
         } else { // KOD I + KOD II
-            QrCodeData cert = buildCertificateQr(req, invoiceXmlBytes);
+            QrCodeData cert = buildCertificateQr(req, invoiceXmlBytes, langCode);
             return List.of(online, cert);
         }
     }
 
     private QrCodeData buildOnlineQr(InvoiceQRCodeGeneratorRequest req,
                                      @Nullable String ksefNumber,
-                                     byte[] invoiceXmlBytes) {
+                                     byte[] invoiceXmlBytes,
+                                     String langCode) {
         String link = VerificationLinkGenerator.generateVerificationLink(
                 req.getEnvironment(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
 
-        String label = (ksefNumber != null && !ksefNumber.isBlank()) ? ksefNumber : LABEL_OFFLINE;
-        return qrFromLink(link, label, TITLE_ONLINE);
+        String labelOffline = translationService.getTranslation(langCode, "qr.offline");
+        String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
+
+        String label = (ksefNumber != null && !ksefNumber.isBlank()) ? ksefNumber : labelOffline;
+        return qrFromLink(link, label, titleOnline);
     }
 
     private QrCodeData buildCertificateQr(InvoiceQRCodeGeneratorRequest req,
-                                          byte[] invoiceXmlBytes) {
+                                          byte[] invoiceXmlBytes,
+                                          String langCode) {
         String link = VerificationLinkGenerator.generateCertificateVerificationLink(
                 req.getEnvironment(),
                 req.getCtxType(),
@@ -268,7 +289,9 @@ public class PdfGenerator {
                 req.getPrivateKey(),
                 invoiceXmlBytes
         );
-        return qrFromLink(link, LABEL_CERT, TITLE_CERT);
+        String labelCert = translationService.getTranslation(langCode, "qr.certificate");
+        String titleCert = translationService.getTranslation(langCode, "qr.certificateTitle");
+        return qrFromLink(link, labelCert, titleCert);
     }
 
     private QrCodeData qrFromLink(String link, String label, String title) {

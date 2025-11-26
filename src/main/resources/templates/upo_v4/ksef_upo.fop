@@ -3,6 +3,10 @@
     xmlns:fo="http://www.w3.org/1999/XSL/Format"
     xmlns:n1="http://upo.schematy.mf.gov.pl/KSeF/v4-2">
     <xsl:output method="xml"  encoding="UTF-8" indent="yes"/>
+
+    <xsl:param name="labels"/>
+    <xsl:key name="kLabels" match="entry" use="@key"/>
+
     <xsl:template match="/">
         <fo:root font-family="sans" font-size="7pt">
             <fo:layout-master-set>

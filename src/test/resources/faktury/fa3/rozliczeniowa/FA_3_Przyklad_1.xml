@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2025-12-02T15:16:13.0087947Z</DataWytworzeniaFa>
+        <SystemInfo>Aplikacja Podatnika KSeF</SystemInfo>
+    </Naglowek>
+    <Podmiot1>
+        <PrefiksPodatnika>PL</PrefiksPodatnika>
+        <DaneIdentyfikacyjne>
+            <NIP>5451824119</NIP>
+            <Nazwa>adres 123</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>adres 234</AdresL1>
+            <AdresL2>adres 123</AdresL2>
+        </Adres>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>abc abc</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>abc 123</AdresL1>
+            <AdresL2>adres</AdresL2>
+        </Adres>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1>2025-12-02</P_1>
+        <P_1M>Warszawa</P_1M>
+        <P_2>abc/test/1234</P_2>
+        <P_6>2025-12-02</P_6>
+        <P_15>0</P_15>
+        <Adnotacje>
+            <P_16>1</P_16>
+            <P_17>2</P_17>
+            <P_18>1</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>1</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>ROZ</RodzajFaktury>
+        <FakturaZaliczkowa>
+            <NrKSeFFaZaliczkowej>5451824119-20251202-0100A0E87267-21</NrKSeFFaZaliczkowej>
+        </FakturaZaliczkowa>
+        <FakturaZaliczkowa>
+            <NrKSeFZN>1</NrKSeFZN>
+            <NrFaZaliczkowej>ABC/TEST/DEF</NrFaZaliczkowej>
+        </FakturaZaliczkowa>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>abc</P_7>
+            <P_8A>szt</P_8A>
+            <P_8B>1</P_8B>
+            <P_9A>100</P_9A>
+            <P_11>100</P_11>
+            <P_12>23</P_12>
+        </FaWiersz>
+    </Fa>
+</Faktura>
