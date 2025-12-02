@@ -992,6 +992,26 @@
                     <xsl:if test="crd:Fa/crd:FaWiersz or crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz or crd:Fa/crd:OkresFaKorygowanej">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+                        
+                        <!-- Label informujący o cenach netto/brutto -->
+                        <xsl:if test="crd:Fa/crd:KodWaluty and crd:Fa/crd:FaWiersz">
+                            <xsl:variable name="hasNetPrices" select="boolean(crd:Fa/crd:FaWiersz[crd:P_9A and crd:P_11])"/>
+                            <xsl:variable name="hasGrossPrices" select="boolean(crd:Fa/crd:FaWiersz[crd:P_9B and crd:P_11A])"/>
+                            <xsl:if test="$hasNetPrices or $hasGrossPrices">
+                                <fo:block font-size="8pt" font-weight="bold" text-align="left" space-after="3mm">
+                                    <xsl:choose>
+                                        <xsl:when test="$hasNetPrices">
+                                            <fo:inline><xsl:value-of select="key('kLabels', 'invoiceInNetPrices', $labels)"/><xsl:text> </xsl:text></fo:inline>
+                                        </xsl:when>
+                                        <xsl:when test="$hasGrossPrices">
+                                            <fo:inline><xsl:value-of select="key('kLabels', 'invoiceInGrossPrices', $labels)"/><xsl:text> </xsl:text></fo:inline>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                    <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                                </fo:block>
+                            </xsl:if>
+                        </xsl:if>
+                        
                         <fo:block text-align="left" space-after="2mm">
                             <fo:inline font-weight="bold" font-size="12pt">
                                 <xsl:choose>
@@ -1001,12 +1021,6 @@
                                 </xsl:choose>
                             </fo:inline>
                         </fo:block>
-                        <xsl:if test="crd:Fa/crd:KodWaluty != 'PLN'">
-                            <fo:block font-size="8pt" font-weight="bold" text-align="left" space-after="3mm">
-                                <fo:inline><xsl:value-of select="key('kLabels', 'invoiceInCurrency', $labels)"/><xsl:text> </xsl:text></fo:inline>
-                                <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
-                            </fo:block>
-                        </xsl:if>
                         <xsl:if test="crd:Fa/crd:OkresFaKorygowanej">
 <!--                            <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>-->
 <!--                            <fo:block text-align="left" space-after="2mm">-->
@@ -1791,126 +1805,136 @@
 
                     </xsl:if>
                     <!-- Płatność -->
-                   <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+                    <xsl:if test="crd:Fa/crd:Platnosc and (
+                        crd:Fa/crd:Platnosc/crd:Zaplacono or
+                        crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej or
+                        crd:Fa/crd:Platnosc/crd:DataZaplaty or
+                        crd:Fa/crd:Platnosc/crd:FormaPlatnosci or
+                        crd:Fa/crd:Platnosc/crd:PlatnoscInna or
+                        crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin or
+                        crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis or
+                        crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
+                       <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
-                    <fo:block font-size="12pt" text-align="left" space-after="2mm">
-                        <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'payment', $labels)"/></fo:inline>
-                    </fo:block>
-
-                    <!-- Informacja o płatności -->
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono = 1">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
-                            <xsl:text> </xsl:text><xsl:value-of select="key('kLabels', 'payment.paid', $labels)"/>
+                        <fo:block font-size="12pt" text-align="left" space-after="2mm">
+                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'payment', $labels)"/></fo:inline>
                         </fo:block>
-                    </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
-                            <xsl:text> </xsl:text><xsl:value-of select="key('kLabels', 'payment.partial', $labels)"/>
-                        </fo:block>
-                    </xsl:if>
-
-                    <!-- DataZaplaty -->
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:DataZaplaty">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDate', $labels)"/>: </fo:inline>
-                            <xsl:value-of select="crd:Fa/crd:Platnosc/crd:DataZaplaty"/>
-                        </fo:block>
-                    </xsl:if>
-
-                    <!-- Forma płatności -->
-                    <xsl:choose>
-                        <xsl:when test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci">
+                        <!-- Informacja o płatności -->
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:Zaplacono = 1">
                             <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentMethod', $labels)"/>: </fo:inline>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.cash', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.card', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.voucher', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.check', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.credit', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.transfer', $labels)"/>
-                                </xsl:if>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
-                                    <xsl:value-of select="key('kLabels', 'paymentMethod.mobile', $labels)"/>
-                                </xsl:if>
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
+                                <xsl:text> </xsl:text><xsl:value-of select="key('kLabels', 'payment.paid', $labels)"/>
                             </fo:block>
-                        </xsl:when>
-                        <xsl:when test="crd:Fa/crd:Platnosc/crd:PlatnoscInna = 1">
+                        </xsl:if>
+
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
                             <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentMethod', $labels)"/>: </fo:inline>
-                                <xsl:if test="crd:Fa/crd:Platnosc/crd:OpisPlatnosci">
-                                    <xsl:value-of select="crd:Fa/crd:Platnosc/crd:OpisPlatnosci"/>
-                                </xsl:if>
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
+                                <xsl:text> </xsl:text><xsl:value-of select="key('kLabels', 'payment.partial', $labels)"/>
                             </fo:block>
-                        </xsl:when>
-                    </xsl:choose>
+                        </xsl:if>
 
-                    <!-- Termin płatności -->
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDueDate', $labels)"/>: </fo:inline>
-                            <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin"/>
-                        </fo:block>
-                    </xsl:if>
+                        <!-- DataZaplaty -->
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:DataZaplaty">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDate', $labels)"/>: </fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:DataZaplaty"/>
+                            </fo:block>
+                        </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis">
-                        <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDescription', $labels)"/>: </fo:inline>
-                            <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis"/>
-                        </fo:block>
-                    </xsl:if>
+                        <!-- Forma płatności -->
+                        <xsl:choose>
+                            <xsl:when test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci">
+                                <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                    <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentMethod', $labels)"/>: </fo:inline>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '1'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.cash', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '2'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.card', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '3'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.voucher', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '4'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.check', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '5'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.credit', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '6'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.transfer', $labels)"/>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci = '7'">
+                                        <xsl:value-of select="key('kLabels', 'paymentMethod.mobile', $labels)"/>
+                                    </xsl:if>
+                                </fo:block>
+                            </xsl:when>
+                            <xsl:when test="crd:Fa/crd:Platnosc/crd:PlatnoscInna = 1">
+                                <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                    <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentMethod', $labels)"/>: </fo:inline>
+                                    <xsl:if test="crd:Fa/crd:Platnosc/crd:OpisPlatnosci">
+                                        <xsl:value-of select="crd:Fa/crd:Platnosc/crd:OpisPlatnosci"/>
+                                    </xsl:if>
+                                </fo:block>
+                            </xsl:when>
+                        </xsl:choose>
 
-                    <!-- Tabela płatności częściowych -->
-                    <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
-                        <fo:block space-before="2mm" space-after="2mm">
-                            <fo:table table-layout="fixed" width="100%">
-                                <fo:table-column column-width="25%"/>
-                                <fo:table-column column-width="25%"/>
-                                <fo:table-header>
-                                    <fo:table-row background-color="#f0f0f0">
-                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding" >
-                                            <fo:block font-size="7pt" font-weight="bold" text-align="left">
-                                                <xsl:value-of select="key('kLabels', 'partialPaymentDate', $labels)"/>
-                                            </fo:block>
-                                        </fo:table-cell>
-                                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                            <fo:block font-size="7pt" font-weight="bold" text-align="left">
-                                                <xsl:value-of select="key('kLabels', 'partialPaymentAmount', $labels)"/>
-                                            </fo:block>
-                                        </fo:table-cell>
-                                    </fo:table-row>
-                                </fo:table-header>
-                                <fo:table-body>
-                                    <xsl:for-each select="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
-                                        <fo:table-row>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" text-align="left">
-                                                    <xsl:value-of select="crd:DataZaplatyCzesciowej"/>
+                        <!-- Termin płatności -->
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDueDate', $labels)"/>: </fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:Termin"/>
+                            </fo:block>
+                        </xsl:if>
+
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDescription', $labels)"/>: </fo:inline>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis"/>
+                            </fo:block>
+                        </xsl:if>
+
+                        <!-- Tabela płatności częściowych -->
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
+                            <fo:block space-before="2mm" space-after="2mm">
+                                <fo:table table-layout="fixed" width="100%">
+                                    <fo:table-column column-width="25%"/>
+                                    <fo:table-column column-width="25%"/>
+                                    <fo:table-header>
+                                        <fo:table-row background-color="#f0f0f0">
+                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding" >
+                                                <fo:block font-size="7pt" font-weight="bold" text-align="left">
+                                                    <xsl:value-of select="key('kLabels', 'partialPaymentDate', $labels)"/>
                                                 </fo:block>
                                             </fo:table-cell>
                                             <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" text-align="right">
-                                                    <xsl:value-of select="translate(format-number(number(crd:KwotaZaplatyCzesciowej), '#,##0.00'), ',.', ' ,')"/>
+                                                <fo:block font-size="7pt" font-weight="bold" text-align="left">
+                                                    <xsl:value-of select="key('kLabels', 'partialPaymentAmount', $labels)"/>
                                                 </fo:block>
                                             </fo:table-cell>
                                         </fo:table-row>
-                                    </xsl:for-each>
-                                </fo:table-body>
-                            </fo:table>
-                        </fo:block>
+                                    </fo:table-header>
+                                    <fo:table-body>
+                                        <xsl:for-each select="crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa">
+                                            <fo:table-row>
+                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                    <fo:block font-size="7pt" text-align="left">
+                                                        <xsl:value-of select="crd:DataZaplatyCzesciowej"/>
+                                                    </fo:block>
+                                                </fo:table-cell>
+                                                <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                                    <fo:block font-size="7pt" text-align="right">
+                                                        <xsl:value-of select="translate(format-number(number(crd:KwotaZaplatyCzesciowej), '#,##0.00'), ',.', ' ,')"/>
+                                                    </fo:block>
+                                                </fo:table-cell>
+                                            </fo:table-row>
+                                        </xsl:for-each>
+                                    </fo:table-body>
+                                </fo:table>
+                            </fo:block>
+                        </xsl:if>
                     </xsl:if>
                     <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>

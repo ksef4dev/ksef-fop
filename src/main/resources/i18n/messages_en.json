@@ -67,6 +67,8 @@
   "discount": "Discount",
   "positions": "Items",
   "invoiceInCurrency": "Invoice issued in currency",
+  "invoiceInNetPrices": "Invoice issued in net prices in currency",
+  "invoiceInGrossPrices": "Invoice issued in gross prices in currency",
   "discountNotAll": "Discount does not apply to all deliveries and services for this buyer in the given period.",
   "discountAll": "Discount applies to all deliveries and services for this buyer in the given period.",
   "positionsBeforeCorrection": "Invoice items before correction",
