@@ -123,6 +123,15 @@
             <P_12>23</P_12>
             <StanPrzed>1</StanPrzed>
         </FaWiersz>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>Steelcontainer 800 lt</P_7>
+            <P_8A>ST</P_8A>
+            <P_8B>1.000</P_8B>
+            <P_9A>0.00</P_9A>
+            <P_11>0.00</P_11>
+            <P_12>23</P_12>
+        </FaWiersz>
         <Platnosc>
             <TerminPlatnosci>
                 <Termin>2024-04-02</Termin>
