@@ -38,4 +38,7 @@ public class InvoiceGenerationParams {
 
     @Nullable
     private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
+
+    @Builder.Default
+    private Language language = Language.PL;
 }

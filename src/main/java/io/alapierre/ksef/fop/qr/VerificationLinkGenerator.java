@@ -54,7 +54,7 @@ public final class VerificationLinkGenerator {
      * @param ctxValue    context identifier value
      * @param sellerNip   seller’s NIP (10 digits)
      * @param certSerial  KSeF certificate serial number (hex string expected by docs)
-     * @param invoiceXml  SHA-256 of invoice XML in Base64URL (no padding)
+     * @param invoiceXml  the full invoice content in XML (as bytes), used to calculate the SHA-256 hash
      * @param privateKey  private key – RSA (for RSA-PSS) or EC (for ECDSA P-256)
      * @return full CODE II URL with Base64URL(no padding) signature appended
      */
