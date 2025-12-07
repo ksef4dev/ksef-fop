@@ -1,7 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import io.alapierre.ksef.fop.qr.enums.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -9,16 +7,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMDecryptorProvider;
-import org.bouncycastle.openssl.PEMEncryptedKeyPair;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
-import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.Result;
@@ -28,17 +17,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.time.LocalDate;
-import java.util.Arrays;
 
 
 /**

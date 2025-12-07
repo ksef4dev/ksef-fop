@@ -39,7 +39,7 @@
         <xsl:if test="$qrCodeImage and $qrCodeVerificationLink">
             <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
             
-            <fo:block>
+            <fo:block keep-together.within-page="always">
                 <fo:table width="100%">
                     <fo:table-column column-width="35%"/>
                     <fo:table-column column-width="65%"/>
@@ -2235,32 +2235,34 @@
 
                     <!-- New multiple QR codes approach -->
                     <xsl:if test="$qrCodesCount > 0">
+                        <!-- Keep text and QR codes together on the same page -->
+                        <fo:block keep-together.within-page="always">
+                            <fo:block font-size="12pt" text-align="left" space-before="4mm" keep-with-next.within-page="always">
+                                <fo:inline font-weight="bold">
+                                    <xsl:value-of select="key('kLabels', 'checkInvoiceInKsef', $labels)"/>
+                                </fo:inline>
+                            </fo:block>
 
-                        <fo:block font-size="12pt" text-align="left">
-                            <fo:inline font-weight="bold">
-                                <xsl:value-of select="key('kLabels', 'checkInvoiceInKsef', $labels)"/>
-                            </fo:inline>
+                            <!-- Render QR Code 0 if exists -->
+                            <xsl:if test="$qrCode0 and $verificationLink0">
+                                <xsl:call-template name="renderQrCode">
+                                    <xsl:with-param name="qrCodeImage" select="$qrCode0"/>
+                                    <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel0"/>
+                                    <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle0"/>
+                                    <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink0"/>
+                                </xsl:call-template>
+                            </xsl:if>
+
+                            <!-- Render QR Code 1 if exists -->
+                            <xsl:if test="$qrCode1 and $verificationLink1">
+                                <xsl:call-template name="renderQrCode">
+                                    <xsl:with-param name="qrCodeImage" select="$qrCode1"/>
+                                    <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel1"/>
+                                    <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle1"/>
+                                    <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink1"/>
+                                </xsl:call-template>
+                            </xsl:if>
                         </fo:block>
-
-                        <!-- Render QR Code 0 if exists -->
-                        <xsl:if test="$qrCode0 and $verificationLink0">
-                            <xsl:call-template name="renderQrCode">
-                                <xsl:with-param name="qrCodeImage" select="$qrCode0"/>
-                                <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel0"/>
-                                <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle0"/>
-                                <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink0"/>
-                            </xsl:call-template>
-                        </xsl:if>
-
-                        <!-- Render QR Code 1 if exists -->
-                        <xsl:if test="$qrCode1 and $verificationLink1">
-                            <xsl:call-template name="renderQrCode">
-                                <xsl:with-param name="qrCodeImage" select="$qrCode1"/>
-                                <xsl:with-param name="qrCodeLabel" select="$qrCodeLabel1"/>
-                                <xsl:with-param name="qrCodeVerificationLinkTitle" select="$verificationLinkTitle1"/>
-                                <xsl:with-param name="qrCodeVerificationLink" select="$verificationLink1"/>
-                            </xsl:call-template>
-                        </xsl:if>
                     </xsl:if>
                 </fo:flow>
             </fo:page-sequence>
