@@ -1,9 +1,8 @@
 package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
-import io.alapierre.ksef.fop.qr.QrCodeGenerator;
-import io.alapierre.ksef.fop.qr.VerificationLinkGenerator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.saxon.TransformerFactoryImpl;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
@@ -34,11 +32,11 @@ import java.util.List;
 public class PdfGenerator {
 
     private static final String MIME_PDF = "application/pdf";
-    private static final int QR_SIZE = 200;
 
     private final FopFactory fopFactory;
     private InvoicePdfConfig invoicePdfConfig = new InvoicePdfConfig();
     private final TranslationService translationService = new TranslationService();
+    private final QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
         this(loadResource(fopConfig));
@@ -252,56 +250,7 @@ public class PdfGenerator {
                                                     @Nullable String ksefNumber,
                                                     byte[] invoiceXmlBytes,
                                                     String langCode) {
-        if (req == null) return null;
-
-        QrCodeData online = buildOnlineQr(req, ksefNumber, invoiceXmlBytes, langCode);
-        if (req.isOnline()) { // KOD I
-            return List.of(online);
-        } else { // KOD I + KOD II
-            QrCodeData cert = buildCertificateQr(req, invoiceXmlBytes, langCode);
-            return List.of(online, cert);
-        }
-    }
-
-    private QrCodeData buildOnlineQr(InvoiceQRCodeGeneratorRequest req,
-                                     @Nullable String ksefNumber,
-                                     byte[] invoiceXmlBytes,
-                                     String langCode) {
-        String link = VerificationLinkGenerator.generateVerificationLink(
-                req.getEnvironment(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
-
-        String labelOffline = translationService.getTranslation(langCode, "qr.offline");
-        String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
-
-        String label = (ksefNumber != null && !ksefNumber.isBlank()) ? ksefNumber : labelOffline;
-        return qrFromLink(link, label, titleOnline);
-    }
-
-    private QrCodeData buildCertificateQr(InvoiceQRCodeGeneratorRequest req,
-                                          byte[] invoiceXmlBytes,
-                                          String langCode) {
-        String link = VerificationLinkGenerator.generateCertificateVerificationLink(
-                req.getEnvironment(),
-                req.getCtxType(),
-                req.getCtxValue(),
-                req.getIdentifier(),
-                req.getCertSerial(),
-                req.getPrivateKey(),
-                invoiceXmlBytes
-        );
-        String labelCert = translationService.getTranslation(langCode, "qr.certificate");
-        String titleCert = translationService.getTranslation(langCode, "qr.certificateTitle");
-        return qrFromLink(link, labelCert, titleCert);
-    }
-
-    private QrCodeData qrFromLink(String link, String label, String title) {
-        byte[] image = QrCodeGenerator.generateBarcode(link, QR_SIZE, QR_SIZE);
-        return QrCodeData.builder()
-                .qrCodeImage(image)
-                .label(label)
-                .verificationLink(link)
-                .verificationLinkTitle(title)
-                .build();
+        return qrCodeBuilder.buildQrCodes(req, ksefNumber, invoiceXmlBytes, langCode);
     }
 
 
