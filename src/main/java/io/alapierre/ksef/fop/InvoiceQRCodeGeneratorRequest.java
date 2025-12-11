@@ -1,7 +1,6 @@
 package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import io.alapierre.ksef.fop.qr.enums.Environment;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ import java.time.LocalDate;
 public class InvoiceQRCodeGeneratorRequest {
 
     @NotNull
-    private Environment environment;
+    private String environmentUrl;
 
     /**
      * Seller nip
@@ -53,10 +52,10 @@ public class InvoiceQRCodeGeneratorRequest {
     /**
      * Builder for online verification QR (KOD I)
      */
-    public static InvoiceQRCodeGeneratorRequest onlineQrBuilder(Environment environment,
+    public static InvoiceQRCodeGeneratorRequest onlineQrBuilder(String environmentUrl,
                                                                 String sellerNip,
                                                                 LocalDate issueDate) {
-        InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = new InvoiceQRCodeGeneratorRequest(environment, sellerNip, issueDate);
+        InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = new InvoiceQRCodeGeneratorRequest(environmentUrl, sellerNip, issueDate);
         invoiceQRCodeGeneratorRequest.online = true;
         return invoiceQRCodeGeneratorRequest;
     }
@@ -64,14 +63,14 @@ public class InvoiceQRCodeGeneratorRequest {
     /**
      * Builder for certificate verification QR (KOD II)
      */
-    public static InvoiceQRCodeGeneratorRequest offlineCertificateQrBuilder(Environment environment,
+    public static InvoiceQRCodeGeneratorRequest offlineCertificateQrBuilder(String environmentUrl,
                                                                             ContextIdentifierType ctxType,
                                                                             String ctxValue,
                                                                             String sellerNip,
                                                                             String certSerial,
                                                                             PrivateKey privateKey,
                                                                             LocalDate issueDate) {
-        InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = new InvoiceQRCodeGeneratorRequest(environment, sellerNip, issueDate);
+        InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = new InvoiceQRCodeGeneratorRequest(environmentUrl, sellerNip, issueDate);
         invoiceQRCodeGeneratorRequest.ctxValue = ctxValue;
         invoiceQRCodeGeneratorRequest.ctxType = ctxType;
         invoiceQRCodeGeneratorRequest.certSerial = certSerial;

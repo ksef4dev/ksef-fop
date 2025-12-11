@@ -2,7 +2,6 @@ package io.alapierre.ksef.fop.qr;
 
 
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import io.alapierre.ksef.fop.qr.enums.Environment;
 import io.alapierre.ksef.fop.qr.helpers.CertificateBuilders;
 import io.alapierre.ksef.fop.qr.helpers.SelfSignedCertificate;
 import io.alapierre.ksef.fop.qr.helpers.TestCertificateGenerator;
@@ -29,12 +28,12 @@ class VerificationLinkGeneratorTest {
         String identifier = "6891152920";
         LocalDate issueDate = LocalDate.of(2025, 10, 8);
         String verificationLink = VerificationLinkGenerator.generateVerificationLink(
-                Environment.TEST,
+                "https://ksef-test.mf.gov.pl",
                 identifier,
                 issueDate,
                 invoiceXml);
 
-        assertTrue(verificationLink.contains(Environment.TEST.getUrl()));
+        assertTrue(verificationLink.contains("https://ksef-test.mf.gov.pl"));
         assertTrue(verificationLink.contains(identifier));
         assertTrue(verificationLink.contains(issueDate.format(KSEF_DATE)));
         assertTrue(verificationLink.contains(CryptoUtils.computeInvoiceHashBase64Url(invoiceXml)));
@@ -55,7 +54,7 @@ class VerificationLinkGeneratorTest {
         SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
 
         String verificationLink = VerificationLinkGenerator.generateCertificateVerificationLink(
-                Environment.TEST,
+                "https://ksef-test.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 identifier,
                 identifier,
@@ -64,7 +63,7 @@ class VerificationLinkGeneratorTest {
                 invoiceXml);
 
         // Verify the link structure
-        assertTrue(verificationLink.contains(Environment.TEST.getUrl()));
+        assertTrue(verificationLink.contains("https://ksef-test.mf.gov.pl"));
         assertTrue(verificationLink.contains(identifier));
         assertTrue(verificationLink.contains(serial));
         assertTrue(verificationLink.contains(CryptoUtils.computeInvoiceHashBase64Url(invoiceXml)));
@@ -91,7 +90,7 @@ class VerificationLinkGeneratorTest {
         SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
 
         String verificationLink = VerificationLinkGenerator.generateCertificateVerificationLink(
-                Environment.TEST,
+                "https://ksef-test.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 identifier,
                 identifier,
@@ -100,7 +99,7 @@ class VerificationLinkGeneratorTest {
                 invoiceXml);
 
         // Verify the link structure
-        assertTrue(verificationLink.contains(Environment.TEST.getUrl()));
+        assertTrue(verificationLink.contains("https://ksef-test.mf.gov.pl"));
         assertTrue(verificationLink.contains(identifier));
         assertTrue(verificationLink.contains(serial));
         assertTrue(verificationLink.contains(CryptoUtils.computeInvoiceHashBase64Url(invoiceXml)));

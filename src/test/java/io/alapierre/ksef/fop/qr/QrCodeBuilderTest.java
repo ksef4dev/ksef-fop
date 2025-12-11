@@ -3,7 +3,6 @@ package io.alapierre.ksef.fop.qr;
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import io.alapierre.ksef.fop.qr.enums.Environment;
 import io.alapierre.ksef.fop.qr.helpers.CertificateBuilders;
 import io.alapierre.ksef.fop.qr.helpers.SelfSignedCertificate;
 import io.alapierre.ksef.fop.qr.helpers.TestCertificateGenerator;
@@ -35,7 +34,7 @@ class QrCodeBuilderTest {
     void buildOnlineQr_withKsefNumber_shouldUseKsefNumberAsLabel() {
         String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                Environment.TEST, "6891152920", LocalDate.of(2025, 10, 8));
+                "https://ksef-test.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
 
         QrCodeData result = qrCodeBuilder.buildOnlineQr(req, ksefNumber, testInvoiceXml, "pl");
 
@@ -45,13 +44,13 @@ class QrCodeBuilderTest {
         assertNotNull(result.getVerificationLinkTitle());
         assertNotNull(result.getQrCodeImage());
         assertTrue(result.getQrCodeImage().length > 0);
-        assertTrue(result.getVerificationLink().contains(Environment.TEST.getUrl()));
+        assertTrue(result.getVerificationLink().contains("https://ksef-test.mf.gov.pl"));
     }
 
     @Test
     void buildOnlineQr_withoutKsefNumber_shouldUseOfflineLabel() {
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                Environment.TEST, "6891152920", LocalDate.of(2025, 10, 8));
+                "https://ksef-test.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
 
         QrCodeData result = qrCodeBuilder.buildOnlineQr(req, null, testInvoiceXml, "pl");
 
@@ -65,7 +64,7 @@ class QrCodeBuilderTest {
     @Test
     void buildOnlineQr_withBlankKsefNumber_shouldUseOfflineLabel() {
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                Environment.TEST, "6891152920", LocalDate.of(2025, 10, 8));
+                "https://ksef-test.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
 
         QrCodeData result = qrCodeBuilder.buildOnlineQr(req, "   ", testInvoiceXml, "pl");
 
@@ -78,7 +77,7 @@ class QrCodeBuilderTest {
     @Test
     void buildOnlineQr_shouldUseCorrectLanguage() {
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                Environment.TEST, "6891152920", LocalDate.of(2025, 10, 8));
+                "https://ksef-test.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
 
         QrCodeData resultPl = qrCodeBuilder.buildOnlineQr(req, null, testInvoiceXml, "pl");
         QrCodeData resultEn = qrCodeBuilder.buildOnlineQr(req, null, testInvoiceXml, "en");
@@ -97,7 +96,7 @@ class QrCodeBuilderTest {
         SelfSignedCertificate cert = generator.generateSelfSignedCertificateEcdsa(x500);
 
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(
-                Environment.TEST,
+                "https://ksef-test.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 "6891152920",
                 "6891152920",
@@ -113,7 +112,7 @@ class QrCodeBuilderTest {
         assertNotNull(result.getVerificationLinkTitle());
         assertNotNull(result.getQrCodeImage());
         assertTrue(result.getQrCodeImage().length > 0);
-        assertTrue(result.getVerificationLink().contains(Environment.TEST.getUrl()));
+        assertTrue(result.getVerificationLink().contains("https://ksef-test.mf.gov.pl"));
         assertTrue(result.getVerificationLink().contains("/client-app/certificate/"));
     }
 
@@ -125,7 +124,7 @@ class QrCodeBuilderTest {
         SelfSignedCertificate cert = certGenerator.generateSelfSignedCertificateEcdsa(x500);
 
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(
-                Environment.TEST,
+                "https://ksef-test.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 "6891152920",
                 "6891152920",
@@ -161,14 +160,14 @@ class QrCodeBuilderTest {
     @Test
     void buildQrCodes_onlineMode_shouldReturnSingleQrCode() {
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                Environment.TEST, "6891152920", LocalDate.of(2025, 10, 8));
+                "https://ksef-test.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
 
         List<QrCodeData> result = qrCodeBuilder.buildQrCodes(req, null, testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertNotNull(result.get(0));
-        assertTrue(result.get(0).getVerificationLink().contains(Environment.TEST.getUrl()));
+        assertTrue(result.get(0).getVerificationLink().contains("https://ksef-test.mf.gov.pl"));
     }
 
     @Test

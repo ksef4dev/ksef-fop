@@ -57,7 +57,7 @@ public class QrCodeBuilder {
                                              byte @NotNull [] invoiceXmlBytes,
                                              @NotNull String langCode) {
         String link = VerificationLinkGenerator.generateVerificationLink(
-                req.getEnvironment(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
+                req.getEnvironmentUrl(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
 
         String labelOffline = translationService.getTranslation(langCode, "qr.offline");
         String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
@@ -78,7 +78,7 @@ public class QrCodeBuilder {
                                                    byte @NotNull [] invoiceXmlBytes,
                                                    @NotNull String langCode) {
         String link = VerificationLinkGenerator.generateCertificateVerificationLink(
-                req.getEnvironment(),
+                req.getEnvironmentUrl(),
                 req.getCtxType(),
                 req.getCtxValue(),
                 req.getIdentifier(),
