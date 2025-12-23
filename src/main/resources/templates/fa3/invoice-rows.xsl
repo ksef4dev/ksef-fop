@@ -2,7 +2,9 @@
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/">
+                xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/"
+				xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				>
 
     <!-- Parameter for controlling decimal places in unit prices -->
     <xsl:param name="useExtendedDecimalPlaces" select="false()"/>
@@ -261,15 +263,15 @@
             <xsl:if test="//crd:FaWiersz/crd:P_12">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
-                        <xsl:variable name="taxRate" select="crd:P_12"/>
-                        <xsl:choose>
-                            <xsl:when test="number($taxRate) = $taxRate and $taxRate != ''">
-                                <xsl:value-of select="$taxRate"/>%
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="$taxRate"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                        <xsl:variable name="taxRate" select="crd:P_12"/>				
+						<xsl:choose>
+						  <xsl:when test="$taxRate castable as xs:decimal">
+							<xsl:value-of select="$taxRate"/>%
+						  </xsl:when>
+						  <xsl:otherwise>
+							<xsl:value-of select="$taxRate"/>
+						  </xsl:otherwise>
+						</xsl:choose>
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
