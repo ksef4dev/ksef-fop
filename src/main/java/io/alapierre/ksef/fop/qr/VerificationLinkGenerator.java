@@ -21,9 +21,9 @@ public final class VerificationLinkGenerator {
 
     /**
      * Builds a KSeF verification link (CODE I) according to the specification:
-     * https://{env}/client-app/invoice/{NIP}/{DD-MM-YYYY}/{SHA256(xml) in Base64URL without padding}
+     * https://{env}/invoice/{NIP}/{DD-MM-YYYY}/{SHA256(xml) in Base64URL without padding}
      *
-     * @param environmentUrl base URL (e.g. <a href="https://ksef-test.mf.gov.pl">...</a>)
+     * @param environmentUrl base URL (e.g. <a href="https://qr-test.ksef.mf.gov.pl">...</a>)
      * @param nip          the seller’s NIP (10 digits; all non-digit characters will be removed)
      * @param issueDate    the invoice issue date (field P_1) – formatted as dd-MM-yyyy
      * @param invoiceXml   the full invoice content in XML (as bytes), used to calculate the SHA-256 hash
@@ -37,7 +37,7 @@ public final class VerificationLinkGenerator {
         String normalizedNip = normalizeAndValidateNip(nip);
         String date = issueDate.format(KSEF_DATE);
         String hash = CryptoUtils.computeInvoiceHashBase64Url(invoiceXml);
-        return String.format("%s/client-app/invoice/%s/%s/%s", base, normalizedNip, date, hash);
+        return String.format("%s/invoice/%s/%s/%s", base, normalizedNip, date, hash);
     }
 
 
@@ -46,9 +46,9 @@ public final class VerificationLinkGenerator {
     /**
      * Builds a KSeF certificate verification link (CODE II) and signs the path using either RSA-PSS or ECDSA.
      * Signature input is the URL path without protocol and trailing slash, e.g.:
-     *   ksef-test.mf.gov.pl/client-app/certificate/Nip/1111111111/1111111111/01F20A5D352AE590/{hash}
+     * {{environmentUrl}}/certificate/Nip/1111111111/1111111111/01F20A5D352AE590/{hash}
      *
-     * @param environmentUrl base URL (e.g. <a href="https://ksef-test.mf.gov.pl">...</a>)
+     * @param environmentUrl base URL (e.g. <a href="https://qr-test.ksef.mf.gov.pl">...</a>)
      * @param ctxType     context identifier type (Nip, InternalId, NipVatUe, PeppolId)
      * @param ctxValue    context identifier value
      * @param sellerNip   seller’s NIP (10 digits)
@@ -69,7 +69,7 @@ public final class VerificationLinkGenerator {
         String baseUrl = trimTrailingSlash(environmentUrl);
         String normalizedNip = normalizeAndValidateNip(sellerNip);
 
-        String pathToSign = String.format("%s/client-app/certificate/%s/%s/%s/%s/%s",
+        String pathToSign = String.format("%s/certificate/%s/%s/%s/%s/%s",
                         baseUrl,
                         ctxType.pathPart(),
                         ctxValue,
@@ -79,7 +79,7 @@ public final class VerificationLinkGenerator {
                 .replace("https://", "");
         String signedHash = computeUrlEncodedSignedHash(pathToSign, privateKey);
 
-        return String.format("%s/client-app/certificate/%s/%s/%s/%s/%s/%s",
+        return String.format("%s/certificate/%s/%s/%s/%s/%s/%s",
                 baseUrl,
                 ctxType.pathPart(),
                 ctxValue,
