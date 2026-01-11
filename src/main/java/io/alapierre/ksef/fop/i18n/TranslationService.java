@@ -2,6 +2,7 @@ package io.alapierre.ksef.fop.i18n;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.alapierre.ksef.fop.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,7 +24,7 @@ public class TranslationService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public Document getTranslationsAsXml(String lang) {
-        String targetLang = (lang == null || lang.isBlank()) ? "pl" : lang;
+        String targetLang = Strings.defaultIfBlank(lang, "pl");
         return DOCUMENT_CACHE.computeIfAbsent(targetLang, TranslationService::loadAndCreateDocument);
     }
 
@@ -35,7 +36,7 @@ public class TranslationService {
      * @return the translated value or the key itself if not found
      */
     public String getTranslation(String lang, String key) {
-        String targetLang = (lang == null || lang.isBlank()) ? "pl" : lang;
+        String targetLang = Strings.defaultIfBlank(lang, "pl");
         JsonNode json = JSON_CACHE.computeIfAbsent(targetLang, TranslationService::loadJsonCached);
 
         if (json == null || !json.has(key)) {

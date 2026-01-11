@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +27,7 @@ class QrCodeBuilderTest {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         TranslationService translationService = new TranslationService();
         qrCodeBuilder = new QrCodeBuilder(translationService);
-        testInvoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+        testInvoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
     }
 
     @Test

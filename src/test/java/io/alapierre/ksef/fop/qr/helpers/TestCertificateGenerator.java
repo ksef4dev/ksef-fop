@@ -23,7 +23,7 @@ public class TestCertificateGenerator {
 
     public SelfSignedCertificate generateSelfSignedCertificateEcdsa(CertificateBuilders.X500NameHolder x500Name) {
 
-        return generateSelfSignedCertificate(x500Name.x500Name());
+        return generateSelfSignedCertificate(x500Name.getX500Name());
     }
 
     private SelfSignedCertificate generateSelfSignedCertificate(X500Name x500Name) {
