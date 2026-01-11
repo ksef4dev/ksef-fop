@@ -54,7 +54,7 @@ class VerificationLinkGeneratorTest {
         SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
 
         String verificationLink = VerificationLinkGenerator.generateCertificateVerificationLink(
-                "https://ksef-test.mf.gov.pl",
+                "https://qr-test.ksef.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 identifier,
                 identifier,
@@ -63,7 +63,7 @@ class VerificationLinkGeneratorTest {
                 invoiceXml);
 
         // Verify the link structure
-        assertTrue(verificationLink.contains("https://ksef-test.mf.gov.pl"));
+        assertTrue(verificationLink.contains("https://qr-test.ksef.mf.gov.pl"));
         assertTrue(verificationLink.contains(identifier));
         assertTrue(verificationLink.contains(serial));
         assertTrue(verificationLink.contains(CryptoUtils.computeInvoiceHashBase64Url(invoiceXml)));
@@ -90,7 +90,7 @@ class VerificationLinkGeneratorTest {
         SelfSignedCertificate cert = new TestCertificateGenerator().generateSelfSignedCertificateEcdsa(x500);
 
         String verificationLink = VerificationLinkGenerator.generateCertificateVerificationLink(
-                "https://ksef-test.mf.gov.pl",
+                "https://qr-test.ksef.mf.gov.pl",
                 ContextIdentifierType.NIP,
                 identifier,
                 identifier,
@@ -99,11 +99,11 @@ class VerificationLinkGeneratorTest {
                 invoiceXml);
 
         // Verify the link structure
-        assertTrue(verificationLink.contains("https://ksef-test.mf.gov.pl"));
+        assertTrue(verificationLink.contains("https://qr-test.ksef.mf.gov.pl"));
         assertTrue(verificationLink.contains(identifier));
         assertTrue(verificationLink.contains(serial));
         assertTrue(verificationLink.contains(CryptoUtils.computeInvoiceHashBase64Url(invoiceXml)));
-        assertTrue(verificationLink.contains("/client-app/certificate/"));
+        assertTrue(verificationLink.contains("/certificate/"));
 
         // Verify it contains a signature (Base64URL encoded)
         String[] parts = verificationLink.split("/");
