@@ -118,7 +118,7 @@ public class PdfGenerator {
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws IOException, TransformerException, FOPException {
         String langCode = params.getLanguage().getCode();
-        List<QrCodeData> qrCodes = buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
+        List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params, invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, out);
     }
 
@@ -247,12 +247,6 @@ public class PdfGenerator {
         if (value != null) transformer.setParameter(name, value);
     }
 
-    private @Nullable List<QrCodeData> buildQrCodes(@Nullable InvoiceQRCodeGeneratorRequest req,
-                                                    @Nullable String ksefNumber,
-                                                    byte[] invoiceXmlBytes,
-                                                    String langCode) {
-        return qrCodeBuilder.buildQrCodes(req, ksefNumber, invoiceXmlBytes, langCode);
-    }
 
 
     private static InputStream loadResource(String resource) throws IOException {
