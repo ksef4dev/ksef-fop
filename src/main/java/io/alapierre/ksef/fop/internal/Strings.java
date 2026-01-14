@@ -6,21 +6,14 @@ package io.alapierre.ksef.fop.internal;
 public final class Strings {
 
     /**
-     * Returns the default string if the input string is null or blank.
+     * Returns the default string if the input string is null or empty.
      *
      * @param str        the string to check
-     * @param defaultStr the default string to return if str is {@code null} or blank
-     * @return {@code defaultStr} if {@code str} is {@code null} or blank; otherwise, returns {@code str}
+     * @param defaultStr the default string to return if str is {@code null} or empty
+     * @return {@code defaultStr} if {@code str} is {@code null} or empty; otherwise, returns {@code str}
      */
-    public static String defaultIfBlank(String str, String defaultStr) {
-        if (str != null) {
-            for (int i = 0; i < str.length(); i++) {
-                if (!Character.isWhitespace(str.charAt(i))) {
-                    return str;
-                }
-            }
-        }
-        return defaultStr;
+    public static String defaultIfEmpty(String str, String defaultStr) {
+        return str == null || str.isEmpty() ? defaultStr : str;
     }
 
     private Strings() {

@@ -24,7 +24,7 @@ public class TranslationService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public Document getTranslationsAsXml(String lang) {
-        String targetLang = Strings.defaultIfBlank(lang, "pl");
+        String targetLang = Strings.defaultIfEmpty(lang, "pl");
         return DOCUMENT_CACHE.computeIfAbsent(targetLang, TranslationService::loadAndCreateDocument);
     }
 
@@ -36,7 +36,7 @@ public class TranslationService {
      * @return the translated value or the key itself if not found
      */
     public String getTranslation(String lang, String key) {
-        String targetLang = Strings.defaultIfBlank(lang, "pl");
+        String targetLang = Strings.defaultIfEmpty(lang, "pl");
         JsonNode json = JSON_CACHE.computeIfAbsent(targetLang, TranslationService::loadJsonCached);
 
         if (json == null || !json.has(key)) {

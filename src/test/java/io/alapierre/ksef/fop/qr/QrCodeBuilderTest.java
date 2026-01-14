@@ -62,19 +62,6 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQr_withBlankKsefNumber_shouldUseOfflineLabel() {
-        InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                "https://qr-test.ksef.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
-
-        QrCodeData result = qrCodeBuilder.buildOnlineQr(req, "   ", testInvoiceXml, "pl");
-
-        assertNotNull(result);
-        assertNotEquals("", result.getLabel());
-        // Should not be blank or whitespace
-        assertFalse(result.getLabel().trim().isEmpty());
-    }
-
-    @Test
     void buildOnlineQr_shouldUseCorrectLanguage() {
         InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
                 "https://qr-test.ksef.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));

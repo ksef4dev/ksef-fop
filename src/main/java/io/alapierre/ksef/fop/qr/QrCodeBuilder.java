@@ -65,7 +65,7 @@ public class QrCodeBuilder {
         String labelOffline = translationService.getTranslation(langCode, "qr.offline");
         String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
 
-        String label = Strings.defaultIfBlank(ksefNumber, labelOffline);
+        String label = Strings.defaultIfEmpty(ksefNumber, labelOffline);
         return qrFromLink(link, label, titleOnline);
     }
 

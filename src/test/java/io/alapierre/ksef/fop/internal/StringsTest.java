@@ -10,11 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringsTest {
 
-    static Stream<Arguments> defaultIfBlank() {
+    static Stream<Arguments> defaultIfEmpty() {
         return Stream.of(
                 Arguments.of(null, "default", "default"),
                 Arguments.of("", "default", "default"),
-                Arguments.of("   ", "default", "default"),
                 Arguments.of("value", "default", "value"),
                 Arguments.of("  value  ", "default", "  value  ")
         );
@@ -22,7 +21,7 @@ class StringsTest {
 
     @ParameterizedTest
     @MethodSource
-    void defaultIfBlank(String str, String defaultStr, String expected) {
-        assertEquals(expected, Strings.defaultIfBlank(str, defaultStr));
+    void defaultIfEmpty(String str, String defaultStr, String expected) {
+        assertEquals(expected, Strings.defaultIfEmpty(str, defaultStr));
     }
 }
