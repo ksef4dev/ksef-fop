@@ -108,6 +108,24 @@ class GeneratePdfTest {
     }
 
     @Test
+    void genV4_3UpoByService() throws Exception {
+
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-3-service.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-3.xml");
+            Source src = new StreamSource(xml);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V4_3)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
+        }
+    }
+
+    @Test
     void gen() throws Exception {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo.pdf"))) {
