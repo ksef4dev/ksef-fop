@@ -2,10 +2,13 @@ package io.alapierre.ksef.fop.qr;
 
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.internal.Strings;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,10 +39,10 @@ public class QrCodeBuilder {
 
         QrCodeData online = buildOnlineQr(req, ksefNumber, invoiceXmlBytes, langCode);
         if (req.isOnline()) { // KOD I
-            return List.of(online);
+            return Collections.singletonList(online);
         } else { // KOD I + KOD II
             QrCodeData cert = buildCertificateQr(req, invoiceXmlBytes, langCode);
-            return List.of(online, cert);
+            return Arrays.asList(online, cert);
         }
     }
 
@@ -62,7 +65,7 @@ public class QrCodeBuilder {
         String labelOffline = translationService.getTranslation(langCode, "qr.offline");
         String titleOnline = translationService.getTranslation(langCode, "qr.onlineTitle");
 
-        String label = (ksefNumber != null && !ksefNumber.isBlank()) ? ksefNumber : labelOffline;
+        String label = Strings.defaultIfEmpty(ksefNumber, labelOffline);
         return qrFromLink(link, label, titleOnline);
     }
 

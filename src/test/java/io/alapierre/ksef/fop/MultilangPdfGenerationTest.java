@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 
 @Slf4j
@@ -64,7 +64,7 @@ class MultilangPdfGenerationTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outputPath))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of(invoicePath));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get(invoicePath));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)

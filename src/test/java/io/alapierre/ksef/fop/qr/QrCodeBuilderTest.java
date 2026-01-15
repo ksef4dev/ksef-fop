@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Security;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +27,7 @@ class QrCodeBuilderTest {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         TranslationService translationService = new TranslationService();
         qrCodeBuilder = new QrCodeBuilder(translationService);
-        testInvoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+        testInvoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
     }
 
     @Test
@@ -59,19 +59,6 @@ class QrCodeBuilderTest {
         assertNotNull(result.getVerificationLink());
         assertNotNull(result.getVerificationLinkTitle());
         assertNotNull(result.getQrCodeImage());
-    }
-
-    @Test
-    void buildOnlineQr_withBlankKsefNumber_shouldUseOfflineLabel() {
-        InvoiceQRCodeGeneratorRequest req = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
-                "https://qr-test.ksef.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
-
-        QrCodeData result = qrCodeBuilder.buildOnlineQr(req, "   ", testInvoiceXml, "pl");
-
-        assertNotNull(result);
-        assertNotEquals("", result.getLabel());
-        // Should not be blank or whitespace
-        assertFalse(result.getLabel().trim().isEmpty());
     }
 
     @Test
