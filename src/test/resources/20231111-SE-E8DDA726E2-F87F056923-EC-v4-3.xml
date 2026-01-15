@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Potwierdzenie xmlns="http://upo.schematy.mf.gov.pl/KSeF/v4-3">
+    <NazwaPodmiotuPrzyjmujacego>Ministerstwo Finansów</NazwaPodmiotuPrzyjmujacego>
+    <NumerReferencyjnySesji>20231111-SE-E8DDA726E2-F87F056923-EC</NumerReferencyjnySesji>
+    <Uwierzytelnienie>
+        <IdKontekstu>
+            <Nip>2932110194</Nip>
+        </IdKontekstu>
+        <SkrotDokumentuUwierzytelniajacego>Ze9VbjS5AF0QxN13x8/CvfXoMTYKYj/adMk6vPuujhs=</SkrotDokumentuUwierzytelniajacego>
+    </Uwierzytelnienie>
+    <NazwaStrukturyLogicznej>FA 1-0E</NazwaStrukturyLogicznej>
+    <KodFormularza>FA (2)</KodFormularza>
+    <Dokument>
+        <NipSprzedawcy>2932110194</NipSprzedawcy>
+        <NumerKSeFDokumentu>2932110194-20231111-E3B49FA0E428-C4</NumerKSeFDokumentu>
+        <NumerFaktury>FK2023/11/05</NumerFaktury>
+        <DataWystawieniaFaktury>2023-11-05</DataWystawieniaFaktury>
+        <DataPrzeslaniaDokumentu>2023-11-11T10:49:12.089+01:00</DataPrzeslaniaDokumentu>
+        <DataNadaniaNumeruKSeF>2023-11-11T10:49:18.507+01:00</DataNadaniaNumeruKSeF>
+        <SkrotDokumentu>hiU44GC5CzUbbYE9BSUB9C22sOaYKgKFB2Z8By5H0Gs=</SkrotDokumentu>
+        <TrybWysylki>Online</TrybWysylki>
+    </Dokument>
+</Potwierdzenie>
+
