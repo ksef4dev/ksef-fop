@@ -149,7 +149,6 @@ class QrCodeBuilderTest {
 
     @Test
     void qrFromLink_shouldCreateValidQrCodeData() {
-        // Test qrFromLink indirectly through buildOnlineQrCodeFromUrl
         String testLink = "https://qr-test.ksef.mf.gov.pl/web/verify/test";
         String testLabel = "Test Label";
 
@@ -221,20 +220,6 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_withNullUrl_shouldReturnNull() {
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(null, null, "pl");
-
-        assertNull(result);
-    }
-
-    @Test
-    void buildOnlineQrCodeFromUrl_withBlankUrl_shouldReturnNull() {
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl("   ", null, "pl");
-
-        assertNull(result);
-    }
-
-    @Test
     void buildOnlineQrCodeFromUrl_shouldTrimUrl() {
         String url = "  https://qr-test.ksef.mf.gov.pl/invoice/test  ";
         String expectedUrl = "https://qr-test.ksef.mf.gov.pl/invoice/test";
@@ -272,21 +257,7 @@ class QrCodeBuilderTest {
         assertNotNull(result.getQrCodeImage());
         assertTrue(result.getQrCodeImage().length > 0);
     }
-
-    @Test
-    void buildCertificateQrCodeFromUrl_withNullUrl_shouldReturnNull() {
-        QrCodeData result = qrCodeBuilder.buildCertificateQrCodeFromUrl(null, "pl");
-
-        assertNull(result);
-    }
-
-    @Test
-    void buildCertificateQrCodeFromUrl_withBlankUrl_shouldReturnNull() {
-        QrCodeData result = qrCodeBuilder.buildCertificateQrCodeFromUrl("   ", "pl");
-
-        assertNull(result);
-    }
-
+    
     @Test
     void buildCertificateQrCodeFromUrl_shouldTrimUrl() {
         String url = "  https://qr-test.ksef.mf.gov.pl/certificate/test  ";
@@ -319,7 +290,7 @@ class QrCodeBuilderTest {
 
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
-                .onlineQrCodeUrl(onlineUrl)
+                .invoiceQRCodeGeneratorRequest(InvoiceQRCodeGeneratorRequest.onlineQrBuilder(onlineUrl))
                 .ksefNumber(ksefNumber)
                 .build();
 
@@ -331,22 +302,6 @@ class QrCodeBuilderTest {
         assertEquals(ksefNumber, result.getFirst().getLabel());
     }
 
-    @Test
-    void buildQrCodes_withDirectCertificateUrl_shouldGenerateCertificateQrCode() {
-        String certificateUrl = "https://qr-test.ksef.mf.gov.pl/certificate/test";
-
-        InvoiceGenerationParams params = InvoiceGenerationParams.builder()
-                .schema(InvoiceSchema.FA3_1_0_E)
-                .certificateQrCodeUrl(certificateUrl)
-                .build();
-
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(certificateUrl, result.getFirst().getVerificationLink());
-        assertTrue(result.getFirst().getVerificationLink().contains("/certificate/"));
-    }
 
     @Test
     void buildQrCodes_withBothDirectUrls_shouldGenerateBothQrCodes() {
@@ -355,8 +310,7 @@ class QrCodeBuilderTest {
 
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
-                .onlineQrCodeUrl(onlineUrl)
-                .certificateQrCodeUrl(certificateUrl)
+                .invoiceQRCodeGeneratorRequest(InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(onlineUrl, certificateUrl))
                 .build();
 
         List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
@@ -383,10 +337,10 @@ class QrCodeBuilderTest {
                 "01F20A5D352AE590",
                 cert.getPrivateKey(),
                 LocalDate.of(2025, 10, 8));
+        request.setOnlineQrCodeUrl(onlineUrl);
 
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
-                .onlineQrCodeUrl(onlineUrl)
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
@@ -403,10 +357,11 @@ class QrCodeBuilderTest {
         String certificateUrl = "https://qr-test.ksef.mf.gov.pl/certificate/test";
         InvoiceQRCodeGeneratorRequest request = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
                 "https://qr-test.ksef.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
+        request.setCertificateQrCodeUrl(certificateUrl);
+        request.setOnline(false);
 
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
-                .certificateQrCodeUrl(certificateUrl)
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
@@ -450,11 +405,11 @@ class QrCodeBuilderTest {
     void buildQrCodes_withBlankUrls_shouldFallbackToRequest() {
         InvoiceQRCodeGeneratorRequest request = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(
                 "https://qr-test.ksef.mf.gov.pl", "6891152920", LocalDate.of(2025, 10, 8));
+        request.setOnlineQrCodeUrl("   ");
+        request.setCertificateQrCodeUrl("   ");
 
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
-                .onlineQrCodeUrl("   ")
-                .certificateQrCodeUrl("   ")
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 

@@ -39,12 +39,6 @@ public class InvoiceGenerationParams {
     @Nullable
     private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
 
-    @Nullable
-    private String onlineQrCodeUrl;
-
-    @Nullable
-    private String certificateQrCodeUrl;
-
     @Builder.Default
     private Language language = Language.PL;
 }

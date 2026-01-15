@@ -3,16 +3,23 @@ package io.alapierre.ksef.fop.qr;
 import io.alapierre.ksef.fop.InvoiceGenerationParams;
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.qr.exceptions.QrCodeGenerationException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Builder for creating QR codes for invoice PDFs.
- * Handles both online and certificate-based verification QR codes.
+ * 
+ * Supports two modes:
+ * - ONLINE mode: Generates only KOD I (online verification QR) - for invoices already in KSeF
+ * - OFFLINE mode: Generates both KOD I and KOD II (online + certificate verification QRs) - for invoices not yet in KSeF
+ * 
+ * Each QR code can be generated from:
+ * - Direct URL (if provided in InvoiceQRCodeGeneratorRequest)
+ * - Parameters (environmentUrl, identifier, issueDate, etc.) - URL will be generated
  */
 @RequiredArgsConstructor
 public class QrCodeBuilder {
@@ -21,73 +28,78 @@ public class QrCodeBuilder {
     private final TranslationService translationService;
 
     /**
-     * Builds QR codes based on invoice generation parameters.
-     * Each QR code (KOD I and KOD II) can be generated independently from either:
-     * - Direct URL (onlineQrCodeUrl / certificateQrCodeUrl)
-     * - InvoiceQRCodeGeneratorRequest (traditional generation)
+     * Builds QR codes based on the request. Returns null if request is null.
+     * For online mode returns single QR code, for offline mode returns two QR codes (online + certificate).
+     *
+     * @param request the QR code generation request
+     * @param ksefNumber optional KSeF number to display as label (if null or blank, uses offline label)
+     * @param invoiceXmlBytes the invoice XML bytes
+     * @param langCode the language code for translations
+     * @return list of QR code data, or null if request is null
+     */
+    public @Nullable List<QrCodeData> buildQrCodes(@Nullable InvoiceQRCodeGeneratorRequest request,
+                                                   @Nullable String ksefNumber,
+                                                   byte @NotNull [] invoiceXmlBytes,
+                                                   @NotNull String langCode) {
+        if (request == null) return null;
+
+        QrCodeData online = buildOnlineQr(request, ksefNumber, invoiceXmlBytes, langCode);
+        if (request.isOnline()) { // KOD I
+            return List.of(online);
+        } else { // KOD I + KOD II
+            QrCodeData cert = buildCertificateQr(request, invoiceXmlBytes, langCode);
+            return List.of(online, cert);
+        }
+    }
+    
+    /**
+     * Builds QR codes from InvoiceGenerationParams (legacy method).
+     * Delegates to buildQrCodes(InvoiceQRCodeGeneratorRequest, String, byte[], String).
      *
      * @param params the invoice generation parameters
-     * @param invoiceXmlBytes the invoice XML bytes (used only if generating from request)
+     * @param invoiceXmlBytes the invoice XML bytes
      * @param langCode the language code for translations
      * @return list of QR code data, or null if no QR codes can be generated
      */
     public @Nullable List<QrCodeData> buildQrCodes(@NotNull InvoiceGenerationParams params,
                                                    byte @NotNull [] invoiceXmlBytes,
                                                    @NotNull String langCode) {
-        List<QrCodeData> qrCodes = new ArrayList<>();
-
-        QrCodeData onlineQr = buildOnlineQrCode(params, invoiceXmlBytes, langCode);
-        if (onlineQr != null) {
-            qrCodes.add(onlineQr);
-        }
-
-        QrCodeData certificateQr = buildCertificateQrCode(params, invoiceXmlBytes, langCode);
-        if (certificateQr != null) {
-            qrCodes.add(certificateQr);
-        }
-
-        return qrCodes.isEmpty() ? null : qrCodes;
+        return buildQrCodes(
+            params.getInvoiceQRCodeGeneratorRequest(),
+            params.getKsefNumber(),
+            invoiceXmlBytes,
+            langCode
+        );
     }
 
-    /**
-     * Builds online verification QR code (KOD I).
-     * Uses direct URL if provided, otherwise generates from request.
-     *
-     * @param params the invoice generation parameters
-     * @param invoiceXmlBytes the invoice XML bytes (used only if generating from request)
-     * @param langCode the language code for translations
-     * @return QR code data for online verification, or null if cannot be generated
-     */
-    private @Nullable QrCodeData buildOnlineQrCode(@NotNull InvoiceGenerationParams params,
-                                                    byte @NotNull [] invoiceXmlBytes,
-                                                    @NotNull String langCode) {
-        if (isNotBlank(params.getOnlineQrCodeUrl())) {
-            return buildOnlineQrCodeFromUrl(params.getOnlineQrCodeUrl(), params.getKsefNumber(), langCode);
-        }
-
-        if (params.getInvoiceQRCodeGeneratorRequest() != null) {
-            return buildOnlineQr(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXmlBytes, langCode);
-        }
-
-        return null;
-    }
 
     /**
      * Builds an online verification QR code (KOD I).
+     * Uses direct URL if provided, otherwise generates from parameters.
      *
      * @param req the QR code generation request
      * @param ksefNumber optional KSeF number to display as label
-     * @param invoiceXmlBytes the invoice XML bytes
+     * @param invoiceXmlBytes the invoice XML bytes (used only if generating from parameters)
      * @param langCode the language code for translations
      * @return QR code data
+     * @throws QrCodeGenerationException if URL is not provided and required parameters are missing
      */
-    public @Nullable QrCodeData buildOnlineQr(@NotNull InvoiceQRCodeGeneratorRequest req,
+    public @NotNull QrCodeData buildOnlineQr(@NotNull InvoiceQRCodeGeneratorRequest req,
                                               @Nullable String ksefNumber,
                                               byte @NotNull [] invoiceXmlBytes,
                                               @NotNull String langCode) {
+        if (isNotBlank(req.getOnlineQrCodeUrl())) {
+            return buildOnlineQrCodeFromUrl(req.getOnlineQrCodeUrl(), ksefNumber, langCode);
+        }
+        
+        if (req.getEnvironmentUrl() == null || req.getIdentifier() == null || req.getIssueDate() == null) {
+            throw new QrCodeGenerationException(
+                "When onlineQrCodeUrl is not provided, environmentUrl, identifier, and issueDate are required");
+        }
+        
         String link = VerificationLinkGenerator.generateVerificationLink(
                 req.getEnvironmentUrl(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
-        return buildOnlineQrCodeFromUrl(link, ksefNumber, langCode);
+        return buildOnlineQrCodeFromUrl(link.trim(), ksefNumber, langCode);
     }
 
     /**
@@ -98,53 +110,39 @@ public class QrCodeBuilder {
      * @param langCode the language code for translations
      * @return QR code data, or null if url is null or empty
      */
-    public @Nullable QrCodeData buildOnlineQrCodeFromUrl(@Nullable String url,
+    public @NotNull QrCodeData buildOnlineQrCodeFromUrl(@NotNull String url,
                                                          @Nullable String ksefNumber,
                                                          @NotNull String langCode) {
-        if (!isNotBlank(url)) {
-            return null;
-        }
 
         String label = isNotBlank(ksefNumber) ? ksefNumber : translationService.getTranslation(langCode, "qr.offline");
         String title = translationService.getTranslation(langCode, "qr.onlineTitle");
         return qrFromLink(url.trim(), label, title);
     }
 
-    /**
-     * Builds certificate verification QR code (KOD II).
-     * Uses direct URL if provided, otherwise generates from request (if offline mode).
-     *
-     * @param params the invoice generation parameters
-     * @param invoiceXmlBytes the invoice XML bytes (used only if generating from request)
-     * @param langCode the language code for translations
-     * @return QR code data for certificate verification, or null if cannot be generated
-     */
-    private @Nullable QrCodeData buildCertificateQrCode(@NotNull InvoiceGenerationParams params,
-                                                        byte @NotNull [] invoiceXmlBytes,
-                                                        @NotNull String langCode) {
-        if (isNotBlank(params.getCertificateQrCodeUrl())) {
-            return buildCertificateQrCodeFromUrl(params.getCertificateQrCodeUrl(), langCode);
-        }
-
-        InvoiceQRCodeGeneratorRequest request = params.getInvoiceQRCodeGeneratorRequest();
-        if (request != null && !request.isOnline()) {
-            return buildCertificateQr(request, invoiceXmlBytes, langCode);
-        }
-
-        return null;
-    }
 
     /**
      * Builds a certificate verification QR code (KOD II).
+     * Uses direct URL if provided, otherwise generates from parameters.
      *
      * @param req the QR code generation request
-     * @param invoiceXmlBytes the invoice XML bytes
+     * @param invoiceXmlBytes the invoice XML bytes (used only if generating from parameters)
      * @param langCode the language code for translations
      * @return QR code data
+     * @throws QrCodeGenerationException if URL is not provided and required parameters are missing
      */
-    public @Nullable QrCodeData buildCertificateQr(@NotNull InvoiceQRCodeGeneratorRequest req,
+    public @NotNull QrCodeData buildCertificateQr(@NotNull InvoiceQRCodeGeneratorRequest req,
                                                    byte @NotNull [] invoiceXmlBytes,
                                                    @NotNull String langCode) {
+        if (isNotBlank(req.getCertificateQrCodeUrl())) {
+            return buildCertificateQrCodeFromUrl(req.getCertificateQrCodeUrl(), langCode);
+        }
+        
+        if (req.getEnvironmentUrl() == null || req.getCtxType() == null || req.getCtxValue() == null ||
+            req.getIdentifier() == null || req.getCertSerial() == null || req.getPrivateKey() == null) {
+            throw new QrCodeGenerationException(
+                "When certificateQrCodeUrl is not provided, environmentUrl, ctxType, ctxValue, identifier, certSerial, and privateKey are required");
+        }
+ 
         String link = VerificationLinkGenerator.generateCertificateVerificationLink(
                 req.getEnvironmentUrl(),
                 req.getCtxType(),
@@ -154,7 +152,7 @@ public class QrCodeBuilder {
                 req.getPrivateKey(),
                 invoiceXmlBytes
         );
-        return buildCertificateQrCodeFromUrl(link, langCode);
+        return buildCertificateQrCodeFromUrl(link.trim(), langCode);
     }
 
     /**
@@ -164,11 +162,8 @@ public class QrCodeBuilder {
      * @param langCode the language code for translations
      * @return QR code data, or null if url is null or empty
      */
-    public @Nullable QrCodeData buildCertificateQrCodeFromUrl(@Nullable String url,
+    public @NotNull QrCodeData buildCertificateQrCodeFromUrl(@NotNull String url,
                                                               @NotNull String langCode) {
-        if (!isNotBlank(url)) {
-            return null;
-        }
 
         String label = translationService.getTranslation(langCode, "qr.certificate");
         String title = translationService.getTranslation(langCode, "qr.certificateTitle");
