@@ -66,21 +66,6 @@ class TranslationServiceTest {
     }
 
     @Test
-    void getTranslation_shouldCacheTranslations() {
-        // First call
-        String result1 = translationService.getTranslation("pl", "invoice.date");
-        assertEquals("Data wystawienia", result1);
-
-        // Second call should use cache
-        String result2 = translationService.getTranslation("pl", "invoice.date");
-        assertEquals("Data wystawienia", result2);
-
-        // Verify cache is used by checking cache size
-        Map<String, ?> jsonCache = getJsonCache();
-        assertTrue(jsonCache.containsKey("pl"));
-    }
-
-    @Test
     void getTranslationsAsXml_shouldReturnValidXmlDocument() {
         Document doc = translationService.getTranslationsAsXml("pl");
         assertNotNull(doc);
@@ -173,17 +158,6 @@ class TranslationServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, ?> getJsonCache() {
-        try {
-            Field field = TranslationService.class.getDeclaredField("JSON_CACHE");
-            field.setAccessible(true);
-            return (Map<String, ?>) field.get(null);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to access cache", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     private Map<String, ?> getDocumentCache() {
         try {
             Field field = TranslationService.class.getDeclaredField("DOCUMENT_CACHE");
@@ -196,9 +170,7 @@ class TranslationServiceTest {
 
     private void clearCaches() {
         try {
-            Map<String, ?> jsonCache = getJsonCache();
             Map<String, ?> docCache = getDocumentCache();
-            jsonCache.clear();
             docCache.clear();
         } catch (Exception e) {
             // Ignore if clearing fails
