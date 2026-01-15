@@ -74,7 +74,7 @@ public class QrCodeBuilder {
 
 
     /**
-     * Builds an online verification QR code (KOD I).
+     * Builds an online verification QR code (KOD I) from a request.
      * Uses direct URL if provided, otherwise generates from parameters.
      *
      * @param req the QR code generation request
@@ -89,7 +89,7 @@ public class QrCodeBuilder {
                                               byte @NotNull [] invoiceXmlBytes,
                                               @NotNull String langCode) {
         if (isNotBlank(req.getOnlineQrCodeUrl())) {
-            return buildOnlineQrCodeFromUrl(req.getOnlineQrCodeUrl(), ksefNumber, langCode);
+            return buildOnlineQr(req.getOnlineQrCodeUrl(), ksefNumber, langCode);
         }
         
         if (req.getEnvironmentUrl() == null || req.getIdentifier() == null || req.getIssueDate() == null) {
@@ -99,7 +99,7 @@ public class QrCodeBuilder {
         
         String link = VerificationLinkGenerator.generateVerificationLink(
                 req.getEnvironmentUrl(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
-        return buildOnlineQrCodeFromUrl(link.trim(), ksefNumber, langCode);
+        return buildOnlineQr(link.trim(), ksefNumber, langCode);
     }
 
     /**
@@ -108,12 +108,11 @@ public class QrCodeBuilder {
      * @param url URL for KOD I (online verification)
      * @param ksefNumber optional KSeF number to display as label (if null or blank, uses offline label)
      * @param langCode the language code for translations
-     * @return QR code data, or null if url is null or empty
+     * @return QR code data
      */
-    public @NotNull QrCodeData buildOnlineQrCodeFromUrl(@NotNull String url,
-                                                         @Nullable String ksefNumber,
-                                                         @NotNull String langCode) {
-
+    public @NotNull QrCodeData buildOnlineQr(@NotNull String url,
+                                             @Nullable String ksefNumber,
+                                             @NotNull String langCode) {
         String label = isNotBlank(ksefNumber) ? ksefNumber : translationService.getTranslation(langCode, "qr.offline");
         String title = translationService.getTranslation(langCode, "qr.onlineTitle");
         return qrFromLink(url.trim(), label, title);
@@ -121,7 +120,7 @@ public class QrCodeBuilder {
 
 
     /**
-     * Builds a certificate verification QR code (KOD II).
+     * Builds a certificate verification QR code (KOD II) from a request.
      * Uses direct URL if provided, otherwise generates from parameters.
      *
      * @param req the QR code generation request
@@ -134,7 +133,7 @@ public class QrCodeBuilder {
                                                    byte @NotNull [] invoiceXmlBytes,
                                                    @NotNull String langCode) {
         if (isNotBlank(req.getCertificateQrCodeUrl())) {
-            return buildCertificateQrCodeFromUrl(req.getCertificateQrCodeUrl(), langCode);
+            return buildCertificateQr(req.getCertificateQrCodeUrl(), langCode);
         }
         
         if (req.getEnvironmentUrl() == null || req.getCtxType() == null || req.getCtxValue() == null ||
@@ -152,7 +151,7 @@ public class QrCodeBuilder {
                 req.getPrivateKey(),
                 invoiceXmlBytes
         );
-        return buildCertificateQrCodeFromUrl(link.trim(), langCode);
+        return buildCertificateQr(link.trim(), langCode);
     }
 
     /**
@@ -160,11 +159,10 @@ public class QrCodeBuilder {
      *
      * @param url URL for KOD II (certificate verification)
      * @param langCode the language code for translations
-     * @return QR code data, or null if url is null or empty
+     * @return QR code data
      */
-    public @NotNull QrCodeData buildCertificateQrCodeFromUrl(@NotNull String url,
-                                                              @NotNull String langCode) {
-
+    public @NotNull QrCodeData buildCertificateQr(@NotNull String url,
+                                                  @NotNull String langCode) {
         String label = translationService.getTranslation(langCode, "qr.certificate");
         String title = translationService.getTranslation(langCode, "qr.certificateTitle");
         return qrFromLink(url.trim(), label, title);

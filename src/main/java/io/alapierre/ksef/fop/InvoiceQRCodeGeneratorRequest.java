@@ -58,9 +58,17 @@ public class InvoiceQRCodeGeneratorRequest {
 
     private boolean online;
 
+    /**
+     * Direct URL for KOD I (online verification QR code).
+     * If provided, this URL will be used directly instead of generating from parameters.
+     */
     @Nullable
     private String onlineQrCodeUrl;
 
+    /**
+     * Direct URL for KOD II (certificate verification QR code).
+     * If provided, this URL will be used directly instead of generating from parameters.
+     */
     @Nullable
     private String certificateQrCodeUrl;
 

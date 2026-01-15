@@ -152,7 +152,7 @@ class QrCodeBuilderTest {
         String testLink = "https://qr-test.ksef.mf.gov.pl/web/verify/test";
         String testLabel = "Test Label";
 
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(testLink, testLabel, "pl");
+        QrCodeData result = qrCodeBuilder.buildOnlineQr(testLink, testLabel, "pl");
 
         assertNotNull(result);
         assertEquals(testLink, result.getVerificationLink());
@@ -181,11 +181,11 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_withValidUrl_shouldGenerateQrCode() {
+    void buildOnlineQr_fromUrl_shouldGenerateQrCode() {
         String url = "https://qr-test.ksef.mf.gov.pl/invoice/6891152920/08-10-2025/abc123";
         String ksefNumber = "6891152920-20251008-010000B4CF64-9C";
 
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, ksefNumber, "pl");
+        QrCodeData result = qrCodeBuilder.buildOnlineQr(url, ksefNumber, "pl");
 
         assertNotNull(result);
         assertEquals(url, result.getVerificationLink());
@@ -196,10 +196,10 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_withoutKsefNumber_shouldUseOfflineLabel() {
+    void buildOnlineQr_fromUrl_withoutKsefNumber_shouldUseOfflineLabel() {
         String url = "https://qr-test.ksef.mf.gov.pl/invoice/6891152920/08-10-2025/abc123";
 
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, null, "pl");
+        QrCodeData result = qrCodeBuilder.buildOnlineQr(url, null, "pl");
 
         assertNotNull(result);
         assertEquals(url, result.getVerificationLink());
@@ -209,10 +209,10 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_withBlankKsefNumber_shouldUseOfflineLabel() {
+    void buildOnlineQr_fromUrl_withBlankKsefNumber_shouldUseOfflineLabel() {
         String url = "https://qr-test.ksef.mf.gov.pl/invoice/6891152920/08-10-2025/abc123";
 
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, "   ", "pl");
+        QrCodeData result = qrCodeBuilder.buildOnlineQr(url, "   ", "pl");
 
         assertNotNull(result);
         assertNotNull(result.getLabel());
@@ -220,22 +220,22 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_shouldTrimUrl() {
+    void buildOnlineQr_fromUrl_shouldTrimUrl() {
         String url = "  https://qr-test.ksef.mf.gov.pl/invoice/test  ";
         String expectedUrl = "https://qr-test.ksef.mf.gov.pl/invoice/test";
 
-        QrCodeData result = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, null, "pl");
+        QrCodeData result = qrCodeBuilder.buildOnlineQr(url, null, "pl");
 
         assertNotNull(result);
         assertEquals(expectedUrl, result.getVerificationLink());
     }
 
     @Test
-    void buildOnlineQrCodeFromUrl_shouldUseCorrectLanguage() {
+    void buildOnlineQr_fromUrl_shouldUseCorrectLanguage() {
         String url = "https://qr-test.ksef.mf.gov.pl/invoice/test";
 
-        QrCodeData resultPl = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, null, "pl");
-        QrCodeData resultEn = qrCodeBuilder.buildOnlineQrCodeFromUrl(url, null, "en");
+        QrCodeData resultPl = qrCodeBuilder.buildOnlineQr(url, null, "pl");
+        QrCodeData resultEn = qrCodeBuilder.buildOnlineQr(url, null, "en");
 
         assertNotNull(resultPl);
         assertNotNull(resultPl.getVerificationLinkTitle());
@@ -245,10 +245,10 @@ class QrCodeBuilderTest {
     }
 
     @Test
-    void buildCertificateQrCodeFromUrl_withValidUrl_shouldGenerateQrCode() {
+    void buildCertificateQr_fromUrl_shouldGenerateQrCode() {
         String url = "https://qr-test.ksef.mf.gov.pl/certificate/Nip/6891152920/6891152920/01F20A5D352AE590/abc123/signature";
 
-        QrCodeData result = qrCodeBuilder.buildCertificateQrCodeFromUrl(url, "pl");
+        QrCodeData result = qrCodeBuilder.buildCertificateQr(url, "pl");
 
         assertNotNull(result);
         assertEquals(url, result.getVerificationLink());
@@ -259,22 +259,22 @@ class QrCodeBuilderTest {
     }
     
     @Test
-    void buildCertificateQrCodeFromUrl_shouldTrimUrl() {
+    void buildCertificateQr_fromUrl_shouldTrimUrl() {
         String url = "  https://qr-test.ksef.mf.gov.pl/certificate/test  ";
         String expectedUrl = "https://qr-test.ksef.mf.gov.pl/certificate/test";
 
-        QrCodeData result = qrCodeBuilder.buildCertificateQrCodeFromUrl(url, "pl");
+        QrCodeData result = qrCodeBuilder.buildCertificateQr(url, "pl");
 
         assertNotNull(result);
         assertEquals(expectedUrl, result.getVerificationLink());
     }
 
     @Test
-    void buildCertificateQrCodeFromUrl_shouldUseCorrectLanguage() {
+    void buildCertificateQr_fromUrl_shouldUseCorrectLanguage() {
         String url = "https://qr-test.ksef.mf.gov.pl/certificate/test";
 
-        QrCodeData resultPl = qrCodeBuilder.buildCertificateQrCodeFromUrl(url, "pl");
-        QrCodeData resultEn = qrCodeBuilder.buildCertificateQrCodeFromUrl(url, "en");
+        QrCodeData resultPl = qrCodeBuilder.buildCertificateQr(url, "pl");
+        QrCodeData resultEn = qrCodeBuilder.buildCertificateQr(url, "en");
 
         assertNotNull(resultPl);
         assertNotNull(resultPl.getVerificationLinkTitle());
