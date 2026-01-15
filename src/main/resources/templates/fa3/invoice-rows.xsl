@@ -33,34 +33,19 @@
         <xsl:param name="faWiersz"/>
 
         <!-- Calculate column width for name based on presence of other columns -->
+        <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
+        <!-- Optional columns: P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
         <xsl:variable name="nameColumnWidth">
-            <xsl:choose>
-                <!-- Base width is 31% -->
-                <!-- Check all combinations of P_11Vat, P_11A, P_9B and P_10 -->
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">22%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">29%</xsl:when>
-                
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">31%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">38%</xsl:when>
-                
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">32%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">39%</xsl:when>
-                
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">41%</xsl:when>
-                <xsl:when test="$faWiersz/crd:P_11Vat and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">48%</xsl:when>
-                
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">29%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">36%</xsl:when>
-                
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">38%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and $faWiersz/crd:P_11A and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">45%</xsl:when>
-                
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and $faWiersz/crd:P_10">39%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and $faWiersz/crd:P_9B and not($faWiersz/crd:P_10)">46%</xsl:when>
-                
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and $faWiersz/crd:P_10">48%</xsl:when>
-                <xsl:when test="not($faWiersz/crd:P_11Vat) and not($faWiersz/crd:P_11A) and not($faWiersz/crd:P_9B) and not($faWiersz/crd:P_10)">55%</xsl:when>
-            </xsl:choose>
+            <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
+            <xsl:variable name="p9aWidth" select="if ($faWiersz/crd:P_9A) then 10 else 0"/>
+            <xsl:variable name="p9bWidth" select="if ($faWiersz/crd:P_9B) then 10 else 0"/>
+            <xsl:variable name="p10Width" select="if ($faWiersz/crd:P_10) then 7 else 0"/>
+            <xsl:variable name="p12Width" select="if ($faWiersz/crd:P_12) then 8 else 0"/>
+            <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
+            <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
+            <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
         <!-- Define the table structure -->
@@ -348,32 +333,20 @@
         <xsl:param name="faWierszBefore"/>
         <xsl:param name="faWierszAfter"/>
 
+        <!-- Calculate column width for name based on presence of other columns -->
+        <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
+        <!-- Optional columns: P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8% - always shown in differencesTable), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
         <xsl:variable name="nameColumnWidth">
-            <xsl:choose>
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and $faWierszAfter/crd:P_11A and $faWierszAfter/crd:P_9B and $faWierszAfter/crd:P_10">22%</xsl:when>
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and $faWierszAfter/crd:P_11A and $faWierszAfter/crd:P_9B and not($faWierszAfter/crd:P_10)">29%</xsl:when>
-                
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and $faWierszAfter/crd:P_11A and not($faWierszAfter/crd:P_9B) and $faWierszAfter/crd:P_10">31%</xsl:when>
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and $faWierszAfter/crd:P_11A and not($faWierszAfter/crd:P_9B) and not($faWierszAfter/crd:P_10)">38%</xsl:when>
-                
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and not($faWierszAfter/crd:P_11A) and $faWierszAfter/crd:P_9B and $faWierszAfter/crd:P_10">32%</xsl:when>
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and not($faWierszAfter/crd:P_11A) and $faWierszAfter/crd:P_9B and not($faWierszAfter/crd:P_10)">39%</xsl:when>
-                
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and not($faWierszAfter/crd:P_11A) and not($faWierszAfter/crd:P_9B) and $faWierszAfter/crd:P_10">41%</xsl:when>
-                <xsl:when test="$faWierszAfter/crd:P_11Vat and not($faWierszAfter/crd:P_11A) and not($faWierszAfter/crd:P_9B) and not($faWierszAfter/crd:P_10)">48%</xsl:when>
-                
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and $faWierszAfter/crd:P_11A and $faWierszAfter/crd:P_9B and $faWierszAfter/crd:P_10">29%</xsl:when>
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and $faWierszAfter/crd:P_11A and $faWierszAfter/crd:P_9B and not($faWierszAfter/crd:P_10)">36%</xsl:when>
-                
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and $faWierszAfter/crd:P_11A and not($faWierszAfter/crd:P_9B) and $faWierszAfter/crd:P_10">38%</xsl:when>
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and $faWierszAfter/crd:P_11A and not($faWierszAfter/crd:P_9B) and not($faWierszAfter/crd:P_10)">45%</xsl:when>
-                
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and not($faWierszAfter/crd:P_11A) and $faWierszAfter/crd:P_9B and $faWierszAfter/crd:P_10">39%</xsl:when>
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and not($faWierszAfter/crd:P_11A) and $faWierszAfter/crd:P_9B and not($faWierszAfter/crd:P_10)">46%</xsl:when>
-                
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and not($faWierszAfter/crd:P_11A) and not($faWierszAfter/crd:P_9B) and $faWierszAfter/crd:P_10">48%</xsl:when>
-                <xsl:when test="not($faWierszAfter/crd:P_11Vat) and not($faWierszAfter/crd:P_11A) and not($faWierszAfter/crd:P_9B) and not($faWierszAfter/crd:P_10)">55%</xsl:when>
-            </xsl:choose>
+            <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
+            <xsl:variable name="p9aWidth" select="if ($faWierszAfter/crd:P_9A) then 10 else 0"/>
+            <xsl:variable name="p9bWidth" select="if ($faWierszAfter/crd:P_9B) then 10 else 0"/>
+            <xsl:variable name="p10Width" select="if ($faWierszAfter/crd:P_10) then 7 else 0"/>
+            <xsl:variable name="p12Width" select="8"/> <!-- Always shown in differencesTable -->
+            <xsl:variable name="p11Width" select="if ($faWierszAfter/crd:P_11) then 10 else 0"/>
+            <xsl:variable name="p11vatWidth" select="if ($faWierszAfter/crd:P_11Vat) then 7 else 0"/>
+            <xsl:variable name="p11aWidth" select="if ($faWierszAfter/crd:P_11A) then 10 else 0"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">

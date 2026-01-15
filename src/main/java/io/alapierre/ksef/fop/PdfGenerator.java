@@ -187,7 +187,10 @@ public class PdfGenerator {
                 templateFileName = "templates/upo_v3/ksef_upo.fop";
                 break;
             case UPO_V4_2:
-                templateFileName = "templates/upo_v4/ksef_upo.fop";
+                templateFileName = "templates/upo_v4/ksef_upo_v4_2.fop";
+                break;
+            case UPO_V4_3:
+                templateFileName = "templates/upo_v4/ksef_upo_v4_3.fop";
                 break;
             default:
                 log.warn("UPO Schema is not provided in UpoGenerationParams or not supported, using default v3");
