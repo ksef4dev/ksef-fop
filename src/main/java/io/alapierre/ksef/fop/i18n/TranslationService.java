@@ -14,12 +14,11 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.nio.charset.StandardCharsets.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 public class TranslationService {
@@ -78,15 +77,15 @@ public class TranslationService {
     }
 
     /**
-     * Ensures that property files are read using UTF-8, even on Java 8.
-     * <p>
-     *     Since Java 9, property files are read as UTF-8 by default, so this class can be removed if only Java 9+ is targeted.
-     * </p>
+     * Ensures that property files are read using UTF-8, even on Java 8 and no fallback locale is used.
      */
     private static class Utf8Control extends ResourceBundle.Control {
         @Override
         public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
                 throws java.io.IOException {
+            /*
+             * Since Java 9, property files are read as UTF-8 by default, so this override is only necessary for Java 8 and below.
+             */
             String bundleName = toBundleName(baseName, locale);
             String resourceName = toResourceName(bundleName, "properties");
             ResourceBundle bundle = null;
@@ -106,6 +105,15 @@ public class TranslationService {
                 }
             }
             return bundle;
+        }
+
+        @Override
+        public Locale getFallbackLocale(String baseName, Locale locale) {
+            /*
+             * Disable fallback locale: always return null to avoid falling back to default locale.
+             * This ensures that the lookup falls back to Locale.ROOT (which is Polish in our case) when the specific locale is not found.
+             */
+            return null;
         }
     }
 }
