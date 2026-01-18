@@ -85,6 +85,7 @@
         <FaWiersz>
             <NrWierszaFa>1</NrWierszaFa>
             <P_7>Sprzedaż towarów 23%</P_7>
+            <Indeks>ABC</Indeks>
             <P_8A>szt.</P_8A>
             <P_8B>2.323</P_8B>
             <P_9A>234.24</P_9A>
@@ -94,6 +95,7 @@
         <FaWiersz>
             <NrWierszaFa>2</NrWierszaFa>
             <P_7>GTU_01</P_7>
+            <Indeks>123</Indeks>
             <P_8A>-</P_8A>
             <P_8B>2.561</P_8B>
             <P_9A>1350.00</P_9A>
