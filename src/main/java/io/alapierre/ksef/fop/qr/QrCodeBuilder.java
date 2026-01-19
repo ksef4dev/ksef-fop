@@ -168,7 +168,14 @@ public class QrCodeBuilder {
         return qrFromLink(url.trim(), label, title);
     }
 
-    private @NotNull QrCodeData qrFromLink(@NotNull String link, @NotNull String label, @NotNull String title) {
+    /**
+     * @deprecated This method will be removed in version 2.0.0. 
+     *             Please use methods dedicated for online or offline build instead, such as 
+     *             {@link #buildOnlineQr(String, String, String)} for online builds or 
+     *             {@link #buildCertificateQr(String, String)} for offline builds.
+     */
+    @Deprecated(forRemoval = true, since = "1.0.0")
+    public @NotNull QrCodeData qrFromLink(@NotNull String link, @NotNull String label, @NotNull String title) {
         byte[] image = QrCodeGenerator.generateBarcode(link, QR_SIZE, QR_SIZE);
         return QrCodeData.builder()
                 .qrCodeImage(image)
