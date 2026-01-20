@@ -163,8 +163,8 @@ class QrCodeBuilderTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertNotNull(result.getFirst());
-        assertTrue(result.getFirst().getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
+        assertNotNull(result.get(0));
+        assertTrue(result.get(0).getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
     }
 
     @Test
@@ -285,8 +285,8 @@ class QrCodeBuilderTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(onlineUrl, result.getFirst().getVerificationLink());
-        assertEquals(ksefNumber, result.getFirst().getLabel());
+        assertEquals(onlineUrl, result.get(0).getVerificationLink());
+        assertEquals(ksefNumber, result.get(0).getLabel());
     }
 
 
@@ -374,7 +374,7 @@ class QrCodeBuilderTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertTrue(result.getFirst().getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
+        assertTrue(result.get(0).getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
     }
 
     @Test
@@ -404,7 +404,7 @@ class QrCodeBuilderTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertTrue(result.getFirst().getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
+        assertTrue(result.get(0).getVerificationLink().contains("https://qr-test.ksef.mf.gov.pl"));
     }
 
 }

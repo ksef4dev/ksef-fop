@@ -1,9 +1,7 @@
 package io.alapierre.ksef.fop.qr;
 
-import io.alapierre.ksef.fop.InvoiceGenerationParams;
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
-import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.qr.exceptions.QrCodeGenerationException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +94,7 @@ public class QrCodeBuilder {
     public @NotNull QrCodeData buildOnlineQr(@NotNull String url,
                                              @Nullable String ksefNumber,
                                              @NotNull String langCode) {
-        String label = Strings.defaultIfEmpty(ksefNumber, labelOffline);
+        String label = isNotBlank(ksefNumber) ? ksefNumber : translationService.getTranslation(langCode, "qr.offline");
         String title = translationService.getTranslation(langCode, "qr.onlineTitle");
         return qrFromLink(url.trim(), label, title);
     }
@@ -152,12 +150,12 @@ public class QrCodeBuilder {
     }
 
     /**
-     * @deprecated This method will be removed in version 2.0.0.
+     * @deprecated This method will be private in version 2.0.0.
      *             Please use methods dedicated for online or offline build instead, such as
      *             {@link #buildOnlineQr(String, String, String)} for online builds or
      *             {@link #buildCertificateQr(String, String)} for offline builds.
      */
-    @Deprecated(forRemoval = true, since = "1.0.0")
+    @Deprecated
     public @NotNull QrCodeData qrFromLink(@NotNull String link, @NotNull String label, @NotNull String title) {
         byte[] image = QrCodeGenerator.generateBarcode(link, QR_SIZE, QR_SIZE);
         return QrCodeData.builder()
@@ -169,6 +167,6 @@ public class QrCodeBuilder {
     }
 
     private boolean isNotBlank(@Nullable String str) {
-        return str != null && !str.isBlank();
+        return str != null && !str.trim().isEmpty();
     }
 }
