@@ -51,8 +51,8 @@ jobs:
           
           # Static content
           cat > target/sonar-project.properties <<EOF
-          sonar.organization=ksef-fop-test
-          sonar.projectKey=ksef-fop-test_ksef
+          sonar.organization=ksef4dev
+          sonar.projectKey=ksef4dev_ksef-fop
           sonar.java.binaries=target/classes
           sonar.java.test.binaries=target/test-classes
           EOF
