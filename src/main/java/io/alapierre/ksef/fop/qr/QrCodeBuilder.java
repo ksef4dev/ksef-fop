@@ -51,26 +51,6 @@ public class QrCodeBuilder {
             return List.of(online, cert);
         }
     }
-    
-    /**
-     * Builds QR codes from InvoiceGenerationParams (legacy method).
-     * Delegates to buildQrCodes(InvoiceQRCodeGeneratorRequest, String, byte[], String).
-     *
-     * @param params the invoice generation parameters
-     * @param invoiceXmlBytes the invoice XML bytes
-     * @param langCode the language code for translations
-     * @return list of QR code data, or null if no QR codes can be generated
-     */
-    public @Nullable List<QrCodeData> buildQrCodes(@NotNull InvoiceGenerationParams params,
-                                                   byte @NotNull [] invoiceXmlBytes,
-                                                   @NotNull String langCode) {
-        return buildQrCodes(
-            params.getInvoiceQRCodeGeneratorRequest(),
-            params.getKsefNumber(),
-            invoiceXmlBytes,
-            langCode
-        );
-    }
 
 
     /**

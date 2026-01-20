@@ -172,7 +172,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(req)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -294,7 +294,7 @@ class QrCodeBuilderTest {
                 .ksefNumber(ksefNumber)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -313,7 +313,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(InvoiceQRCodeGeneratorRequest.offlineCertificateQrBuilder(onlineUrl, certificateUrl))
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -344,7 +344,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -365,7 +365,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -383,7 +383,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -396,7 +396,7 @@ class QrCodeBuilderTest {
                 .schema(InvoiceSchema.FA3_1_0_E)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNull(result);
     }
@@ -413,7 +413,7 @@ class QrCodeBuilderTest {
                 .invoiceQRCodeGeneratorRequest(request)
                 .build();
 
-        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params, testInvoiceXml, "pl");
+        List<QrCodeData> result = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), testInvoiceXml, "pl");
 
         assertNotNull(result);
         assertEquals(1, result.size());
