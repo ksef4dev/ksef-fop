@@ -1,7 +1,6 @@
 package io.alapierre.ksef.fop.i18n;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.alapierre.ksef.fop.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -9,22 +8,39 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 public class TranslationService {
 
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
     private static final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
-    private static final Map<String, JsonNode> JSON_CACHE = new ConcurrentHashMap<>();
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private final DocumentBuilder documentBuilder;
+
+    public TranslationService() {
+        try {
+            this.documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            log.error("Failed to initialize DocumentBuilder", e);
+            throw new RuntimeException("Failed to initialize TranslationService", e);
+        }
+    }
 
     public Document getTranslationsAsXml(String lang) {
-        String targetLang = (lang == null || lang.isBlank()) ? "pl" : lang;
-        return DOCUMENT_CACHE.computeIfAbsent(targetLang, TranslationService::loadAndCreateDocument);
+        String targetLang = Strings.defaultIfEmpty(lang, "pl");
+        return DOCUMENT_CACHE.computeIfAbsent(targetLang, this::loadAndCreateDocument);
     }
 
     /**
@@ -35,85 +51,70 @@ public class TranslationService {
      * @return the translated value or the key itself if not found
      */
     public String getTranslation(String lang, String key) {
-        String targetLang = (lang == null || lang.isBlank()) ? "pl" : lang;
-        JsonNode json = JSON_CACHE.computeIfAbsent(targetLang, TranslationService::loadJsonCached);
-
-        if (json == null || !json.has(key)) {
-            log.warn("Translation key '{}' not found for language '{}'", key, targetLang);
-            return key;
-        }
-        return json.get(key).asText();
+        String targetLang = Strings.defaultIfEmpty(lang, "pl");
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.forLanguageTag(targetLang), new Utf8Control());
+        return bundle.containsKey(key) ? bundle.getString(key) : key;
     }
 
-    private static JsonNode loadJsonCached(String lang) {
-        String resourcePath = "i18n/messages_" + lang + ".json";
-        JsonNode langNode = loadJson(resourcePath);
-
-        if (langNode == null && !"pl".equals(lang)) {
-            log.warn("Translations for '{}' not found, falling back to 'pl'", lang);
-            langNode = loadJson("i18n/messages_pl.json");
-        }
-
-        return langNode;
+    private Document loadAndCreateDocument(String lang) {
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.forLanguageTag(lang), new Utf8Control());
+        return createDocumentFromBundle(bundle);
     }
 
-    private static Document loadAndCreateDocument(String lang) {
-        String resourcePath = "i18n/messages_" + lang + ".json";
-        JsonNode langNode = loadJson(resourcePath);
+    private Document createDocumentFromBundle(ResourceBundle bundle) {
+        Document doc = documentBuilder.newDocument();
+        Element rootElement = doc.createElement("labels");
+        doc.appendChild(rootElement);
 
-        if (langNode == null && !"pl".equals(lang)) {
-            log.warn("Translations for '{}' not found, falling back to 'pl'", lang);
-            langNode = loadJson("i18n/messages_pl.json");
+        Enumeration<String> keys = bundle.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            Element entry = doc.createElement("entry");
+            entry.setAttribute("key", key);
+            entry.setTextContent(bundle.getString(key));
+            rootElement.appendChild(entry);
         }
-
-        if (langNode == null) {
-            log.error("Default translations (pl) not found!");
-            return createEmptyDocument();
-        }
-
-        return createDocumentFromJson(langNode);
+        return doc;
     }
 
-    private static JsonNode loadJson(String path) {
-        try (InputStream is = TranslationService.class.getClassLoader().getResourceAsStream(path)) {
-            if (is == null) {
-                return null;
+    /**
+     * Ensures that property files are read using UTF-8, even on Java 8 and no fallback locale is used.
+     */
+    private static class Utf8Control extends ResourceBundle.Control {
+        @Override
+        public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+                throws java.io.IOException {
+            /*
+             * Since Java 9, property files are read as UTF-8 by default, so this override is only necessary for Java 8 and below.
+             */
+            String bundleName = toBundleName(baseName, locale);
+            String resourceName = toResourceName(bundleName, "properties");
+            ResourceBundle bundle = null;
+
+            URL url = loader.getResource(resourceName);
+            if (url != null) {
+                URLConnection connection = url.openConnection();
+                if (reload) {
+                    connection.setUseCaches(false);
+                }
+                try (InputStream stream = connection.getInputStream()) {
+                    if (stream != null) {
+                        try (InputStreamReader reader = new InputStreamReader(stream, UTF_8)) {
+                            bundle = new PropertyResourceBundle(reader);
+                        }
+                    }
+                }
             }
-            return MAPPER.readTree(is);
-        } catch (IOException e) {
-            log.error("Failed to load translations from {}", path, e);
+            return bundle;
+        }
+
+        @Override
+        public Locale getFallbackLocale(String baseName, Locale locale) {
+            /*
+             * Disable fallback locale: always return null to avoid falling back to default locale.
+             * This ensures that the lookup falls back to Locale.ROOT (which is Polish in our case) when the specific locale is not found.
+             */
             return null;
-        }
-    }
-
-    private static Document createDocumentFromJson(JsonNode json) {
-        try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            Element rootElement = doc.createElement("labels");
-            doc.appendChild(rootElement);
-
-            Iterator<Map.Entry<String, JsonNode>> fields = json.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                Element entry = doc.createElement("entry");
-                entry.setAttribute("key", field.getKey());
-                entry.setTextContent(field.getValue().asText());
-                rootElement.appendChild(entry);
-            }
-            return doc;
-        } catch (ParserConfigurationException e) {
-             log.error("Failed to create XML document for translations", e);
-             throw new RuntimeException("Failed to create translation XML", e);
-        }
-    }
-
-    private static Document createEmptyDocument() {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
         }
     }
 }

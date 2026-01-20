@@ -183,12 +183,18 @@ public class PdfGenerator {
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {
         String templateFileName;
         switch (params.getSchema()) {
-            case UPO_V3 -> templateFileName = "templates/upo_v3/ksef_upo.fop";
-            case UPO_V4_2 -> templateFileName = "templates/upo_v4/ksef_upo.fop";
-            default -> {
+            case UPO_V3:
+                templateFileName = "templates/upo_v3/ksef_upo.fop";
+                break;
+            case UPO_V4_2:
+                templateFileName = "templates/upo_v4/ksef_upo_v4_2.fop";
+                break;
+            case UPO_V4_3:
+                templateFileName = "templates/upo_v4/ksef_upo_v4_3.fop";
+                break;
+            default:
                 log.warn("UPO Schema is not provided in UpoGenerationParams or not supported, using default v3");
                 templateFileName = "templates/upo_v3/ksef_upo.fop";
-            }
         }
         return templateFileName;
     }
@@ -262,10 +268,15 @@ public class PdfGenerator {
     }
 
     private static String resolveXslTemplate(InvoiceGenerationParams params) {
-        return switch (params.getSchema()) {
-            case FA2_1_0_E -> "templates/fa2/ksef_invoice.xsl";
-            case FA3_1_0_E -> "templates/fa3/ksef_invoice.xsl";
-        };
+        switch (params.getSchema()) {
+            case FA2_1_0_E:
+                return "templates/fa2/ksef_invoice.xsl";
+            case FA3_1_0_E:
+                return "templates/fa3/ksef_invoice.xsl";
+            default:
+                log.warn("UPO Schema {} in InvoiceGenerationParams is not supported, using default {}", params.getSchema(), InvoiceSchema.FA3_1_0_E);
+                return "templates/fa3/ksef_invoice.xsl";
+        }
     }
 
 }

@@ -108,6 +108,24 @@ class GeneratePdfTest {
     }
 
     @Test
+    void genV4_3UpoByService() throws Exception {
+
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-3-service.pdf"))) {
+
+            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-3.xml");
+            Source src = new StreamSource(xml);
+            
+            UpoGenerationParams params = UpoGenerationParams.builder()
+                    .schema(UpoSchema.UPO_V4_3)
+                    .build();
+            
+            generator.generateUpo(src, params, out);
+        }
+    }
+
+    @Test
     void gen() throws Exception {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo.pdf"))) {
@@ -136,7 +154,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa2/korygujaca/FA_2_Przyklad_2.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa2/korygujaca/FA_2_Przyklad_2.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA2_1_0_E)
@@ -151,7 +169,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_2.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)
@@ -171,7 +189,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Path.of("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_20.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa2/podstawowa/FA_2_Przyklad_20.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .ksefNumber(ksefNumber)

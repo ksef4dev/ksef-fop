@@ -3,20 +3,23 @@ package io.alapierre.ksef.fop.qr;
 import io.alapierre.ksef.fop.InvoiceGenerationParams;
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.qr.exceptions.QrCodeGenerationException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Builder for creating QR codes for invoice PDFs.
- * 
+ *
  * Supports two modes:
  * - ONLINE mode: Generates only KOD I (online verification QR) - for invoices already in KSeF
  * - OFFLINE mode: Generates both KOD I and KOD II (online + certificate verification QRs) - for invoices not yet in KSeF
- * 
+ *
  * Each QR code can be generated from:
  * - Direct URL (if provided in InvoiceQRCodeGeneratorRequest)
  * - Parameters (environmentUrl, identifier, issueDate, etc.) - URL will be generated
@@ -45,10 +48,10 @@ public class QrCodeBuilder {
 
         QrCodeData online = buildOnlineQr(request, ksefNumber, invoiceXmlBytes, langCode);
         if (request.isOnline()) { // KOD I
-            return List.of(online);
+            return Collections.singletonList(online);
         } else { // KOD I + KOD II
             QrCodeData cert = buildCertificateQr(request, invoiceXmlBytes, langCode);
-            return List.of(online, cert);
+            return Arrays.asList(online, cert);
         }
     }
 
@@ -71,12 +74,12 @@ public class QrCodeBuilder {
         if (isNotBlank(req.getOnlineQrCodeUrl())) {
             return buildOnlineQr(req.getOnlineQrCodeUrl(), ksefNumber, langCode);
         }
-        
+
         if (req.getEnvironmentUrl() == null || req.getIdentifier() == null || req.getIssueDate() == null) {
             throw new QrCodeGenerationException(
                 "When onlineQrCodeUrl is not provided, environmentUrl, identifier, and issueDate are required");
         }
-        
+
         String link = VerificationLinkGenerator.generateVerificationLink(
                 req.getEnvironmentUrl(), req.getIdentifier(), req.getIssueDate(), invoiceXmlBytes);
         return buildOnlineQr(link.trim(), ksefNumber, langCode);
@@ -93,7 +96,7 @@ public class QrCodeBuilder {
     public @NotNull QrCodeData buildOnlineQr(@NotNull String url,
                                              @Nullable String ksefNumber,
                                              @NotNull String langCode) {
-        String label = isNotBlank(ksefNumber) ? ksefNumber : translationService.getTranslation(langCode, "qr.offline");
+        String label = Strings.defaultIfEmpty(ksefNumber, labelOffline);
         String title = translationService.getTranslation(langCode, "qr.onlineTitle");
         return qrFromLink(url.trim(), label, title);
     }
@@ -115,13 +118,13 @@ public class QrCodeBuilder {
         if (isNotBlank(req.getCertificateQrCodeUrl())) {
             return buildCertificateQr(req.getCertificateQrCodeUrl(), langCode);
         }
-        
+
         if (req.getEnvironmentUrl() == null || req.getCtxType() == null || req.getCtxValue() == null ||
             req.getIdentifier() == null || req.getCertSerial() == null || req.getPrivateKey() == null) {
             throw new QrCodeGenerationException(
                 "When certificateQrCodeUrl is not provided, environmentUrl, ctxType, ctxValue, identifier, certSerial, and privateKey are required");
         }
- 
+
         String link = VerificationLinkGenerator.generateCertificateVerificationLink(
                 req.getEnvironmentUrl(),
                 req.getCtxType(),
@@ -149,9 +152,9 @@ public class QrCodeBuilder {
     }
 
     /**
-     * @deprecated This method will be removed in version 2.0.0. 
-     *             Please use methods dedicated for online or offline build instead, such as 
-     *             {@link #buildOnlineQr(String, String, String)} for online builds or 
+     * @deprecated This method will be removed in version 2.0.0.
+     *             Please use methods dedicated for online or offline build instead, such as
+     *             {@link #buildOnlineQr(String, String, String)} for online builds or
      *             {@link #buildCertificateQr(String, String)} for offline builds.
      */
     @Deprecated(forRemoval = true, since = "1.0.0")

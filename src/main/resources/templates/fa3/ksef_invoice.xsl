@@ -227,7 +227,7 @@
                     <!-- Numer KSeF-->
                     <xsl:if test="$nrKsef">
                         <fo:block font-size="9pt" text-align="right" space-after="5mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'ksef.number', $labels)"/>:</fo:inline>
+                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'ksef.number', $labels)"/>: </fo:inline>
                             <fo:inline>
                                 <xsl:value-of select="$nrKsef"/>
                             </fo:inline>
