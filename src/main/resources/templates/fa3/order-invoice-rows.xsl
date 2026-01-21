@@ -162,9 +162,25 @@
                                     </fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                    <fo:block>
-                                        <xsl:value-of select="crd:P_8BZ"/>
-                                    </fo:block>
+                                    <xsl:variable name="formattedQty" select="translate(format-number(number(crd:P_8BZ), '#,##0.######'), ',', '&#160;')"/>
+                                    <xsl:variable name="qtyLength" select="string-length($formattedQty)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$qtyLength &gt; 14">
+                                            <fo:block font-size="5pt">
+                                                <xsl:value-of select="$formattedQty"/>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <xsl:when test="$qtyLength &gt; 10">
+                                            <fo:block font-size="6pt">
+                                                <xsl:value-of select="$formattedQty"/>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block>
+                                                <xsl:value-of select="$formattedQty"/>
+                                            </fo:block>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
@@ -242,9 +258,25 @@
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <fo:block>
-                    <xsl:value-of select="crd:P_8BZ"/>
-                </fo:block>
+                <xsl:variable name="formattedQty" select="translate(format-number(number(crd:P_8BZ), '#,##0.######'), ',', '&#160;')"/>
+                <xsl:variable name="qtyLength" select="string-length($formattedQty)"/>
+                <xsl:choose>
+                    <xsl:when test="$qtyLength &gt; 14">
+                        <fo:block font-size="5pt">
+                            <xsl:value-of select="$formattedQty"/>
+                        </fo:block>
+                    </xsl:when>
+                    <xsl:when test="$qtyLength &gt; 10">
+                        <fo:block font-size="6pt">
+                            <xsl:value-of select="$formattedQty"/>
+                        </fo:block>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <fo:block>
+                            <xsl:value-of select="$formattedQty"/>
+                        </fo:block>
+                    </xsl:otherwise>
+                </xsl:choose>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <fo:block>
@@ -479,34 +511,41 @@
                             
                             <!-- Quantity - for new rows, show exact "after" value, otherwise show difference -->
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                                <fo:block>
-                                    <xsl:variable name="formattedNumber">
-                                        <xsl:choose>
-                                            <xsl:when test="$isNewRow">
-                                                <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:when test="$before/crd:P_8B and $after/crd:P_8B">
-                                                <xsl:value-of select="translate(format-number(number($after/crd:P_8B) - number($before/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:when test="not($before/crd:P_8B) and $after/crd:P_8B">
-                                                <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:when test="$before/crd:P_8B and not($after/crd:P_8B)">
-                                                <xsl:value-of select="translate(format-number(-number($before/crd:P_8B), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>0,00</xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:variable>
-                                    
+                                <xsl:variable name="formattedQty">
                                     <xsl:choose>
-                                        <xsl:when test="string-length($formattedNumber) > 8">
-                                            <fo:inline font-size="6pt"><xsl:value-of select="$formattedNumber"/></fo:inline>
+                                        <xsl:when test="$isNewRow">
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
                                         </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:value-of select="$formattedNumber"/>
-                                        </xsl:otherwise>
+                                        <xsl:when test="$before/crd:P_8B and $after/crd:P_8B">
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B) - number($before/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                        </xsl:when>
+                                        <xsl:when test="not($before/crd:P_8B) and $after/crd:P_8B">
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                        </xsl:when>
+                                        <xsl:when test="$before/crd:P_8B and not($after/crd:P_8B)">
+                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>0</xsl:otherwise>
                                     </xsl:choose>
-                                </fo:block>
+                                </xsl:variable>
+                                <xsl:variable name="qtyLength" select="string-length($formattedQty)"/>
+                                <xsl:choose>
+                                    <xsl:when test="$qtyLength &gt; 14">
+                                        <fo:block font-size="5pt">
+                                            <xsl:value-of select="$formattedQty"/>
+                                        </fo:block>
+                                    </xsl:when>
+                                    <xsl:when test="$qtyLength &gt; 10">
+                                        <fo:block font-size="6pt">
+                                            <xsl:value-of select="$formattedQty"/>
+                                        </fo:block>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <fo:block>
+                                            <xsl:value-of select="$formattedQty"/>
+                                        </fo:block>
+                                    </xsl:otherwise>
+                                </xsl:choose>
                             </fo:table-cell>
                             
                             <!-- Unit - show only "after" value -->
