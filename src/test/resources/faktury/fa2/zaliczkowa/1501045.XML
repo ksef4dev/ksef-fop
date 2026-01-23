@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
+ <Naglowek>
+  <KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
+  <WariantFormularza>2</WariantFormularza>
+  <DataWytworzeniaFa>2023-10-03T12:34:13.7802571Z</DataWytworzeniaFa>
+  <SystemInfo>SAP R3</SystemInfo>
+ </Naglowek>
+ <Podmiot1>
+  <PrefiksPodatnika>PL</PrefiksPodatnika>
+  <DaneIdentyfikacyjne>
+   <NIP>5631805222</NIP>
+   <Nazwa>Test Company Sp. z o.o.</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <KodKraju>PL</KodKraju>
+   <AdresL1>ul. Testowa 31</AdresL1>
+   <AdresL2>22-100 Test</AdresL2>
+  </Adres>
+  <DaneKontaktowe>
+   <Email>test@domain.com</Email>
+   <Telefon>+48123622111</Telefon>
+  </DaneKontaktowe>
+ </Podmiot1>
+ <Podmiot2>
+  <DaneIdentyfikacyjne>
+   <NIP>5263120111</NIP>
+   <Nazwa>TEST COMPANY GmbH</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <KodKraju>AT</KodKraju>
+   <AdresL1>Kröllendorf  45</AdresL1>
+   <AdresL2>3365  Allhartsberg</AdresL2>
+  </Adres>
+  <NrKlienta>10919</NrKlienta>
+ </Podmiot2>
+ <Fa>
+  <KodWaluty>PLN</KodWaluty>
+  <P_1>2024-11-15</P_1>
+  <P_2>1501045</P_2>
+  <P_6>2024-11-15</P_6>
+  <P_13_1>0.00</P_13_1>
+  <P_14_1>0.00</P_14_1>
+  <P_13_2>0.00</P_13_2>
+  <P_14_2>0.00</P_14_2>
+  <P_13_3>4761904.76</P_13_3>
+  <P_14_3>238095.24</P_14_3>
+  <P_13_4>0.00</P_13_4>
+  <P_14_4>0.00</P_14_4>
+  <P_13_5>0.00</P_13_5>
+  <P_13_6_2>0.00</P_13_6_2>
+  <P_15>5000000.00</P_15>
+  <Adnotacje>
+   <P_16>2</P_16>
+   <P_17>2</P_17>
+   <P_18>1</P_18>
+   <P_18A>2</P_18A>
+   <Zwolnienie>
+    <P_19N>1</P_19N>
+   </Zwolnienie>
+   <NoweSrodkiTransportu>
+    <P_22N>1</P_22N>
+   </NoweSrodkiTransportu>
+   <P_23>2</P_23>
+   <PMarzy>
+    <P_PMarzyN>1</P_PMarzyN>
+   </PMarzy>
+  </Adnotacje>
+  <RodzajFaktury>ZAL</RodzajFaktury>
+  <Platnosc/>
+  <WarunkiTransakcji/>
+  <Zamowienie>
+   <WartoscZamowienia>53472861</WartoscZamowienia>
+   <ZamowienieWiersz>
+    <NrWierszaZam>1</NrWierszaZam>
+    <P_7Z>Apple Juice Concentrate clear</P_7Z>
+    <P_8AZ>KG</P_8AZ>
+    <P_8BZ>5693860.000</P_8BZ>
+    <P_9AZ>9.39</P_9AZ>
+    <P_11NettoZ>53472861.30</P_11NettoZ>
+    <P_11VatZ>2673643.07</P_11VatZ>
+    <P_12Z>5</P_12Z>
+   </ZamowienieWiersz>
+  </Zamowienie>
+ </Fa>
+ <Stopka/>
+</Faktura>

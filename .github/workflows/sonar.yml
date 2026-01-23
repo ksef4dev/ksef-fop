@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: Apache-2.0
+name: SonarCloud Scan
+on:
+  workflow_run:
+    types:
+      - completed
+    workflows:
+      - Build
+
+# Explicitly drop all permissions.
+# Permissions will be granted to individual jobs as needed.
+permissions: { }
+
+jobs:
+  # WARNING: this job runs with access to repository secrets: do not execute untrusted code here.
+  # It is triggered after the Build workflow completes; avoid running any code from the pull request itself.
+  sonarcloud-scan:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Download coverage, test results and binary artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # 7.0.0
+        with:
+          name: test-results
+          github-token: ${{ github.token }}
+          path: 'target'
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Restore Maven cache
+        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
+        with:
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            setup-java-${{ runner.os }}-maven-
+          path: ~/.m2/repository
+
+      - name: Print SonarQube configuration
+        shell: bash
+        run: |
+          cat target/sonar-project.properties
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # 7.0.0
+        with:
+          args: "-Dproject.settings=target/sonar-project.properties"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

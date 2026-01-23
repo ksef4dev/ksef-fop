@@ -1,62 +1,90 @@
+# SPDX-License-Identifier: Apache-2.0
 name: Build
 on:
   push:
     branches:
       - master
   pull_request:
-    types: [opened, synchronize, reopened]
+
+# Explicitly drop all permissions.
+# Permissions will be granted to individual jobs as needed.
+permissions: { }
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # 5.0.2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
+          java-version: 21
           distribution: 'temurin'
-          architecture: x64
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
+
+      # We set up the Maven cache separately to have a stabler cache key and path parameters.
+      # The `path` parameter is also used as an implicit cache key.
+      - name: Setup Maven cache
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Print github.actor
-        run: 'echo "Wykonawca: ${{ github.actor }}"'
-      - name: Sprawdź kontekst repozytorium
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            setup-java-${{ runner.os }}-maven-
+          path: ~/.m2/repository
+
+      - name: Build
+        shell: bash
         run: |
-          if [ "${{ github.repository }}" = "${{ github.event.pull_request.head.repo.full_name }}" ]; then
-            echo "Uruchamiany w kontekście oryginalnego repozytorium"
-          else
-            echo "Uruchamiany w kontekście forkowanego repozytorium"
+          mvn --show-version --batch-mode --errors --no-transfer-progress \
+          verify jacoco:report
+
+      - name: Prepare SonarQube configuration
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          mkdir -p target
+          
+          # Static content
+          cat > target/sonar-project.properties <<EOF
+          sonar.organization=ksef4dev
+          sonar.projectKey=ksef4dev_ksef-fop
+          sonar.java.binaries=target/classes
+          sonar.java.test.binaries=target/test-classes
+          EOF
+          
+          # Classpaths
+          get_classpath() {
+            mvn dependency:build-classpath \
+              -Dmdep.scope="$1" \
+              -Dmdep.pathSeparator=, \
+              -Dmdep.outputFile=target/dependencies.txt > /dev/null
+            cat target/dependencies.txt
+          }
+          echo "sonar.java.libraries=$(get_classpath compile)" >> target/sonar-project.properties
+          echo "sonar.java.test.libraries=$(get_classpath test)" >> target/sonar-project.properties
+
+          # Only set pull request properties when building a PR
+          if [ -n "$PR_NUMBER" ]; then
+            cat >> target/sonar-project.properties <<EOF
+          sonar.pullrequest.key=$PR_NUMBER
+          sonar.pullrequest.branch=$PR_BRANCH
+          sonar.pullrequest.base=$PR_BASE
+          EOF
           fi
-      - name: Build and analyze
-        if: github.actor != 'dependabot[bot]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ksef4dev_ksef-fop
-      - name: Build only
-        if: github.actor == 'dependabot[bot]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-        run: mvn -B verify
-      - name: deploy snapshots
-        if: github.event_name == 'push'
-        run: mvn --batch-mode deploy
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+
+      - name: Upload coverage, test results and binary artifacts
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # 6.0.0
+        with:
+          name: test-results
+          path: |
+            target/sonar-project.properties
+            target/classes/
+            target/test-classes/
+            target/surefire-reports/
+            target/site/jacoco/jacoco.xml

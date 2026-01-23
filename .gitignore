@@ -62,5 +62,7 @@ buildNumber.properties
 *.iml
 out
 gen
-/src/test/resources/upo.pdf
-/src/test/resources/invoice.pdf
+/src/test/resources/upo**.pdf
+/src/test/resources/invoice**.pdf
+
+/.mvn/

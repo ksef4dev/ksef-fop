@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2023/06/29/12648/">
+ <Naglowek>
+  <KodFormularza kodSystemowy="FA (2)" wersjaSchemy="1-0E">FA</KodFormularza>
+  <WariantFormularza>2</WariantFormularza>
+  <DataWytworzeniaFa>2023-10-03T12:34:13.7802571Z</DataWytworzeniaFa>
+  <SystemInfo>SAP</SystemInfo>
+ </Naglowek>
+ <Podmiot1>
+  <PrefiksPodatnika>PL</PrefiksPodatnika>
+  <DaneIdentyfikacyjne>
+   <NIP>1234565885</NIP>
+   <Nazwa>Company Poland Sp. z o.o.</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <KodKraju>PL</KodKraju>
+   <AdresL1>ul. Krakowska 31</AdresL1>
+   <AdresL2>22-100 Miasto</AdresL2>
+  </Adres>
+  <DaneKontaktowe>
+   <Telefon>+48123456779</Telefon>
+  </DaneKontaktowe>
+ </Podmiot1>
+ <Podmiot2>
+  <DaneIdentyfikacyjne>
+   <KodUE>PL</KodUE>
+   <NrVatUE>5263120307</NrVatUE>
+   <Nazwa>Test Company</Nazwa>
+  </DaneIdentyfikacyjne>
+  <Adres>
+   <KodKraju>PL</KodKraju>
+   <AdresL1>Ulica 29</AdresL1>
+   <AdresL2>27-540 Miasto</AdresL2>
+  </Adres>
+  <DaneKontaktowe>
+   <Telefon>+43123456</Telefon>
+  </DaneKontaktowe>
+  <NrKlienta>12345</NrKlienta>
+ </Podmiot2>
+ <Fa>
+  <KodWaluty>PLN</KodWaluty>
+  <P_1>2024-11-30</P_1>
+  <P_2>123456</P_2>
+  <P_6>2024-11-22</P_6>
+  <P_13_1>0.00</P_13_1>
+  <P_14_1>0.00</P_14_1>
+  <P_13_2>0.00</P_13_2>
+  <P_14_2>0.00</P_14_2>
+  <P_13_3>0.00</P_13_3>
+  <P_14_3>0.00</P_14_3>
+  <P_13_4>0.00</P_13_4>
+  <P_14_4>0.00</P_14_4>
+  <P_13_5>0.00</P_13_5>
+  <P_13_6_2>0.00</P_13_6_2>
+  <P_15>0</P_15>
+  <Adnotacje>
+   <P_16>2</P_16>
+   <P_17>2</P_17>
+   <P_18>1</P_18>
+   <P_18A>2</P_18A>
+   <Zwolnienie>
+    <P_19N>1</P_19N>
+   </Zwolnienie>
+   <NoweSrodkiTransportu>
+    <P_22N>1</P_22N>
+   </NoweSrodkiTransportu>
+   <P_23>2</P_23>
+   <PMarzy>
+    <P_PMarzyN>1</P_PMarzyN>
+   </PMarzy>
+  </Adnotacje>
+  <RodzajFaktury>ROZ</RodzajFaktury>
+  <DodatkowyOpis>
+   <Klucz>Dotatkowe Informacje (nagłówek/header)</Klucz>
+   <Wartosc>Crop 2024 on hedging code 210110_2024   PL72</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <Klucz>Dodatkowy opis</Klucz>
+   <Wartosc>0078131166</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>1</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>1</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017096</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>1</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>1</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>2</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>2</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501045 as of 15.11.2024 - 807.952,85</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>2</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017025</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>2</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>2</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>3</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>3</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501045 as of 15.11.2024 - 1.219.832,11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>3</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017185</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>3</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>3</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>4</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>4</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501045 as of 15.11.2024 - 1.216.400,79</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>4</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017233</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>4</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>4</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501045 as of 15.11.2024 - 326.701,84</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501046 as of 17.11.2024 - 891.414,61</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017295</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>5</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>6</NrWiersza>
+   <Klucz>Materiał</Klucz>
+   <Wartosc>21011001</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>6</NrWiersza>
+   <Klucz>Dodatkowe Informacje</Klucz>
+   <Wartosc>Invoice 1501046 as of 17.11.2024 - 1.212.969,48</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>6</NrWiersza>
+   <Klucz>Batch</Klucz>
+   <Wartosc>F3017324</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>6</NrWiersza>
+   <Klucz>KDM</Klucz>
+   <Wartosc>13509.11</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <NrWiersza>6</NrWiersza>
+   <Klucz>Zlecenie sprzedazy</Klucz>
+   <Wartosc>4500800805</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <Klucz>Kwota zaliczki</Klucz>
+   <Wartosc>Zaliczka 1501045   , zapłacono: 4761904.76 pozostało: 0</Wartosc>
+  </DodatkowyOpis>
+  <DodatkowyOpis>
+   <Klucz>Kwota zaliczki</Klucz>
+   <Wartosc>Zaliczka 1501046   , zapłacono: 2104384.09 pozostało: 752758.77</Wartosc>
+  </DodatkowyOpis>
+  <FakturaZaliczkowa>
+  <NrKSeFFaZaliczkowej>6112776074-20240425-EE312185CB13-0E</NrKSeFFaZaliczkowej>
+  </FakturaZaliczkowa>
+  <FakturaZaliczkowa>
+   <NrKSeFZN>1</NrKSeFZN>
+   <NrFaZaliczkowej>1501046</NrFaZaliczkowej>
+  </FakturaZaliczkowa>
+  <FaWiersz>
+   <NrWierszaFa>1</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>124000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>2</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>84000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>3</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>127000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>4</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>127000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>5</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>127000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <FaWiersz>
+   <NrWierszaFa>6</NrWierszaFa>
+   <P_7>Apple Juice Concentrate clear</P_7>
+   <Indeks>21011001</Indeks>
+   <P_8A>KC</P_8A>
+   <P_8B>127000.000</P_8B>
+   <P_9A>0</P_9A>
+   <P_11>0.00</P_11>
+   <P_12>5</P_12>
+  </FaWiersz>
+  <Platnosc>
+   <TerminPlatnosci>
+    <Termin>2024-12-05</Termin>
+    <TerminOpis>Przelew 5 dni</TerminOpis>
+   </TerminPlatnosci>
+  </Platnosc>
+  <WarunkiTransakcji>
+   <Zamowienia>
+    <DataZamowienia>2024-11-22</DataZamowienia>
+    <NrZamowienia>4500800805</NrZamowienia>
+   </Zamowienia>
+   <WarunkiDostawy>FCA Lipnik</WarunkiDostawy>
+  </WarunkiTransakcji>
+ </Fa>
+ <Stopka/>
+</Faktura>

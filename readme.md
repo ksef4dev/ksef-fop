@@ -1,5 +1,5 @@
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-fop)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
+[![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-fop)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-fop)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ksef4dev_ksef-fop&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ksef4dev_ksef-fop)
 
 ## Table of contents
@@ -23,7 +23,7 @@ What do you need to use it in your application:
 3. Dependency `io.alapierre.ksef:ksef-fop` 
 
 # Technologies
-- Java 17
+- Java 21
 - Apache FOP
 
 # Configuration
@@ -60,6 +60,7 @@ The PDF invoice generator currently offers the following features:
 - Tax Rate Summary: Automatically calculate and present a summary of the various tax rates on your invoice.
 - Payment Details: Information regarding payment terms, payment methods, etc.
 - Bank account number: Option to add a bank account number to facilitate the payment process.
+- Verification Data: QR code and verification link
 
 
 # Examples
@@ -79,16 +80,45 @@ try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/
 
 ##### Generate Invoice
 ````java
- PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
+String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";
+File qrCodeFile = new File("src/test/resources/barcode.png");
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
             InputStream xml = new FileInputStream("src/test/resources/faktury/podstawowa/FA_2_Przyklad_20.xml");
             Source src = new StreamSource(xml);
-            generator.generateInvoice(src, out);
+            generator.generateInvoice(src, ksefNumber, verificationLink, qrCode, out);
         }
 ````
 
 # Fop Schema 
 
 https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/fop/src/foschema/fop.xsd
+
+## Test certificates for QR verification link generation
+
+The tests responsible for generating **QR verification links** (used in invoice PDFs) rely on **test-only certificates and private keys**.  
+These certificates were generated exclusively for the **KSeF test environment** and serve **only for signing verification payloads**.  
+They are **not related to any real entities** and must **never be used in production**.
+
+### Important notes
+
+- Certificates stored in `src/test/resources/certs`:
+    - are **dedicated to the KSeF test environment**,
+    - were generated solely for **integration and development tests**,
+    - are **not valid for authentication** (only for signing),
+    - do **not provide access** to any KSeF system areas,
+    - can be safely included in the repository for test reproducibility.
+
+- Encrypted private keys used in the tests are bundled together with test certificates:
+    - the passwords are included directly in the test class **on purpose**,
+    - this is acceptable **only for testing scenarios**,
+    - do not reuse these keys or their structure in real projects.
+
+- Production applications must use **real, trusted certificates** compliant with KSeF requirements.  
+  The certificates included here are **never** meant for production signing or authentication.
+
+- If you need to test QR verification link generation in your project,  
+  you should create **your own dedicated test certificates** instead of reusing the ones from this repository.

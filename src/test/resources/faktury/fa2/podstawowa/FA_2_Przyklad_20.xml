@@ -8,7 +8,7 @@
     </tns:Naglowek>
     <tns:Podmiot1>
         <tns:DaneIdentyfikacyjne>
-            <tns:NIP>9999999999</tns:NIP>
+            <tns:NIP>5451824119</tns:NIP>
             <tns:Nazwa>ABC Developex S.A.</tns:Nazwa>
         </tns:DaneIdentyfikacyjne>
         <tns:Adres>
@@ -55,7 +55,6 @@
         <tns:Rola>5</tns:Rola>
     </tns:Podmiot3>
     <tns:Fa>
-        <tns:NrKSeF>5451824119-20231201-27647BC34480-8D</tns:NrKSeF>
         <tns:KodWaluty>PLN</tns:KodWaluty>
         <tns:P_1>2023-11-30</tns:P_1>
         <tns:P_1M>Warszawa</tns:P_1M>
@@ -83,7 +82,8 @@
         <tns:RodzajFaktury>VAT</tns:RodzajFaktury>
         <tns:FaWiersz>
             <tns:NrWierszaFa>1</tns:NrWierszaFa>
-            <tns:P_7>usługa pierwsza</tns:P_7>
+            <tns:P_7>Opłata za abonament / parkowanie</tns:P_7>
+            <tns:P_8A>szt</tns:P_8A>
             <tns:P_8B>1</tns:P_8B>
             <tns:P_9A>10120</tns:P_9A>
             <tns:P_11>10120</tns:P_11>
@@ -92,6 +92,7 @@
         <tns:FaWiersz>
             <tns:NrWierszaFa>2</tns:NrWierszaFa>
             <tns:P_7>aaaa111133339998</tns:P_7>
+            <tns:P_8A>szt</tns:P_8A>
             <tns:P_8B>1</tns:P_8B>
             <tns:P_9A>3795</tns:P_9A>
             <tns:P_11>3795</tns:P_11>
