@@ -55,6 +55,9 @@ jobs:
           sonar.projectKey=ksef4dev_ksef-fop
           sonar.java.binaries=target/classes
           sonar.java.test.binaries=target/test-classes
+          sonar.sources=src/main/java
+          sonar.tests=src/test/java
+          sonar.test.inclusions=src/test/**
           EOF
           
           # Classpaths
