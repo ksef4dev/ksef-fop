@@ -89,6 +89,7 @@
     <xsl:param name="qrCode"/>
     <xsl:param name="verificationLink"/>
     <xsl:param name="logo"/>
+    <xsl:param name="logoUri"/>
     <xsl:param name="showFooter"/>
     <xsl:param name="duplicateDate"/>
     <xsl:param name="currencyDate"/>
@@ -172,7 +173,13 @@
                             <fo:external-graphic
                                     content-width="80pt"
                                     content-height="80pt"
-                                    src="url('data:image/png;base64,{$logo}')"/>
+                                    src="url('data:image/svg;base64,{$logo}')"/>
+                        </xsl:if>
+                        <xsl:if test="$logoUri != ''">
+                            <fo:external-graphic
+                                    content-width="80pt"
+                                    content-height="80pt"
+                                    src="url('{$logoUri}')"/>
                         </xsl:if>
                     </fo:block>
                     <!-- Numer faktury -->

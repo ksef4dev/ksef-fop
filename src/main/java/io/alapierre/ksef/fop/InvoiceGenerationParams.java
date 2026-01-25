@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.time.LocalDate;
 
 @Data
@@ -18,6 +19,8 @@ public class InvoiceGenerationParams {
     private String verificationLink;
 
     private byte[] logo;
+
+    private URI logoUri;
 
     @Nullable
     private LocalDate currencyDate;
