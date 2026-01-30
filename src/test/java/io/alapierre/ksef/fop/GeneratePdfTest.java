@@ -44,11 +44,11 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
-            
+
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V3)
                     .build();
-            
+
             generator.generateUpo(src, params, out);
         }
     }
@@ -62,11 +62,11 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
             Source src = new StreamSource(xml);
-            
+
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V3)
                     .build();
-            
+
             generator.generateUpo(src, params, out);
         }
     }
@@ -80,11 +80,11 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
             Source src = new StreamSource(xml);
-            
+
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V4_2)
                     .build();
-            
+
             generator.generateUpo(src, params, out);
         }
     }
@@ -98,11 +98,11 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
             Source src = new StreamSource(xml);
-            
+
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V4_2)
                     .build();
-            
+
             generator.generateUpo(src, params, out);
         }
     }
@@ -116,11 +116,11 @@ class GeneratePdfTest {
 
             InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-3.xml");
             Source src = new StreamSource(xml);
-            
+
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V4_3)
                     .build();
-            
+
             generator.generateUpo(src, params, out);
         }
     }
@@ -170,6 +170,22 @@ class GeneratePdfTest {
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3.pdf"))) {
 
             byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_2.xml"));
+
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA3_1_0_E)
+                    .build();
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
+        }
+    }
+
+    @Test
+    void generateFa3InvoicePdfNonUE() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out =
+                     new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_non_ue.pdf"))) {
+
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/poza_ue/FA_3_Przyklad_23.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)
