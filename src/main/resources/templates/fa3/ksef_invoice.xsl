@@ -673,6 +673,10 @@
                                                     <xsl:value-of
                                                             select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NIP"/>
                                                 </xsl:if>
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrID">
+                                                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrID"/>
+                                                </xsl:if>
                                             </fo:block>
                                             <fo:block text-align="left" padding-bottom="3px">
                                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
