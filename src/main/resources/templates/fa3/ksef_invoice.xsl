@@ -28,7 +28,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
+
     <!-- Template for rendering a single QR code -->
     <xsl:template name="renderQrCode">
         <xsl:param name="qrCodeImage"/>
@@ -38,7 +38,7 @@
 
         <xsl:if test="$qrCodeImage and $qrCodeVerificationLink">
             <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-            
+
             <fo:block keep-together.within-page="always">
                 <fo:table width="100%">
                     <fo:table-column column-width="35%"/>
@@ -80,7 +80,7 @@
             </fo:block>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:include href="invoice-rows.xsl"/>
     <xsl:include href="order-invoice-rows.xsl"/>
 
@@ -680,6 +680,10 @@
                                                     <xsl:value-of
                                                             select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NIP"/>
                                                 </xsl:if>
+                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrID">
+                                                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:NrID"/>
+                                                </xsl:if>
                                             </fo:block>
                                             <fo:block text-align="left" padding-bottom="3px">
                                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
@@ -728,6 +732,10 @@
                                                     <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
                                                     <xsl:value-of
                                                             select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NIP"/>
+                                                </xsl:if>
+                                                <xsl:if test="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrID">
+                                                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
+                                                    <xsl:value-of select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:NrID"/>
                                                 </xsl:if>
                                             </fo:block>
                                             <fo:block text-align="left" padding-bottom="3px">
@@ -999,7 +1007,7 @@
                     <xsl:if test="crd:Fa/crd:FaWiersz or crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz or crd:Fa/crd:OkresFaKorygowanej">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-                        
+
                         <!-- Label informujący o cenach netto/brutto -->
                         <xsl:if test="crd:Fa/crd:KodWaluty and (crd:Fa/crd:FaWiersz or crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz)">
                             <xsl:variable name="hasNetPrices" select="boolean(crd:Fa/crd:FaWiersz[crd:P_9A and crd:P_11] or crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz[crd:P_9AZ and crd:P_11NettoZ])"/>
@@ -1018,7 +1026,7 @@
                                 </fo:block>
                             </xsl:if>
                         </xsl:if>
-                        
+
                         <fo:block text-align="left" space-after="2mm">
                             <fo:inline font-weight="bold" font-size="12pt">
                                 <xsl:choose>
@@ -2538,6 +2546,17 @@
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
+                <xsl:if test="crd:DaneIdentyfikacyjne/crd:NrID">
+                    <fo:table-row>
+                        <fo:table-cell>
+                            <fo:block text-align="left" padding-bottom="3px">
+                                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
+                                <xsl:value-of
+                                        select="crd:DaneIdentyfikacyjne/crd:NrID"/>
+                            </fo:block>
+                        </fo:table-cell>
+                    </fo:table-row>
+                </xsl:if>
                 <fo:table-row>
                     <fo:table-cell>
                         <fo:block text-align="left">
@@ -2827,7 +2846,7 @@
         <xsl:param name="faktura"/>
         <xsl:param name="numer"/>
         <xsl:param name="pokazNagłówek"/>
-        
+
         <xsl:if test="$pokazNagłówek">
             <fo:block text-align="left" font-weight="bold" font-size="10pt" space-after="3mm">
                 <xsl:value-of select="key('kLabels', 'correctedInvoice.identificationData', $labels)"/><xsl:text> </xsl:text><xsl:value-of select="$numer"/>
