@@ -1,0 +1,1424 @@
+<n0:Faktura xmlns:n0="http://crd.gov.pl/wzor/2025/06/25/13775/" xmlns:prx="urn:sap.com:proxy:BIP:/1SAI/TAS5B4A2F84289DFFEAE670:740">
+    <n0:Naglowek>
+        <n0:KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</n0:KodFormularza>
+        <n0:WariantFormularza>3</n0:WariantFormularza>
+        <n0:DataWytworzeniaFa>2026-02-04T16:36:49+01:00</n0:DataWytworzeniaFa>
+        <n0:SystemInfo>DM KSEF</n0:SystemInfo>
+    </n0:Naglowek>
+    <n0:Podmiot1>
+        <n0:PrefiksPodatnika>PL</n0:PrefiksPodatnika>
+        <n0:DaneIdentyfikacyjne>
+            <n0:NIP>1234567890</n0:NIP>
+            <n0:Nazwa>Sprzedawca S.A.</n0:Nazwa>
+        </n0:DaneIdentyfikacyjne>
+        <n0:Adres>
+            <n0:KodKraju>PL</n0:KodKraju>
+            <n0:AdresL1>00-001 Warszawa, ul. Przykładowa 1</n0:AdresL1>
+            <n0:GLN>1234567890123</n0:GLN>
+        </n0:Adres>
+        <n0:DaneKontaktowe/>
+    </n0:Podmiot1>
+    <n0:Podmiot2>
+        <n0:DaneIdentyfikacyjne>
+            <n0:NIP>9876543210</n0:NIP>
+            <n0:Nazwa>NABYWCA SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</n0:Nazwa>
+        </n0:DaneIdentyfikacyjne>
+        <n0:Adres>
+            <n0:KodKraju>PL</n0:KodKraju>
+            <n0:AdresL1>20-001 MIASTO, TESTOWA 10</n0:AdresL1>
+        </n0:Adres>
+        <n0:DaneKontaktowe/>
+        <n0:NrKlienta>0000000001</n0:NrKlienta>
+        <n0:JST>2</n0:JST>
+        <n0:GV>2</n0:GV>
+    </n0:Podmiot2>
+    <n0:Fa>
+        <n0:KodWaluty>PLN</n0:KodWaluty>
+        <n0:P_1>2026-02-04</n0:P_1>
+        <n0:P_1M>Warszawa</n0:P_1M>
+        <n0:P_2>FA/002/2026</n0:P_2>
+        <n0:P_6>2026-01-31</n0:P_6>
+        <n0:P_13_1>14425.53</n0:P_13_1>
+        <n0:P_14_1>3317.87</n0:P_14_1>
+        <n0:P_15>17743.4</n0:P_15>
+        <n0:Adnotacje>
+            <n0:P_16>2</n0:P_16>
+            <n0:P_17>2</n0:P_17>
+            <n0:P_18>2</n0:P_18>
+            <n0:P_18A>1</n0:P_18A>
+            <n0:Zwolnienie>
+                <n0:P_19N>1</n0:P_19N>
+            </n0:Zwolnienie>
+            <n0:NoweSrodkiTransportu>
+                <n0:P_22N>1</n0:P_22N>
+            </n0:NoweSrodkiTransportu>
+            <n0:P_23>2</n0:P_23>
+            <n0:PMarzy>
+                <n0:P_PMarzyN>1</n0:P_PMarzyN>
+            </n0:PMarzy>
+        </n0:Adnotacje>
+        <n0:RodzajFaktury>VAT</n0:RodzajFaktury>
+        <n0:DodatkowyOpis>
+            <n0:Klucz>SYSTEM</n0:Klucz>
+            <n0:Wartosc>BIP</n0:Wartosc>
+        </n0:DodatkowyOpis>
+        <n0:DodatkowyOpis>
+            <n0:Klucz>TX_PODATEK_BIS</n0:Klucz>
+            <n0:Wartosc>Sprzedawca może określić w fakturze również kwoty podatku dotyczącewartości sprzedaży poszczególnych towarów i usług wykazanych w tej fakturze; w tym przypadku łączna kwota podatku może być ustalona wwyniku podsumowania jednostkowych kwot podatku.</n0:Wartosc>
+        </n0:DodatkowyOpis>
+        <n0:DodatkowyOpis>
+            <n0:Klucz>MPP</n0:Klucz>
+            <n0:Wartosc>Mechanizm podzielonej płatności</n0:Wartosc>
+        </n0:DodatkowyOpis>
+        <n0:DodatkowyOpis>
+            <n0:Klucz>IPT_ZALACZNIK_INT_FAK</n0:Klucz>
+            <n0:Wartosc>Załącznik jest integralną częścią faktury</n0:Wartosc>
+        </n0:DodatkowyOpis>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>1</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000040</n0:UU_ID>
+            <n0:P_7>OPŁATA AUTOSTRADOWA A4</n0:P_7>
+            <n0:Indeks>S-36230-1</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>4.0</n0:P_8B>
+            <n0:P_11>55.28</n0:P_11>
+            <n0:P_11Vat>12.72</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>2</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000290</n0:UU_ID>
+            <n0:P_7>OPŁATA ZA KARTY</n0:P_7>
+            <n0:Indeks>S-80230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>2.0</n0:P_8B>
+            <n0:P_11>20.0</n0:P_11>
+            <n0:P_11Vat>4.6</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>3</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000320</n0:UU_ID>
+            <n0:P_7>ADBLUE</n0:P_7>
+            <n0:Indeks>S-81230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>2.0</n0:P_8B>
+            <n0:P_11>146.33</n0:P_11>
+            <n0:P_11Vat>33.65</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>4</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000360</n0:UU_ID>
+            <n0:P_7>OPŁATA ZA OBSŁ.ADM.UBEZPIECZE.</n0:P_7>
+            <n0:Indeks>S-85230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>1.0</n0:P_8B>
+            <n0:P_11>15.0</n0:P_11>
+            <n0:P_11Vat>3.45</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>5</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000380</n0:UU_ID>
+            <n0:P_7>AKCESORIA SAMOCHODOWE 23%</n0:P_7>
+            <n0:Indeks>S-30230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>1.0</n0:P_8B>
+            <n0:P_11>26.01</n0:P_11>
+            <n0:P_11Vat>5.98</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>6</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000400</n0:UU_ID>
+            <n0:P_7>PALIWO DIESEL - OSOBOWY</n0:P_7>
+            <n0:Indeks>S-01230-1</n0:Indeks>
+            <n0:PKWiU>232015001</n0:PKWiU>
+            <n0:P_8A>L</n0:P_8A>
+            <n0:P_8B>288.52</n0:P_8B>
+            <n0:P_11>1408.8</n0:P_11>
+            <n0:P_11Vat>324.02</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:KwotaAkcyzy>334.68</n0:KwotaAkcyzy>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>7</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000450</n0:UU_ID>
+            <n0:P_7>PALIWO ON</n0:P_7>
+            <n0:Indeks>S-02230-2</n0:Indeks>
+            <n0:P_8A>L</n0:P_8A>
+            <n0:P_8B>330.57</n0:P_8B>
+            <n0:P_11>1715.75</n0:P_11>
+            <n0:P_11Vat>394.62</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:KwotaAkcyzy>383.46</n0:KwotaAkcyzy>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>8</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000460</n0:UU_ID>
+            <n0:P_7>PALIWO ON - OSOBOWE</n0:P_7>
+            <n0:Indeks>S-02230-3</n0:Indeks>
+            <n0:P_8A>L</n0:P_8A>
+            <n0:P_8B>430.46</n0:P_8B>
+            <n0:P_11>2194.69</n0:P_11>
+            <n0:P_11Vat>504.78</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:KwotaAkcyzy>499.33</n0:KwotaAkcyzy>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>9</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000480</n0:UU_ID>
+            <n0:P_7>PALIWO 95 - OSOBOWY</n0:P_7>
+            <n0:Indeks>S-03230-1</n0:Indeks>
+            <n0:P_8A>L</n0:P_8A>
+            <n0:P_8B>686.88</n0:P_8B>
+            <n0:P_11>3241.01</n0:P_11>
+            <n0:P_11Vat>745.43</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:KwotaAkcyzy>1050.24</n0:KwotaAkcyzy>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>10</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000540</n0:UU_ID>
+            <n0:P_7>BENZYNA PREMIUM 98 - OSOBOWE</n0:P_7>
+            <n0:Indeks>S-05230-3</n0:Indeks>
+            <n0:P_8A>L</n0:P_8A>
+            <n0:P_8B>864.53</n0:P_8B>
+            <n0:P_11>4531.38</n0:P_11>
+            <n0:P_11Vat>1042.22</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:KwotaAkcyzy>1321.87</n0:KwotaAkcyzy>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>11</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000600</n0:UU_ID>
+            <n0:P_7>OLEJE</n0:P_7>
+            <n0:Indeks>S-11230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>1.0</n0:P_8B>
+            <n0:P_11>52.02</n0:P_11>
+            <n0:P_11Vat>11.97</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+            <n0:GTU>GTU_02</n0:GTU>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>12</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000620</n0:UU_ID>
+            <n0:P_7>PŁYNY EKSPLOATACYJNE</n0:P_7>
+            <n0:Indeks>S-12230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>23.0</n0:P_8B>
+            <n0:P_11>747.78</n0:P_11>
+            <n0:P_11Vat>171.99</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>13</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000660</n0:UU_ID>
+            <n0:P_7>USŁUGI SAMOCHODOWE</n0:P_7>
+            <n0:Indeks>S-20230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>8.0</n0:P_8B>
+            <n0:P_11>256.85</n0:P_11>
+            <n0:P_11Vat>59.08</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:FaWiersz>
+            <n0:NrWierszaFa>14</n0:NrWierszaFa>
+            <n0:UU_ID>FA0000000000740</n0:UU_ID>
+            <n0:P_7>KOSMETYKI SAMOCHODOWE</n0:P_7>
+            <n0:Indeks>S-29230-0</n0:Indeks>
+            <n0:P_8A>SZT</n0:P_8A>
+            <n0:P_8B>1.0</n0:P_8B>
+            <n0:P_11>14.63</n0:P_11>
+            <n0:P_11Vat>3.36</n0:P_11Vat>
+            <n0:P_12>23</n0:P_12>
+        </n0:FaWiersz>
+        <n0:Rozliczenie>
+            <n0:DoZaplaty>17743.4</n0:DoZaplaty>
+        </n0:Rozliczenie>
+        <n0:Platnosc>
+            <n0:TerminPlatnosci>
+                <n0:Termin>2026-02-21</n0:Termin>
+                <n0:TerminOpis>
+                    <n0:Ilosc>21</n0:Ilosc>
+                    <n0:Jednostka>D</n0:Jednostka>
+                    <n0:ZdarzeniePoczatkowe>odbiorcy - od sprzedaży</n0:ZdarzeniePoczatkowe>
+                </n0:TerminOpis>
+            </n0:TerminPlatnosci>
+            <n0:FormaPlatnosci>6</n0:FormaPlatnosci>
+            <n0:RachunekBankowy>
+                <n0:NrRB>PL12345678901234567890123456</n0:NrRB>
+                <n0:SWIFT>TESTPLPW</n0:SWIFT>
+                <n0:NazwaBanku>Bank Przykładowy S.A.</n0:NazwaBanku>
+            </n0:RachunekBankowy>
+        </n0:Platnosc>
+        <n0:WarunkiTransakcji>
+            <n0:Zamowienia>
+                <n0:DataZamowienia>2026-01-31</n0:DataZamowienia>
+                <n0:NrZamowienia>ZAM/001/2026</n0:NrZamowienia>
+            </n0:Zamowienia>
+            <n0:WarunkiDostawy>EXW WARSZAWA</n0:WarunkiDostawy>
+        </n0:WarunkiTransakcji>
+    </n0:Fa>
+    <n0:Stopka>
+        <n0:Rejestry>
+            <n0:PelnaNazwa>Sprzedawca S.A.</n0:PelnaNazwa>
+            <n0:KRS>0000000001</n0:KRS>
+            <n0:REGON>123456789</n0:REGON>
+            <n0:BDO>000000001</n0:BDO>
+        </n0:Rejestry>
+    </n0:Stopka>
+    <n0:Zalacznik xmlns:n0="http://crd.gov.pl/wzor/2025/06/25/13775/">
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji paliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>400</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaRabat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>1</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>5.7900</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>4.00</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>23.1600</n0:WKom>
+                    <n0:WKom>4.3300</n0:WKom>
+                    <n0:WKom>18.8300</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>2</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>5.8500</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>31.69</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>185.3900</n0:WKom>
+                    <n0:WKom>34.6700</n0:WKom>
+                    <n0:WKom>150.7200</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>3</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>5.9500</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>63.39</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>377.1700</n0:WKom>
+                    <n0:WKom>70.5200</n0:WKom>
+                    <n0:WKom>306.6500</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>4</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>6.0400</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>120.04</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>725.0400</n0:WKom>
+                    <n0:WKom>135.5700</n0:WKom>
+                    <n0:WKom>589.4700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>5</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>6.0500</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>25.59</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>154.8200</n0:WKom>
+                    <n0:WKom>28.9500</n0:WKom>
+                    <n0:WKom>125.8700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>6</n0:WKom>
+                    <n0:WKom>400</n0:WKom>
+                    <n0:WKom>6.1000</n0:WKom>
+                    <n0:WKom>PALIWO DIESEL CN27102011</n0:WKom>
+                    <n0:WKom>43.81</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>267.2400</n0:WKom>
+                    <n0:WKom>49.9700</n0:WKom>
+                    <n0:WKom>217.2700</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji paliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>450</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaRabat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>7</n0:WKom>
+                    <n0:WKom>450</n0:WKom>
+                    <n0:WKom>6.2000</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>26.38</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>163.5600</n0:WKom>
+                    <n0:WKom>30.5800</n0:WKom>
+                    <n0:WKom>132.9800</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>8</n0:WKom>
+                    <n0:WKom>450</n0:WKom>
+                    <n0:WKom>6.4000</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>304.19</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>1946.8200</n0:WKom>
+                    <n0:WKom>364.0300</n0:WKom>
+                    <n0:WKom>1582.7900</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji paliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>460</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaRabat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>9</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.1000</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>43.90</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>267.7900</n0:WKom>
+                    <n0:WKom>50.0700</n0:WKom>
+                    <n0:WKom>217.7200</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>10</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.1300</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>37.44</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>229.5100</n0:WKom>
+                    <n0:WKom>42.9200</n0:WKom>
+                    <n0:WKom>186.5900</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>11</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.2000</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>83.45</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>517.3900</n0:WKom>
+                    <n0:WKom>96.7500</n0:WKom>
+                    <n0:WKom>420.6400</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>12</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.2500</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>38.42</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>240.1300</n0:WKom>
+                    <n0:WKom>44.9000</n0:WKom>
+                    <n0:WKom>195.2300</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>13</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.2800</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>44.35</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>278.5200</n0:WKom>
+                    <n0:WKom>52.0800</n0:WKom>
+                    <n0:WKom>226.4400</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>14</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.3500</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>88.43</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>561.5300</n0:WKom>
+                    <n0:WKom>105.0000</n0:WKom>
+                    <n0:WKom>456.5300</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>15</n0:WKom>
+                    <n0:WKom>460</n0:WKom>
+                    <n0:WKom>6.4000</n0:WKom>
+                    <n0:WKom>PALIWO ON</n0:WKom>
+                    <n0:WKom>94.47</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>604.6100</n0:WKom>
+                    <n0:WKom>113.0600</n0:WKom>
+                    <n0:WKom>491.5500</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji paliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>480</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaRabat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>16</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.5000</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>79.72</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>438.4600</n0:WKom>
+                    <n0:WKom>81.9900</n0:WKom>
+                    <n0:WKom>356.4700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>17</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.6800</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>21.04</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>119.5100</n0:WKom>
+                    <n0:WKom>22.3500</n0:WKom>
+                    <n0:WKom>97.1600</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>18</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.7100</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>55.26</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>315.5300</n0:WKom>
+                    <n0:WKom>59.0000</n0:WKom>
+                    <n0:WKom>256.5300</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>19</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.7300</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>39.87</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>228.4600</n0:WKom>
+                    <n0:WKom>42.7200</n0:WKom>
+                    <n0:WKom>185.7400</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>20</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.7500</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>176.58</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>1015.3300</n0:WKom>
+                    <n0:WKom>189.8600</n0:WKom>
+                    <n0:WKom>825.4700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>21</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.7800</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>58.88</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>340.3300</n0:WKom>
+                    <n0:WKom>63.6400</n0:WKom>
+                    <n0:WKom>276.6900</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>22</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.8000</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>34.20</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>198.3600</n0:WKom>
+                    <n0:WKom>37.0900</n0:WKom>
+                    <n0:WKom>161.2700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>23</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.8300</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>34.95</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>203.7600</n0:WKom>
+                    <n0:WKom>38.1000</n0:WKom>
+                    <n0:WKom>165.6600</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>24</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.8500</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>97.35</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>569.5000</n0:WKom>
+                    <n0:WKom>106.4900</n0:WKom>
+                    <n0:WKom>463.0100</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>25</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>5.9500</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>34.08</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>202.7800</n0:WKom>
+                    <n0:WKom>37.9200</n0:WKom>
+                    <n0:WKom>164.8600</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>26</n0:WKom>
+                    <n0:WKom>480</n0:WKom>
+                    <n0:WKom>6.4500</n0:WKom>
+                    <n0:WKom>PALIWO 95 CN27101245</n0:WKom>
+                    <n0:WKom>54.95</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>354.4300</n0:WKom>
+                    <n0:WKom>66.2800</n0:WKom>
+                    <n0:WKom>288.1500</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji paliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>540</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaRabat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>27</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.2300</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>49.42</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>307.8900</n0:WKom>
+                    <n0:WKom>57.5700</n0:WKom>
+                    <n0:WKom>250.3200</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>28</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.2500</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>151.37</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>946.0600</n0:WKom>
+                    <n0:WKom>176.9100</n0:WKom>
+                    <n0:WKom>769.1500</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>29</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.3500</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>36.90</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>234.3200</n0:WKom>
+                    <n0:WKom>43.8200</n0:WKom>
+                    <n0:WKom>190.5000</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>30</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.4000</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>31.15</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>199.3600</n0:WKom>
+                    <n0:WKom>37.2800</n0:WKom>
+                    <n0:WKom>162.0800</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>31</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.4700</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>245.96</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>1591.3500</n0:WKom>
+                    <n0:WKom>297.5800</n0:WKom>
+                    <n0:WKom>1293.7700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>32</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.4800</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>31.68</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>205.2900</n0:WKom>
+                    <n0:WKom>38.3900</n0:WKom>
+                    <n0:WKom>166.9000</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>33</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.5000</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>164.00</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>1066.0000</n0:WKom>
+                    <n0:WKom>199.3300</n0:WKom>
+                    <n0:WKom>866.6700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>34</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.6400</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>109.93</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>729.9300</n0:WKom>
+                    <n0:WKom>136.4900</n0:WKom>
+                    <n0:WKom>593.4400</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>35</n0:WKom>
+                    <n0:WKom>540</n0:WKom>
+                    <n0:WKom>6.6500</n0:WKom>
+                    <n0:WKom>PALIWO 98</n0:WKom>
+                    <n0:WKom>44.12</n0:WKom>
+                    <n0:WKom>l/kg</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>293.4000</n0:WKom>
+                    <n0:WKom>54.8600</n0:WKom>
+                    <n0:WKom>238.5400</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>40</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>36</n0:WKom>
+                    <n0:WKom>40</n0:WKom>
+                    <n0:WKom>17.0000</n0:WKom>
+                    <n0:WKom>PRZEJAZD AUTOSTRADÄ A4</n0:WKom>
+                    <n0:WKom>4.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>68.0000</n0:WKom>
+                    <n0:WKom>12.7200</n0:WKom>
+                    <n0:WKom>55.2800</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>290</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>37</n0:WKom>
+                    <n0:WKom>290</n0:WKom>
+                    <n0:WKom>12.3000</n0:WKom>
+                    <n0:WKom>OpĹata za wydanie karty</n0:WKom>
+                    <n0:WKom>2.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>24.6000</n0:WKom>
+                    <n0:WKom>4.6000</n0:WKom>
+                    <n0:WKom>20.0000</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>320</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>38</n0:WKom>
+                    <n0:WKom>320</n0:WKom>
+                    <n0:WKom>89.9900</n0:WKom>
+                    <n0:WKom>ADBLUE PREMIUM 10L</n0:WKom>
+                    <n0:WKom>2.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>179.9800</n0:WKom>
+                    <n0:WKom>33.6500</n0:WKom>
+                    <n0:WKom>146.3300</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>380</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>39</n0:WKom>
+                    <n0:WKom>380</n0:WKom>
+                    <n0:WKom>31.9900</n0:WKom>
+                    <n0:WKom>SZCZOTKO-SKROBACZKA TELESKOPOWA87/115cm</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>31.9900</n0:WKom>
+                    <n0:WKom>5.9800</n0:WKom>
+                    <n0:WKom>26.0100</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>600</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>40</n0:WKom>
+                    <n0:WKom>600</n0:WKom>
+                    <n0:WKom>63.9900</n0:WKom>
+                    <n0:WKom>OLEJ PREMIUM C4 5W-30 B1L</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>63.9900</n0:WKom>
+                    <n0:WKom>11.9700</n0:WKom>
+                    <n0:WKom>52.0200</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>620</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>41</n0:WKom>
+                    <n0:WKom>620</n0:WKom>
+                    <n0:WKom>26.9900</n0:WKom>
+                    <n0:WKom>ZIMOWY PĹYN -20C PREMIUM 3L</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>26.9900</n0:WKom>
+                    <n0:WKom>5.0500</n0:WKom>
+                    <n0:WKom>21.9400</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>42</n0:WKom>
+                    <n0:WKom>620</n0:WKom>
+                    <n0:WKom>36.9900</n0:WKom>
+                    <n0:WKom>ZIMOWY PĹYN -20C PREMIUM 3L</n0:WKom>
+                    <n0:WKom>3.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>110.9700</n0:WKom>
+                    <n0:WKom>20.7600</n0:WKom>
+                    <n0:WKom>90.2100</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>43</n0:WKom>
+                    <n0:WKom>620</n0:WKom>
+                    <n0:WKom>38.9900</n0:WKom>
+                    <n0:WKom>ZIMOWY PĹYN -25C NANO PREMIUM 3L</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>38.9900</n0:WKom>
+                    <n0:WKom>7.2900</n0:WKom>
+                    <n0:WKom>31.7000</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>44</n0:WKom>
+                    <n0:WKom>620</n0:WKom>
+                    <n0:WKom>39.9900</n0:WKom>
+                    <n0:WKom>ZIMOWY PĹYN -25C NANO PREMIUM 3L</n0:WKom>
+                    <n0:WKom>17.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>679.8300</n0:WKom>
+                    <n0:WKom>127.1500</n0:WKom>
+                    <n0:WKom>552.6800</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>45</n0:WKom>
+                    <n0:WKom>620</n0:WKom>
+                    <n0:WKom>62.9900</n0:WKom>
+                    <n0:WKom>PĹYN DO CHĹODNIC PETRYGO PRIME B5L</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>62.9900</n0:WKom>
+                    <n0:WKom>11.7800</n0:WKom>
+                    <n0:WKom>51.2100</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>660</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>46</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>20.9900</n0:WKom>
+                    <n0:WKom>MYJNIA AUTOMAT.PR.1 Express</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>20.9900</n0:WKom>
+                    <n0:WKom>3.9200</n0:WKom>
+                    <n0:WKom>17.0700</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>47</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>24.9900</n0:WKom>
+                    <n0:WKom>MYJNIA AUTOMAT.PR.2 Standard</n0:WKom>
+                    <n0:WKom>3.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>74.9700</n0:WKom>
+                    <n0:WKom>14.0100</n0:WKom>
+                    <n0:WKom>60.9600</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>48</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>27.9900</n0:WKom>
+                    <n0:WKom>MYJNIA AUTOMAT.PR.2 Standard</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>27.9900</n0:WKom>
+                    <n0:WKom>5.2300</n0:WKom>
+                    <n0:WKom>22.7600</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>49</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>32.9900</n0:WKom>
+                    <n0:WKom>MYJNIA AUTOMAT.PR.4 Premium</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>32.9900</n0:WKom>
+                    <n0:WKom>6.1700</n0:WKom>
+                    <n0:WKom>26.8200</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>50</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>39.9900</n0:WKom>
+                    <n0:WKom>MYJNIA AUTOMAT.PR.5 Perfect</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>39.9900</n0:WKom>
+                    <n0:WKom>7.4800</n0:WKom>
+                    <n0:WKom>32.5100</n0:WKom>
+                </n0:Wiersz>
+                <n0:Wiersz>
+                    <n0:WKom>51</n0:WKom>
+                    <n0:WKom>660</n0:WKom>
+                    <n0:WKom>119.0000</n0:WKom>
+                    <n0:WKom>Karnet na myjnie PR. 4 Premium</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>119.0000</n0:WKom>
+                    <n0:WKom>22.2500</n0:WKom>
+                    <n0:WKom>96.7500</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+        <n0:BlokDanych>
+            <n0:MetaDane>
+                <n0:ZKlucz>Wykaz dla pozycji pozapaliwowych faktury</n0:ZKlucz>
+                <n0:ZWartosc>740</n0:ZWartosc>
+            </n0:MetaDane>
+            <n0:Tabela>
+                <n0:TNaglowek>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>Lp</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="int">
+                        <n0:NKom>PozycjaFaktury</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>CenaZaSzt.</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>NazwaProduktu</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>iloĹÄ</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>JM</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="txt">
+                        <n0:NKom>VAT</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WBrutto</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WVat</n0:NKom>
+                    </n0:Kol>
+                    <n0:Kol Typ="dec">
+                        <n0:NKom>WNetto</n0:NKom>
+                    </n0:Kol>
+                </n0:TNaglowek>
+                <n0:Wiersz>
+                    <n0:WKom>52</n0:WKom>
+                    <n0:WKom>740</n0:WKom>
+                    <n0:WKom>17.9900</n0:WKom>
+                    <n0:WKom>PLAK MAXI PREMIUM ĹCIER DO KOK 24 szt</n0:WKom>
+                    <n0:WKom>1.00</n0:WKom>
+                    <n0:WKom>szt.</n0:WKom>
+                    <n0:WKom>23 </n0:WKom>
+                    <n0:WKom>17.9900</n0:WKom>
+                    <n0:WKom>3.3600</n0:WKom>
+                    <n0:WKom>14.6300</n0:WKom>
+                </n0:Wiersz>
+            </n0:Tabela>
+        </n0:BlokDanych>
+    </n0:Zalacznik>
+</n0:Faktura>

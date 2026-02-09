@@ -2291,6 +2291,21 @@
                         </fo:block>
                     </xsl:if>
 
+                    <!-- Załącznik do faktury VAT -->
+                    <xsl:if test="crd:Zalacznik">
+                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="6mm"/>
+                        <fo:block font-size="12pt" font-weight="bold" text-align="left" space-after="4mm">
+                            Załącznik do Faktury VAT
+                        </fo:block>
+
+                        <xsl:for-each select="crd:Zalacznik/crd:BlokDanych">
+                            <xsl:call-template name="renderBlokDanychZalacznika">
+                                <xsl:with-param name="blokDanych" select="."/>
+                                <xsl:with-param name="nrBloku" select="position()"/>
+                            </xsl:call-template>
+                        </xsl:for-each>
+                    </xsl:if>
+
                     <!-- New multiple QR codes approach -->
                     <xsl:if test="$qrCodesCount > 0">
                         <!-- Keep text and QR codes together on the same page -->
@@ -2322,6 +2337,7 @@
                             </xsl:if>
                         </fo:block>
                     </xsl:if>
+
                 </fo:flow>
             </fo:page-sequence>
         </fo:root>
@@ -2875,6 +2891,244 @@
                 <xsl:value-of select="$faktura/crd:NrKSeFFaKorygowanej"/>
             </fo:block>
         </xsl:if>
+    </xsl:template>
+
+    <!-- ======================== ZAŁĄCZNIK DO FAKTURY VAT ======================== -->
+
+    <!-- Template renderujący pojedynczy BlokDanych załącznika -->
+    <xsl:template name="renderBlokDanychZalacznika">
+        <xsl:param name="blokDanych"/>
+        <xsl:param name="nrBloku"/>
+
+        <fo:block space-before="3mm" space-after="3mm">
+            <!-- Nagłówek bloku (Szczegółowe dane załącznika) -->
+            <fo:block font-size="9pt" font-weight="bold" space-after="1mm">
+                Szczegółowe dane załącznika (<xsl:value-of select="$nrBloku"/>)
+            </fo:block>
+
+            <!-- ZNaglowek bloku danych (opcjonalny) -->
+            <xsl:if test="$blokDanych/crd:ZNaglowek">
+                <fo:block font-size="8pt" space-after="2mm">
+                    Nagłówek bloku danych: <xsl:value-of select="$blokDanych/crd:ZNaglowek"/>
+                </fo:block>
+            </xsl:if>
+
+            <!-- MetaDane jako tabela klucz-wartość -->
+            <xsl:if test="$blokDanych/crd:MetaDane">
+                <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="3mm">
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-header>
+                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                <fo:block>Klucz</fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                <fo:block>Wartość</fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-header>
+                    <fo:table-body>
+                        <xsl:for-each select="$blokDanych/crd:MetaDane">
+                            <fo:table-row>
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                    <fo:block><xsl:value-of select="crd:ZKlucz"/></fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                    <fo:block><xsl:value-of select="crd:ZWartosc"/></fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </xsl:for-each>
+                    </fo:table-body>
+                </fo:table>
+            </xsl:if>
+
+            <!-- Tekst (opcjonalny) - akapity -->
+            <xsl:if test="$blokDanych/crd:Tekst">
+                <fo:block font-size="7pt" space-after="3mm">
+                    <xsl:for-each select="$blokDanych/crd:Tekst/crd:Akapit">
+                        <fo:block space-after="1mm">
+                            <xsl:value-of select="."/>
+                        </fo:block>
+                    </xsl:for-each>
+                </fo:block>
+            </xsl:if>
+
+            <!-- Tabele (opcjonalne, może być wiele) -->
+            <xsl:for-each select="$blokDanych/crd:Tabela">
+                <xsl:call-template name="renderTabelaZalacznika">
+                    <xsl:with-param name="tabela" select="."/>
+                    <xsl:with-param name="zNaglowek" select="$blokDanych/crd:ZNaglowek"/>
+                    <xsl:with-param name="nrTabeli" select="position()"/>
+                </xsl:call-template>
+            </xsl:for-each>
+        </fo:block>
+    </xsl:template>
+
+    <!-- Template renderujący pojedynczą tabelę załącznika -->
+    <xsl:template name="renderTabelaZalacznika">
+        <xsl:param name="tabela"/>
+        <xsl:param name="zNaglowek"/>
+        <xsl:param name="nrTabeli"/>
+
+        <xsl:variable name="kolCount" select="count($tabela/crd:TNaglowek/crd:Kol)"/>
+
+        <fo:block space-before="2mm" space-after="3mm">
+
+            <!-- Nagłówek sekcji tabeli, np. "1. Rozliczenie punktu poboru 1" -->
+            <xsl:if test="$zNaglowek">
+                <fo:block font-size="9pt" font-weight="bold" space-after="2mm">
+                    <xsl:value-of select="$zNaglowek"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$nrTabeli"/>
+                </fo:block>
+            </xsl:if>
+
+            <!-- TMetaDane tabeli (opcjonalne) - dane opisowe dotyczące tabeli -->
+            <xsl:if test="$tabela/crd:TMetaDane">
+                <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="2mm">
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-header>
+                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                <fo:block>Klucz</fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                <fo:block>Wartość</fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-header>
+                    <fo:table-body>
+                        <xsl:for-each select="$tabela/crd:TMetaDane">
+                            <fo:table-row>
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                    <fo:block><xsl:value-of select="crd:TKlucz"/></fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                    <fo:block><xsl:value-of select="crd:TWartosc"/></fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </xsl:for-each>
+                    </fo:table-body>
+                </fo:table>
+            </xsl:if>
+
+            <!-- Opis tabeli (opcjonalny) -->
+            <xsl:if test="$tabela/crd:Opis">
+                <fo:block font-size="7pt" font-style="italic" space-after="2mm">
+                    <xsl:value-of select="$tabela/crd:Opis"/>
+                </fo:block>
+            </xsl:if>
+
+            <!-- Tabela dynamiczna z danymi -->
+            <!-- Rozmiar czcionki zależny od liczby kolumn -->
+            <xsl:variable name="tabelaFontSize">
+                <xsl:choose>
+                    <xsl:when test="$kolCount &gt;= 10">5.5</xsl:when>
+                    <xsl:when test="$kolCount &gt;= 8">6</xsl:when>
+                    <xsl:when test="$kolCount &gt;= 6">6.5</xsl:when>
+                    <xsl:otherwise>7</xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+
+            <fo:block font-size="7pt" space-after="1mm" font-weight="bold">Tabela</fo:block>
+            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                <!-- Dynamiczne kolumny - proporcjonalna szerokość wg typu -->
+                <!-- txt=3, date/datetime=2, int/dec/time=2 -->
+                <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol">
+                    <fo:table-column>
+                        <xsl:attribute name="column-width">
+                            <xsl:choose>
+                                <xsl:when test="@Typ = 'txt'">proportional-column-width(3)</xsl:when>
+                                <xsl:otherwise>proportional-column-width(2)</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:attribute>
+                    </fo:table-column>
+                </xsl:for-each>
+
+                <!-- Nagłówek tabeli -->
+                <fo:table-header>
+                    <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                        <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol">
+                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                <xsl:attribute name="text-align">
+                                    <xsl:choose>
+                                        <xsl:when test="@Typ = 'dec' or @Typ = 'int'">right</xsl:when>
+                                        <xsl:otherwise>left</xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:attribute>
+                                <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
+                                    <!-- Wstawiamy zero-width space na granicy camelCase, aby umożliwić zawijanie długich nazw -->
+                                    <xsl:value-of select="replace(crd:NKom, '(\p{Ll})(\p{Lu})', '$1&#8203;$2')"/>
+                                </fo:block>
+                            </fo:table-cell>
+                        </xsl:for-each>
+                    </fo:table-row>
+                </fo:table-header>
+
+                <!-- Wiersze danych -->
+                <fo:table-body>
+                    <xsl:for-each select="$tabela/crd:Wiersz">
+                        <fo:table-row>
+                            <xsl:for-each select="crd:WKom">
+                                <xsl:variable name="pos" select="position()"/>
+                                <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$pos]/@Typ"/>
+                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                    <xsl:attribute name="text-align">
+                                        <xsl:choose>
+                                            <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                            <xsl:otherwise>left</xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:attribute>
+                                    <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
+                                        <xsl:choose>
+                                            <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
+                                                <xsl:value-of select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
+                                            </xsl:when>
+                                            <xsl:when test="($kolTyp = 'int') and (. != '-') and (. != '')">
+                                                <xsl:value-of select="translate(format-number(number(.), '#,##0'), ',.', ' ,')"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="."/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </xsl:for-each>
+                        </fo:table-row>
+                    </xsl:for-each>
+
+                    <!-- Suma (opcjonalna) - wiersz podsumowania -->
+                    <xsl:if test="$tabela/crd:Suma">
+                        <fo:table-row font-weight="bold" background-color="#f5f5f5">
+                            <xsl:for-each select="$tabela/crd:Suma/crd:SKom">
+                                <xsl:variable name="pos" select="position()"/>
+                                <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$pos]/@Typ"/>
+                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                    <xsl:attribute name="text-align">
+                                        <xsl:choose>
+                                            <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                            <xsl:otherwise>left</xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:attribute>
+                                    <fo:block font-size="{$tabelaFontSize}pt">
+                                        <xsl:choose>
+                                            <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
+                                                <xsl:value-of select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="."/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </xsl:for-each>
+                        </fo:table-row>
+                    </xsl:if>
+                </fo:table-body>
+            </fo:table>
+        </fo:block>
     </xsl:template>
 
 
