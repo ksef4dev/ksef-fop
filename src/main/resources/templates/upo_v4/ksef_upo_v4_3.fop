@@ -201,7 +201,7 @@
                     </fo:block>
 
                     <fo:block font-size="6pt" line-height="inherit" space-before="14pt">
-                        <fo:table table-layout="auto" width="100%">
+                        <fo:table table-layout="fixed" width="100%">
                             <fo:table-column column-width="3%"/> <!-- Lp. -->
                             <fo:table-column column-width="18%"/> <!-- Numer identyfikujący fakturę w KSeF -->
                             <fo:table-column column-width="10%"/> <!-- Numer faktury -->

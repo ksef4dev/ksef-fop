@@ -34,10 +34,11 @@
 
         <!-- Calculate column width for name based on presence of other columns -->
         <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
-        <!-- Optional columns: Indeks (8%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
+        <!-- Optional columns: Indeks (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
             <xsl:variable name="indeksWidth" select="if ($faWiersz/crd:Indeks) then 8 else 0"/>
+            <xsl:variable name="p6aWidth" select="if ($faWiersz/crd:P_6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($faWiersz/crd:P_9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($faWiersz/crd:P_9B) then 10 else 0"/>
             <xsl:variable name="p10Width" select="if ($faWiersz/crd:P_10) then 7 else 0"/>
@@ -45,7 +46,7 @@
             <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -79,6 +80,9 @@
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_11A">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
+            </xsl:if>
+            <xsl:if test="$faWiersz/crd:P_6A">
+                <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
             </xsl:if>
 
             <!-- Table header -->
@@ -134,6 +138,11 @@
                     <xsl:if test="$faWiersz/crd:P_11A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.grossValue', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$faWiersz/crd:P_6A">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.deliveryDate', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                 </fo:table-row>
@@ -344,6 +353,13 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
+            <xsl:if test="//crd:FaWiersz/crd:P_6A">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
+                    <fo:block>
+                        <xsl:value-of select="crd:P_6A"/> <!-- Data dostawy (P_6A) -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
         </fo:table-row>
     </xsl:template>
 
@@ -353,10 +369,11 @@
 
         <!-- Calculate column width for name based on presence of other columns -->
         <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
-        <!-- Optional columns: Indeks (8%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8% - always shown in differencesTable), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
+        <!-- Optional columns: Indeks (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8% - always shown in differencesTable), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
             <xsl:variable name="indeksWidth" select="if ($faWierszAfter/crd:Indeks) then 8 else 0"/>
+            <xsl:variable name="p6aWidth" select="if ($faWierszAfter/crd:P_6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($faWierszAfter/crd:P_9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($faWierszAfter/crd:P_9B) then 10 else 0"/>
             <xsl:variable name="p10Width" select="if ($faWierszAfter/crd:P_10) then 7 else 0"/>
@@ -364,7 +381,7 @@
             <xsl:variable name="p11Width" select="if ($faWierszAfter/crd:P_11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($faWierszAfter/crd:P_11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($faWierszAfter/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -394,6 +411,9 @@
             </xsl:if>
             <xsl:if test="$faWierszAfter/crd:P_11A">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
+            </xsl:if>
+            <xsl:if test="$faWierszAfter/crd:P_6A">
+                <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
             </xsl:if>
 
             <!-- Table header - identical to positionsTable -->
@@ -447,6 +467,11 @@
                     <xsl:if test="$faWierszAfter/crd:P_11A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.grossValue', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$faWierszAfter/crd:P_6A">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.deliveryDate', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                 </fo:table-row>
@@ -736,6 +761,14 @@
                                                 <xsl:value-of select="$formattedNumber"/>
                                             </xsl:otherwise>
                                         </xsl:choose>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </xsl:if>
+                            <!-- P_6A (Data dostawy) - show only "after" value -->
+                            <xsl:if test="$faWierszAfter/crd:P_6A">
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
+                                    <fo:block>
+                                        <xsl:value-of select="$after/crd:P_6A"/>
                                     </fo:block>
                                 </fo:table-cell>
                             </xsl:if>
