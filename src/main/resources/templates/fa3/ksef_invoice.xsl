@@ -40,7 +40,7 @@
             <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
             <fo:block keep-together.within-page="always">
-                <fo:table width="100%">
+                <fo:table table-layout="fixed" width="100%">
                     <fo:table-column column-width="35%"/>
                     <fo:table-column column-width="65%"/>
                     <fo:table-body>
