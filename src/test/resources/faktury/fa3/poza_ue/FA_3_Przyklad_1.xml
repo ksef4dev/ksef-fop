@@ -24,8 +24,8 @@
     </Podmiot1>
     <Podmiot2>
         <DaneIdentyfikacyjne>
-            <KodUE>PL</KodUE>
-            <NrVatUE>1234560670</NrVatUE>
+            <KodKraju>NO</KodKraju>
+            <NrID>1234560670</NrID>
             <Nazwa>Nazwa po zmianie sp. z o.o</Nazwa>
         </DaneIdentyfikacyjne>
         <Adres>
@@ -35,9 +35,9 @@
         </Adres>
         <DaneKontaktowe>
             <Email>AP.TEST@test.com</Email>
-            <Telefon>+31123569368</Telefon>
+            <Telefon>1234567890</Telefon>
         </DaneKontaktowe>
-        <NrKlienta>16280</NrKlienta>
+        <NrKlienta>1235</NrKlienta>
         <JST>2</JST>
         <GV>2</GV>
     </Podmiot2>
@@ -79,7 +79,7 @@
             <DataWystFaKorygowanej>2025-03-10</DataWystFaKorygowanej>
             <NrFaKorygowanej>29903413</NrFaKorygowanej>
             <NrKSeF>1</NrKSeF>
-            <NrKSeFFaKorygowanej>5210415750-20250310-FF4861C9CC3F-BA</NrKSeFFaKorygowanej>
+            <NrKSeFFaKorygowanej>1111115750-20250310-FF4861C9CC3F-BA</NrKSeFFaKorygowanej>
         </DaneFaKorygowanej>
         <Podmiot1K>
             <PrefiksPodatnika>PL</PrefiksPodatnika>
@@ -137,22 +137,12 @@
                 <Termin>2024-04-02</Termin>
                 <TerminOpis>Do dnia 02.04.2024 bez rabatu</TerminOpis>
             </TerminPlatnosci>
-            <RachunekBankowy>
-                <NrRB>50175011070000000038433814</NrRB>
-                <SWIFT>PPABPLPKXXX</SWIFT>
-                <NazwaBanku>BNP Paribas Bank Polska S.A.</NazwaBanku>
-            </RachunekBankowy>
         </Platnosc>
         <WarunkiTransakcji>
             <Umowy>
-                <NrUmowy>PL-EKO-01-003602</NrUmowy>
+                <NrUmowy>ABC</NrUmowy>
             </Umowy>
-            <WarunkiDostawy>DDP Bieruñ (Incoterms 2020)</WarunkiDostawy>
+            <WarunkiDostawy>ABC</WarunkiDostawy>
         </WarunkiTransakcji>
     </Fa>
-    <Stopka>
-        <Informacje>
-            <StopkaFaktury>Sąd Rejonowy dla m.st. Warszawy, XIV Wydział Gospodarczy Krajowego Rejestru Sądowego Kapitał zakładowy: 7.163.400 zł</StopkaFaktury>
-        </Informacje>
-    </Stopka>
 </Faktura>

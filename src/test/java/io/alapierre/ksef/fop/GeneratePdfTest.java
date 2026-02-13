@@ -209,7 +209,7 @@ class GeneratePdfTest {
         try (OutputStream out =
                      new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_non_ue.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/poza_ue/FA_3_Przyklad_23.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa3/poza_ue/FA_3_Przyklad_1.xml"));
 
             InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
                     .schema(InvoiceSchema.FA3_1_0_E)
@@ -252,27 +252,23 @@ class GeneratePdfTest {
         byte[] logo = Files.readAllBytes(logoFile.toPath());
         PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
 
-        Path fa2InvoiceFolder = Paths.get("src/test/resources/faktury/fa2/podstawowa");
-        testForFolder(fa2InvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+        Path correctionFolder = Paths.get("src/test/resources/faktury/fa3/korygujaca");
+        testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
         Path fa3InvoiceFolder = Paths.get("src/test/resources/faktury/fa3/podstawowa");
         testForFolder(fa3InvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
+        Path pozaUeFolder = Paths.get("src/test/resources/faktury/fa3/poza_ue");
+        testForFolder(pozaUeFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
-        Path zaliczkowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa2/zaliczkowa");
-        testForFolder(zaliczkowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+        Path zaliczkowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa3/zaliczkowa");
+        testForFolder(zaliczkowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
-        Path rozliczeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa2/rozliczeniowa");
-        testForFolder(rozliczeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
+        Path rozliczeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa3/rozliczeniowa");
+        testForFolder(rozliczeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
 
-        Path correctionFolder = Paths.get("src/test/resources/faktury/fa2/korygujaca");
-        testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
-
-        Path correctionFolderWithCorrectionDifferences = Paths.get("src/test/resources/faktury/fa2/korygujaca");
-        testForFolder(correctionFolderWithCorrectionDifferences, ksefNumber, verificationLink, true, qrCode, logo, InvoiceSchema.FA2_1_0_E, generator);
-
-
-
+        Path zalacznikInvoiceFolder = Paths.get("src/test/resources/faktury/fa3/zalacznik");
+        testForFolder(zalacznikInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
     }
 
     private void testForFolder(Path invoiceFolder,
