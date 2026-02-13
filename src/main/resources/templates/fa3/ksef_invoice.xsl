@@ -3021,113 +3021,168 @@
                 </fo:block>
             </xsl:if>
 
-            <!-- Tabela dynamiczna z danymi -->
-            <!-- Rozmiar czcionki zależny od liczby kolumn -->
+            <!-- Tabela dynamiczna z danymi - liczba kolumn w bloku zależna od długości nagłówków (krótsze = więcej kolumn) -->
+            <xsl:variable name="maxHeaderLen" select="max($tabela/crd:TNaglowek/crd:Kol/string-length(normalize-space(crd:NKom)))"/>
+            <xsl:variable name="maxColsPerBlock" select="if ($maxHeaderLen le 12) then 6 else if ($maxHeaderLen le 18) then 5 else 4"/>
+            <xsl:variable name="numBlocks" select="(($kolCount + $maxColsPerBlock - 1) idiv $maxColsPerBlock)"/>
+
+            <!-- Rozmiar czcionki zależny od liczby bloków -->
             <xsl:variable name="tabelaFontSize">
                 <xsl:choose>
-                    <xsl:when test="$kolCount &gt;= 10">5.5</xsl:when>
-                    <xsl:when test="$kolCount &gt;= 8">6</xsl:when>
-                    <xsl:when test="$kolCount &gt;= 6">6.5</xsl:when>
+                    <xsl:when test="$numBlocks &gt;= 4">6</xsl:when>
+                    <xsl:when test="$numBlocks &gt;= 3">6.5</xsl:when>
                     <xsl:otherwise>7</xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
 
             <fo:block font-size="7pt" space-after="1mm" font-weight="bold">Tabela</fo:block>
-            <fo:table table-layout="fixed" width="100%" border-collapse="separate">
-                <!-- Dynamiczne kolumny - proporcjonalna szerokość wg typu -->
-                <!-- txt=3, date/datetime=2, int/dec/time=2 -->
-                <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol">
-                    <fo:table-column>
-                        <xsl:attribute name="column-width">
-                            <xsl:choose>
-                                <xsl:when test="@Typ = 'txt'">proportional-column-width(3)</xsl:when>
-                                <xsl:otherwise>proportional-column-width(2)</xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:attribute>
-                    </fo:table-column>
-                </xsl:for-each>
 
-                <!-- Nagłówek tabeli -->
-                <fo:table-header>
-                    <fo:table-row background-color="#f5f5f5" font-weight="bold">
-                        <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol">
-                            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
-                                <xsl:attribute name="text-align">
-                                    <xsl:choose>
-                                        <xsl:when test="@Typ = 'dec' or @Typ = 'int'">right</xsl:when>
-                                        <xsl:otherwise>left</xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:attribute>
-                                <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
-                                    <!-- Wstawiamy zero-width space na granicy camelCase, aby umożliwić zawijanie długich nazw -->
-                                    <xsl:value-of select="replace(crd:NKom, '(\p{Ll})(\p{Lu})', '$1&#8203;$2')"/>
-                                </fo:block>
-                            </fo:table-cell>
-                        </xsl:for-each>
-                    </fo:table-row>
-                </fo:table-header>
+            <xsl:for-each select="1 to $numBlocks">
+                <xsl:variable name="blockIdx" select="."/>
+                <xsl:variable name="startCol" select="($blockIdx - 1) * $maxColsPerBlock + 1"/>
+                <xsl:variable name="endCol" select="if ($blockIdx * $maxColsPerBlock le $kolCount) then $blockIdx * $maxColsPerBlock else $kolCount"/>
+                <xsl:variable name="blockKolCount" select="$endCol - $startCol + 1"/>
+                <!-- W drugim i kolejnych blokach powtarzamy pierwszą kolumnę (nagłówek + wartość) jako identyfikator wiersza -->
+                <xsl:variable name="repeatFirstCol" select="$blockIdx gt 1"/>
 
-                <!-- Wiersze danych -->
-                <fo:table-body>
-                    <xsl:for-each select="$tabela/crd:Wiersz">
-                        <fo:table-row>
-                            <xsl:for-each select="crd:WKom">
-                                <xsl:variable name="pos" select="position()"/>
-                                <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$pos]/@Typ"/>
+                <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="2mm">
+                    <!-- Kolumny: ewentualna powtórzona pierwsza + kolumny bloku -->
+                    <xsl:if test="$repeatFirstCol">
+                        <fo:table-column column-width="proportional-column-width(1)"/>
+                    </xsl:if>
+                    <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol[position() ge $startCol and position() le $endCol]">
+                        <fo:table-column column-width="proportional-column-width(1)"/>
+                    </xsl:for-each>
+
+                    <fo:table-header>
+                        <fo:table-row background-color="#f5f5f5" font-weight="bold">
+                            <xsl:if test="$repeatFirstCol">
                                 <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
                                     <xsl:attribute name="text-align">
                                         <xsl:choose>
-                                            <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                            <xsl:when test="$tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'dec' or $tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'int'">right</xsl:when>
                                             <xsl:otherwise>left</xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:attribute>
                                     <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
-                                        <xsl:choose>
-                                            <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
-                                                <xsl:value-of select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:when test="($kolTyp = 'int') and (. != '-') and (. != '')">
-                                                <xsl:value-of select="translate(format-number(number(.), '#,##0'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="."/>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
+                                        <xsl:value-of select="replace($tabela/crd:TNaglowek/crd:Kol[1]/crd:NKom, '(\p{Ll})(\p{Lu})', '$1&#8203;$2')"/>
                                     </fo:block>
                                 </fo:table-cell>
-                            </xsl:for-each>
-                        </fo:table-row>
-                    </xsl:for-each>
-
-                    <!-- Suma (opcjonalna) - wiersz podsumowania -->
-                    <xsl:if test="$tabela/crd:Suma">
-                        <fo:table-row font-weight="bold" background-color="#f5f5f5">
-                            <xsl:for-each select="$tabela/crd:Suma/crd:SKom">
-                                <xsl:variable name="pos" select="position()"/>
-                                <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$pos]/@Typ"/>
+                            </xsl:if>
+                            <xsl:for-each select="$tabela/crd:TNaglowek/crd:Kol[position() ge $startCol and position() le $endCol]">
                                 <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
                                     <xsl:attribute name="text-align">
                                         <xsl:choose>
-                                            <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                            <xsl:when test="@Typ = 'dec' or @Typ = 'int'">right</xsl:when>
                                             <xsl:otherwise>left</xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:attribute>
-                                    <fo:block font-size="{$tabelaFontSize}pt">
-                                        <xsl:choose>
-                                            <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
-                                                <xsl:value-of select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="."/>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
+                                    <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
+                                        <xsl:value-of select="replace(crd:NKom, '(\p{Ll})(\p{Lu})', '$1&#8203;$2')"/>
                                     </fo:block>
                                 </fo:table-cell>
                             </xsl:for-each>
                         </fo:table-row>
-                    </xsl:if>
-                </fo:table-body>
-            </fo:table>
+                    </fo:table-header>
+
+                    <fo:table-body>
+                        <xsl:for-each select="$tabela/crd:Wiersz">
+                            <fo:table-row>
+                                <xsl:if test="$repeatFirstCol">
+                                    <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                        <xsl:attribute name="text-align">
+                                            <xsl:choose>
+                                                <xsl:when test="$tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'dec' or $tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'int'">right</xsl:when>
+                                                <xsl:otherwise>left</xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:attribute>
+                                        <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
+                                            <xsl:variable name="firstVal" select="crd:WKom[1]"/>
+                                            <xsl:variable name="firstKolTyp" select="$tabela/crd:TNaglowek/crd:Kol[1]/@Typ"/>
+                                            <xsl:choose>
+                                                <xsl:when test="($firstKolTyp = 'dec') and ($firstVal != '-') and ($firstVal != '')">
+                                                    <xsl:value-of select="translate($firstVal, '.', ',')"/>
+                                                </xsl:when>
+                                                <xsl:when test="($firstKolTyp = 'int') and ($firstVal != '-') and ($firstVal != '')">
+                                                    <xsl:value-of select="translate(format-number(number($firstVal), '#,##0'), ',.', ' ,')"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="$firstVal"/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:if>
+                                <xsl:for-each select="crd:WKom[position() ge $startCol and position() le $endCol]">
+                                    <xsl:variable name="cellPos" select="$startCol + position() - 1"/>
+                                    <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$cellPos]/@Typ"/>
+                                    <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                        <xsl:attribute name="text-align">
+                                            <xsl:choose>
+                                                <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                                <xsl:otherwise>left</xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:attribute>
+                                        <fo:block wrap-option="wrap" font-size="{$tabelaFontSize}pt">
+                                            <xsl:choose>
+                                                <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
+                                                    <xsl:value-of select="translate(., '.', ',')"/>
+                                                </xsl:when>
+                                                <xsl:when test="($kolTyp = 'int') and (. != '-') and (. != '')">
+                                                    <xsl:value-of select="translate(format-number(number(.), '#,##0'), ',.', ' ,')"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="."/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:for-each>
+                            </fo:table-row>
+                        </xsl:for-each>
+
+                        <xsl:if test="$tabela/crd:Suma">
+                            <fo:table-row font-weight="bold" background-color="#f5f5f5">
+                                <xsl:if test="$repeatFirstCol">
+                                    <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                        <xsl:attribute name="text-align">
+                                            <xsl:choose>
+                                                <xsl:when test="$tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'dec' or $tabela/crd:TNaglowek/crd:Kol[1]/@Typ = 'int'">right</xsl:when>
+                                                <xsl:otherwise>left</xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:attribute>
+                                        <fo:block font-size="{$tabelaFontSize}pt">
+                                            <xsl:value-of select="$tabela/crd:Suma/crd:SKom[1]"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:if>
+                                <xsl:for-each select="$tabela/crd:Suma/crd:SKom[position() ge $startCol and position() le $endCol]">
+                                    <xsl:variable name="cellPos" select="$startCol + position() - 1"/>
+                                    <xsl:variable name="kolTyp" select="$tabela/crd:TNaglowek/crd:Kol[$cellPos]/@Typ"/>
+                                    <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                                        <xsl:attribute name="text-align">
+                                            <xsl:choose>
+                                                <xsl:when test="$kolTyp = 'dec' or $kolTyp = 'int'">right</xsl:when>
+                                                <xsl:otherwise>left</xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:attribute>
+                                        <fo:block font-size="{$tabelaFontSize}pt">
+                                            <xsl:choose>
+                                                <xsl:when test="($kolTyp = 'dec') and (. != '-') and (. != '')">
+                                                    <xsl:value-of select="translate(., '.', ',')"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="."/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </xsl:for-each>
+                            </fo:table-row>
+                        </xsl:if>
+                    </fo:table-body>
+                </fo:table>
+            </xsl:for-each>
         </fo:block>
     </xsl:template>
 
