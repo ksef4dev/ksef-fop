@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">
+  <Naglowek>
+    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+    <WariantFormularza>3</WariantFormularza>
+    <DataWytworzeniaFa>2026-02-04T12:50:29Z</DataWytworzeniaFa>
+    <SystemInfo>ISOOG</SystemInfo>
+  </Naglowek>
+  <Podmiot1>
+    <DaneIdentyfikacyjne>
+      <NIP>1234567890</NIP>
+      <Nazwa>Sprzedawca Sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Przykładowa 1 00-001 Warszawa</AdresL1>
+    </Adres>
+  </Podmiot1>
+  <Podmiot2>
+    <DaneIdentyfikacyjne>
+      <NIP>9876543210</NIP>
+      <Nazwa>Nabywca Sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Testowa 10, 20-001 Miasto</AdresL1>
+    </Adres>
+    <AdresKoresp>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>Nabywca Sp. z o.o. ul. Testowa 10 20 - 001 MIASTO</AdresL1>
+    </AdresKoresp>
+    <NrKlienta>00001</NrKlienta>
+    <JST>2</JST>
+    <GV>2</GV>
+  </Podmiot2>
+  <Fa>
+    <KodWaluty>PLN</KodWaluty>
+    <P_1>2026-02-04</P_1>
+    <P_2>FA/001/2026/F</P_2>
+    <P_13_1>12948.01</P_13_1>
+    <P_14_1>2978.04</P_14_1>
+    <P_15>15926.05</P_15>
+    <Adnotacje>
+      <P_16>2</P_16>
+      <P_17>2</P_17>
+      <P_18>2</P_18>
+      <P_18A>2</P_18A>
+      <Zwolnienie>
+        <P_19N>1</P_19N>
+      </Zwolnienie>
+      <NoweSrodkiTransportu>
+        <P_22N>1</P_22N>
+      </NoweSrodkiTransportu>
+      <P_23>2</P_23>
+      <PMarzy>
+        <P_PMarzyN>1</P_PMarzyN>
+      </PMarzy>
+    </Adnotacje>
+    <RodzajFaktury>VAT</RodzajFaktury>
+    <DodatkowyOpis>
+      <Klucz>Typ faktury</Klucz>
+      <Wartosc>ROZLICZENIE</Wartosc>
+    </DodatkowyOpis>
+    <DodatkowyOpis>
+      <Klucz>Dodatkowe informacje</Klucz>
+      <Wartosc>Zużycie paliwa gazowego w bieżącym okresie rozliczeniowym wynosi xxx m3 / xxx kWh, w analogicznym okresie roku poprzedniego wynosiło xx m3 / xxx kWh</Wartosc>
+    </DodatkowyOpis>
+    <DodatkowyOpis>
+      <Klucz>Dodatkowe informacje</Klucz>
+      <Wartosc>Aktualne informacje o przeciętnym zużyciu paliwa gazowego przez Odbiorców oraz środkach poprawy efektywności dostępne są na stronie internetowej www.przyklad.pl</Wartosc>
+    </DodatkowyOpis>
+    <FaWiersz>
+      <NrWierszaFa>1</NrWierszaFa>
+      <P_7>Dystrybucyjna zmienna</P_7>
+      <P_8A>kWh</P_8A>
+      <P_8B>45181.000</P_8B>
+      <P_9A>0.04415000</P_9A>
+      <P_11>1994.74</P_11>
+      <P_12>23</P_12>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>2</NrWierszaFa>
+      <P_7>Paliwo gazowe</P_7>
+      <P_8A>kWh</P_8A>
+      <P_8B>45181.000</P_8B>
+      <P_9A>0.23525000</P_9A>
+      <P_11>10628.83</P_11>
+      <P_12>23</P_12>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>3</NrWierszaFa>
+      <P_7>Opłata handlowa</P_7>
+      <P_8A>m-c</P_8A>
+      <P_8B>1.000</P_8B>
+      <P_9A>16.11000000</P_9A>
+      <P_11>16.11</P_11>
+      <P_12>23</P_12>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>4</NrWierszaFa>
+      <P_7>Dystrybucyjna stała</P_7>
+      <P_8A>m-c</P_8A>
+      <P_8B>1.000</P_8B>
+      <P_9A>308.33000000</P_9A>
+      <P_11>308.33</P_11>
+      <P_12>23</P_12>
+    </FaWiersz>
+    <Rozliczenie>
+      <DoZaplaty>15926.05</DoZaplaty>
+    </Rozliczenie>
+    <Platnosc>
+      <TerminPlatnosci>
+        <Termin>2026-02-18</Termin>
+      </TerminPlatnosci>
+      <FormaPlatnosci>6</FormaPlatnosci>
+      <RachunekBankowy>
+        <NrRB>12345678901234567890123456</NrRB>
+        <NazwaBanku>Bank Przykładowy S.A.</NazwaBanku>
+      </RachunekBankowy>
+    </Platnosc>
+  </Fa>
+  <Zalacznik>
+    <BlokDanych>
+      <ZNaglowek>1. Rozliczenie punktu poboru</ZNaglowek>
+      <MetaDane>
+        <ZKlucz>Rok umowny</ZKlucz>
+        <ZWartosc>01-01-2026 - 31-12-2026</ZWartosc>
+      </MetaDane>
+      <MetaDane>
+        <ZKlucz>Nr punktu poboru</ZKlucz>
+        <ZWartosc>1234567890123456789012</ZWartosc>
+      </MetaDane>
+      <MetaDane>
+        <ZKlucz>Adres punktu poboru</ZKlucz>
+        <ZWartosc>ul. Testowa 10, 20-001 Miasto</ZWartosc>
+      </MetaDane>
+      <Tabela>
+        <TMetaDane>
+          <TKlucz>Nr gazomierza</TKlucz>
+          <TWartosc>GM1234567890</TWartosc>
+        </TMetaDane>
+        <TMetaDane>
+          <TKlucz>Wskazanie</TKlucz>
+          <TWartosc>47595</TWartosc>
+        </TMetaDane>
+        <TMetaDane>
+          <TKlucz>Typ odczytu (R - rzeczywisty; O - odbiorcy; S - szacunkowy)</TKlucz>
+          <TWartosc>R</TWartosc>
+        </TMetaDane>
+        <TMetaDane>
+          <TKlucz>Kwota podatku akcyzowego, zawarta w wartości za paliwo gazowe określonej w aktualnym rozliczeniu</TKlucz>
+          <TWartosc>0.00</TWartosc>
+        </TMetaDane>
+        <TNaglowek>
+          <Kol Typ="txt">
+            <NKom>Opłaty</NKom>
+          </Kol>
+          <Kol Typ="txt">
+            <NKom>Grupa taryfowa</NKom>
+          </Kol>
+          <Kol Typ="date">
+            <NKom>Data od</NKom>
+          </Kol>
+          <Kol Typ="date">
+            <NKom>Data do</NKom>
+          </Kol>
+          <Kol Typ="int">
+            <NKom>Wskazanie początkowe</NKom>
+          </Kol>
+          <Kol Typ="int">
+            <NKom>Wskazanie końcowe</NKom>
+          </Kol>
+          <Kol Typ="dec">
+            <NKom>Zużycie[m3]</NKom>
+          </Kol>
+          <Kol Typ="dec">
+            <NKom>Współczynnik konwersji</NKom>
+          </Kol>
+        </TNaglowek>
+        <Wiersz>
+          <WKom>Dystrybucyjna zmienna</WKom>
+          <WKom>W-4_TA</WKom>
+          <WKom>01.01.2026</WKom>
+          <WKom>31.01.2026</WKom>
+          <WKom>43529</WKom>
+          <WKom>47595</WKom>
+          <WKom>4066</WKom>
+          <WKom>11.112</WKom>
+        </Wiersz>
+        <Wiersz>
+          <WKom>Paliwo gazowe</WKom>
+          <WKom>BW-4</WKom>
+          <WKom>01.01.2026</WKom>
+          <WKom>31.01.2026</WKom>
+          <WKom>43529</WKom>
+          <WKom>47595</WKom>
+          <WKom>4066</WKom>
+          <WKom>11.112</WKom>
+        </Wiersz>
+        <Wiersz>
+          <WKom>Opłata handlowa</WKom>
+          <WKom>BW-4</WKom>
+          <WKom>01.01.2026</WKom>
+          <WKom>31.01.2026</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+        </Wiersz>
+        <Wiersz>
+          <WKom>Dystrybucyjna stała</WKom>
+          <WKom>W-4_TA</WKom>
+          <WKom>01.01.2026</WKom>
+          <WKom>31.01.2026</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+          <WKom>-</WKom>
+        </Wiersz>
+      </Tabela>
+    </BlokDanych>
+  </Zalacznik>
+</Faktura>
