@@ -269,6 +269,9 @@ class GeneratePdfTest {
 
         Path zalacznikInvoiceFolder = Paths.get("src/test/resources/faktury/fa3/zalacznik");
         testForFolder(zalacznikInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
+
+        Path obciazeniowaInvoiceFolder = Paths.get("src/test/resources/faktury/fa3/obciazeniowa");
+        testForFolder(obciazeniowaInvoiceFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);
     }
 
     private void testForFolder(Path invoiceFolder,
