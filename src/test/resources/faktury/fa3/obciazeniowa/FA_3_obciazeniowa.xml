@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"
+	xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/">
+	<Naglowek>
+		<KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+		<WariantFormularza>3</WariantFormularza>
+		<DataWytworzeniaFa>2026-02-04T12:50:29Z</DataWytworzeniaFa>
+		<SystemInfo>ISOOG</SystemInfo>
+	</Naglowek>
+	<Podmiot1>
+		<DaneIdentyfikacyjne>
+			<NIP>1234567890</NIP>
+			<Nazwa>Sprzedawca Sp. z o.o.</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Przykładowa 1 00-001 Warszawa</AdresL1>
+		</Adres>
+	</Podmiot1>
+	<Podmiot2>
+		<DaneIdentyfikacyjne>
+			<NIP>9876543210</NIP>
+			<Nazwa>Nabywca Sp. z o.o.</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Testowa 10, 20-001 Miasto</AdresL1>
+		</Adres>
+		<AdresKoresp>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>Nabywca Sp. z o.o. ul. Testowa 10 20 - 001 MIASTO</AdresL1>
+		</AdresKoresp>
+		<NrKlienta>00001</NrKlienta>
+		<JST>2</JST>
+		<GV>2</GV>
+	</Podmiot2>
+	<Fa>
+		<KodWaluty>PLN</KodWaluty>
+		<P_1>2026-02-04</P_1>
+		<P_2>FA/001/2026/F</P_2>
+		<P_13_1>12948.01</P_13_1>
+		<P_14_1>2978.04</P_14_1>
+		<P_15>15926.05</P_15>
+		<Adnotacje>
+			<P_16>2</P_16>
+			<P_17>2</P_17>
+			<P_18>2</P_18>
+			<P_18A>2</P_18A>
+			<Zwolnienie>
+				<P_19N>1</P_19N>
+			</Zwolnienie>
+			<NoweSrodkiTransportu>
+				<P_22N>1</P_22N>
+			</NoweSrodkiTransportu>
+			<P_23>2</P_23>
+			<PMarzy>
+				<P_PMarzyN>1</P_PMarzyN>
+			</PMarzy>
+		</Adnotacje>
+		<RodzajFaktury>VAT</RodzajFaktury>
+		<FaWiersz>
+			<NrWierszaFa>1</NrWierszaFa>
+			<P_7>Rata leasingowa - część finansowa</P_7>
+			<P_8A>szt.</P_8A>
+			<P_8B>1</P_8B>
+			<P_9A>738.21</P_9A>
+			<P_11>738.21</P_11>
+			<P_12>23</P_12>
+		</FaWiersz>
+		<Rozliczenie>
+			<Obciazenia>
+				<Kwota>33.52</Kwota>
+				<Powod>Rata ubezpieczenia - GAP</Powod>
+			</Obciazenia>
+			<Obciazenia>
+				<Kwota>35.49</Kwota>
+				<Powod>Rata ubezpieczenia - Life</Powod>
+			</Obciazenia>
+			<SumaObciazen>69.01</SumaObciazen>
+            <Odliczenia>
+                <Kwota>200.00</Kwota>
+                <Powod>Zaliczka wpłacona przy zawarciu umowy</Powod>
+            </Odliczenia>
+            <Odliczenia>
+                <Kwota>50.00</Kwota>
+                <Powod>Rabat promocyjny</Powod>
+            </Odliczenia>
+            <SumaOdliczen>250.00</SumaOdliczen>
+			<DoZaplaty>739.01</DoZaplaty>
+		</Rozliczenie>
+        <Platnosc>
+			<TerminPlatnosci>
+				<Termin>2026-02-15</Termin>
+			</TerminPlatnosci>
+			<FormaPlatnosci>6</FormaPlatnosci>
+			<RachunekBankowy>
+				<NrRB>12345678901234567890123456</NrRB>
+				<NazwaBanku>Bank Polski S.A.</NazwaBanku>
+			</RachunekBankowy>
+		</Platnosc>
+	</Fa>
+</Faktura>
