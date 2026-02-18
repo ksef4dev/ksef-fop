@@ -2,6 +2,7 @@
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:crd="http://crd.gov.pl/wzor/2023/06/29/12648/">
 
     <!-- Parameter for controlling decimal places in unit prices -->
@@ -261,7 +262,7 @@
                     <fo:block>
                         <xsl:variable name="taxRate" select="crd:P_12"/>
                         <xsl:choose>
-                            <xsl:when test="number($taxRate) = $taxRate and $taxRate != ''">
+                            <xsl:when test="$taxRate castable as xs:decimal">
                                 <xsl:value-of select="$taxRate"/>%
                             </xsl:when>
                             <xsl:otherwise>
