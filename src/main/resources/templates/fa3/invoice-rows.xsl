@@ -196,7 +196,7 @@
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
-                <xsl:variable name="formattedQty" select="translate(format-number(number(crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                <xsl:variable name="formattedQty" select="translate(format-number(number(crd:P_8B), '#,##0.######'), '.,', ',&#160;')"/>
                 <xsl:variable name="qtyLength" select="string-length($formattedQty)"/>
                 <xsl:choose>
                     <xsl:when test="$qtyLength &gt; 14">
@@ -532,16 +532,16 @@
                                 <xsl:variable name="formattedQty">
                                     <xsl:choose>
                                         <xsl:when test="$isNewRow">
-                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), '.,', ',&#160;')"/>
                                         </xsl:when>
                                         <xsl:when test="$before/crd:P_8B and $after/crd:P_8B">
-                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B) - number($before/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B) - number($before/crd:P_8B), '#,##0.######'), '.,', ',&#160;')"/>
                                         </xsl:when>
                                         <xsl:when test="not($before/crd:P_8B) and $after/crd:P_8B">
-                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                            <xsl:value-of select="translate(format-number(number($after/crd:P_8B), '#,##0.######'), '.,', ',&#160;')"/>
                                         </xsl:when>
                                         <xsl:when test="$before/crd:P_8B and not($after/crd:P_8B)">
-                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_8B), '#,##0.######'), ',', '&#160;')"/>
+                                            <xsl:value-of select="translate(format-number(-number($before/crd:P_8B), '#,##0.######'), '.,', ',&#160;')"/>
                                         </xsl:when>
                                         <xsl:otherwise>0</xsl:otherwise>
                                     </xsl:choose>
