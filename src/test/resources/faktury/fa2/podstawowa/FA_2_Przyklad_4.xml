@@ -67,6 +67,15 @@
             <P_12>23</P_12>
             <KursWaluty>4.3200</KursWaluty>
         </FaWiersz>
+        <FaWiersz>
+            <NrWierszaFa>2</NrWierszaFa>
+            <P_7>GTU_1</P_7>
+            <P_8A>-</P_8A>
+            <P_8B>2.561</P_8B>
+            <P_9A>1350.0</P_9A>
+            <P_11>3457.35</P_11>
+            <P_12>zw</P_12>
+        </FaWiersz>
         <Platnosc>
             <ZnacznikZaplatyCzesciowej>1</ZnacznikZaplatyCzesciowej>
             <ZaplataCzesciowa>
