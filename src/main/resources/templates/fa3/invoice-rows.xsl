@@ -150,21 +150,40 @@
 
                     <!-- Table body -->
         <fo:table-body>
-            <!-- Apply templates to each position -->
-            <xsl:apply-templates select="$faWiersz"/>
+            <!-- Apply templates to each position; tunnel column visibility so row output matches this table's columns (correction before/after can differ) -->
+            <xsl:apply-templates select="$faWiersz">
+                <xsl:with-param name="showIndeks" select="boolean($faWiersz/crd:Indeks)" tunnel="yes"/>
+                <xsl:with-param name="showP6A" select="boolean($faWiersz/crd:P_6A)" tunnel="yes"/>
+                <xsl:with-param name="showP9A" select="boolean($faWiersz/crd:P_9A)" tunnel="yes"/>
+                <xsl:with-param name="showP9B" select="boolean($faWiersz/crd:P_9B)" tunnel="yes"/>
+                <xsl:with-param name="showP10" select="boolean($faWiersz/crd:P_10)" tunnel="yes"/>
+                <xsl:with-param name="showP12" select="boolean($faWiersz/crd:P_12)" tunnel="yes"/>
+                <xsl:with-param name="showP11" select="boolean($faWiersz/crd:P_11)" tunnel="yes"/>
+                <xsl:with-param name="showP11Vat" select="boolean($faWiersz/crd:P_11Vat)" tunnel="yes"/>
+                <xsl:with-param name="showP11A" select="boolean($faWiersz/crd:P_11A)" tunnel="yes"/>
+            </xsl:apply-templates>
         </fo:table-body>
         </fo:table>
     </xsl:template>
 
-    <!-- Template for each position -->
+    <!-- Template for each position. Column visibility from tunnel params so correction before/after tables can have different columns. -->
     <xsl:template match="crd:FaWiersz">
+        <xsl:param name="showIndeks" select="boolean(//crd:FaWiersz/crd:Indeks)" tunnel="yes"/>
+        <xsl:param name="showP6A" select="boolean(//crd:FaWiersz/crd:P_6A)" tunnel="yes"/>
+        <xsl:param name="showP9A" select="boolean(//crd:FaWiersz/crd:P_9A)" tunnel="yes"/>
+        <xsl:param name="showP9B" select="boolean(//crd:FaWiersz/crd:P_9B)" tunnel="yes"/>
+        <xsl:param name="showP10" select="boolean(//crd:FaWiersz/crd:P_10)" tunnel="yes"/>
+        <xsl:param name="showP12" select="boolean(//crd:FaWiersz/crd:P_12)" tunnel="yes"/>
+        <xsl:param name="showP11" select="boolean(//crd:FaWiersz/crd:P_11)" tunnel="yes"/>
+        <xsl:param name="showP11Vat" select="boolean(//crd:FaWiersz/crd:P_11Vat)" tunnel="yes"/>
+        <xsl:param name="showP11A" select="boolean(//crd:FaWiersz/crd:P_11A)" tunnel="yes"/>
         <fo:table-row>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
                     <xsl:value-of select="crd:NrWierszaFa"/> <!-- Lp -->
                 </fo:block>
             </fo:table-cell>
-            <xsl:if test="//crd:FaWiersz/crd:Indeks">
+            <xsl:if test="$showIndeks">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                     <fo:block>
                         <xsl:value-of select="crd:Indeks"/> <!-- Indeks -->
@@ -202,7 +221,7 @@
                     <xsl:value-of select="crd:P_8A"/> <!-- Jednostka -->
                 </fo:block>
             </fo:table-cell>
-            <xsl:if test="//crd:FaWiersz/crd:P_9A">
+            <xsl:if test="$showP9A">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -226,7 +245,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_9B">
+            <xsl:if test="$showP9B">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -250,7 +269,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_10">
+            <xsl:if test="$showP10">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -272,7 +291,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_12">
+            <xsl:if test="$showP12">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:variable name="taxRate" select="crd:P_12"/>				
@@ -287,7 +306,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_11">
+            <xsl:if test="$showP11">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -309,7 +328,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_11Vat">
+            <xsl:if test="$showP11Vat">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -331,7 +350,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_11A">
+            <xsl:if test="$showP11A">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                     <fo:block>
                         <xsl:choose>
@@ -353,7 +372,7 @@
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
-            <xsl:if test="//crd:FaWiersz/crd:P_6A">
+            <xsl:if test="$showP6A">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
                     <fo:block>
                         <xsl:value-of select="crd:P_6A"/> <!-- Data dostawy (P_6A) -->
@@ -367,62 +386,70 @@
         <xsl:param name="faWierszBefore"/>
         <xsl:param name="faWierszAfter"/>
 
-        <!-- Calculate column width for name based on presence of other columns -->
-        <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
-        <!-- Optional columns: Indeks (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8% - always shown in differencesTable), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
+        <!-- Column visibility: show column if it appears in EITHER before OR after (union), so differing structures don't break the table -->
+        <xsl:variable name="diffShowIndeks" select="boolean($faWierszBefore/crd:Indeks or $faWierszAfter/crd:Indeks)"/>
+        <xsl:variable name="diffShowP6A" select="boolean($faWierszBefore/crd:P_6A or $faWierszAfter/crd:P_6A)"/>
+        <xsl:variable name="diffShowP9A" select="boolean($faWierszBefore/crd:P_9A or $faWierszAfter/crd:P_9A)"/>
+        <xsl:variable name="diffShowP9B" select="boolean($faWierszBefore/crd:P_9B or $faWierszAfter/crd:P_9B)"/>
+        <xsl:variable name="diffShowP10" select="boolean($faWierszBefore/crd:P_10 or $faWierszAfter/crd:P_10)"/>
+        <xsl:variable name="diffShowP11" select="boolean($faWierszBefore/crd:P_11 or $faWierszAfter/crd:P_11)"/>
+        <xsl:variable name="diffShowP11Vat" select="boolean($faWierszBefore/crd:P_11Vat or $faWierszAfter/crd:P_11Vat)"/>
+        <xsl:variable name="diffShowP11A" select="boolean($faWierszBefore/crd:P_11A or $faWierszAfter/crd:P_11A)"/>
+
+        <!-- Calculate column width for name based on union of optional columns -->
         <xsl:variable name="nameColumnWidth">
-            <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
-            <xsl:variable name="indeksWidth" select="if ($faWierszAfter/crd:Indeks) then 8 else 0"/>
-            <xsl:variable name="p6aWidth" select="if ($faWierszAfter/crd:P_6A) then 9 else 0"/>
-            <xsl:variable name="p9aWidth" select="if ($faWierszAfter/crd:P_9A) then 10 else 0"/>
-            <xsl:variable name="p9bWidth" select="if ($faWierszAfter/crd:P_9B) then 10 else 0"/>
-            <xsl:variable name="p10Width" select="if ($faWierszAfter/crd:P_10) then 7 else 0"/>
-            <xsl:variable name="p12Width" select="8"/> <!-- Always shown in differencesTable -->
-            <xsl:variable name="p11Width" select="if ($faWierszAfter/crd:P_11) then 10 else 0"/>
-            <xsl:variable name="p11vatWidth" select="if ($faWierszAfter/crd:P_11Vat) then 7 else 0"/>
-            <xsl:variable name="p11aWidth" select="if ($faWierszAfter/crd:P_11A) then 10 else 0"/>
+            <xsl:variable name="fixedWidth" select="17"/>
+            <xsl:variable name="indeksWidth" select="if ($diffShowIndeks) then 8 else 0"/>
+            <xsl:variable name="p6aWidth" select="if ($diffShowP6A) then 9 else 0"/>
+            <xsl:variable name="p9aWidth" select="if ($diffShowP9A) then 10 else 0"/>
+            <xsl:variable name="p9bWidth" select="if ($diffShowP9B) then 10 else 0"/>
+            <xsl:variable name="p10Width" select="if ($diffShowP10) then 7 else 0"/>
+            <xsl:variable name="p12Width" select="8"/>
+            <xsl:variable name="p11Width" select="if ($diffShowP11) then 10 else 0"/>
+            <xsl:variable name="p11vatWidth" select="if ($diffShowP11Vat) then 7 else 0"/>
+            <xsl:variable name="p11aWidth" select="if ($diffShowP11A) then 10 else 0"/>
             <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
             <fo:table-column column-width="4%"/> <!-- Lp. -->
-            <xsl:if test="$faWierszAfter/crd:Indeks">
+            <xsl:if test="$diffShowIndeks">
                 <fo:table-column column-width="8%"/> <!-- Indeks -->
             </xsl:if>
-            <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa - dynamiczna szerokość -->
+            <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
             <fo:table-column column-width="8%"/> <!-- Ilość -->
             <fo:table-column column-width="5%"/> <!-- Jednostka -->
-            <xsl:if test="$faWierszAfter/crd:P_9A">
+            <xsl:if test="$diffShowP9A">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
-            <xsl:if test="$faWierszAfter/crd:P_9B">
+            <xsl:if test="$diffShowP9B">
                 <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
             </xsl:if>
-            <xsl:if test="$faWierszAfter/crd:P_10">
+            <xsl:if test="$diffShowP10">
                 <fo:table-column column-width="7%"/> <!-- Rabat -->
             </xsl:if>
             <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
-            <xsl:if test="$faWierszAfter/crd:P_11">
+            <xsl:if test="$diffShowP11">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
             </xsl:if>
-            <xsl:if test="$faWierszAfter/crd:P_11Vat">
+            <xsl:if test="$diffShowP11Vat">
                 <fo:table-column column-width="7%"/> <!-- Kwota VAT-->
             </xsl:if>
-            <xsl:if test="$faWierszAfter/crd:P_11A">
+            <xsl:if test="$diffShowP11A">
                 <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
             </xsl:if>
-            <xsl:if test="$faWierszAfter/crd:P_6A">
+            <xsl:if test="$diffShowP6A">
                 <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
             </xsl:if>
 
-            <!-- Table header - identical to positionsTable -->
+            <!-- Table header -->
             <fo:table-header>
                 <fo:table-row background-color="#f5f5f5" font-weight="bold">
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.lp', $labels)"/></fo:block>
                     </fo:table-cell>
-                    <xsl:if test="$faWierszAfter/crd:Indeks">
+                    <xsl:if test="$diffShowIndeks">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/></fo:block>
                         </fo:table-cell>
@@ -436,17 +463,17 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.unit', $labels)"/></fo:block>
                     </fo:table-cell>
-                    <xsl:if test="$faWierszAfter/crd:P_9A">
+                    <xsl:if test="$diffShowP9A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.unitPriceNet', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$faWierszAfter/crd:P_9B">
+                    <xsl:if test="$diffShowP9B">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.unitPriceGross', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$faWierszAfter/crd:P_10">
+                    <xsl:if test="$diffShowP10">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.discount', $labels)"/></fo:block>
                         </fo:table-cell>
@@ -454,22 +481,22 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.taxRate', $labels)"/></fo:block>
                     </fo:table-cell>
-                    <xsl:if test="$faWierszAfter/crd:P_11">
+                    <xsl:if test="$diffShowP11">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.netValue', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$faWierszAfter/crd:P_11Vat">
+                    <xsl:if test="$diffShowP11Vat">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.vatAmount', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$faWierszAfter/crd:P_11A">
+                    <xsl:if test="$diffShowP11A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.grossValue', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
-                    <xsl:if test="$faWierszAfter/crd:P_6A">
+                    <xsl:if test="$diffShowP6A">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.deliveryDate', $labels)"/></fo:block>
                         </fo:table-cell>
@@ -491,7 +518,7 @@
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
                                 <fo:block><xsl:value-of select="$lineNum"/></fo:block>
                             </fo:table-cell>
-                            <xsl:if test="$faWierszAfter/crd:Indeks">
+                            <xsl:if test="$diffShowIndeks">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
                                     <fo:block><xsl:value-of select="$after/crd:Indeks"/></fo:block>
                                 </fo:table-cell>
@@ -547,7 +574,7 @@
                             </fo:table-cell>
                             
                             <!-- Net unit price difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_9A">
+                            <xsl:if test="$diffShowP9A">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -581,7 +608,7 @@
                             </xsl:if>
                             
                             <!-- Gross unit price difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_9B">
+                            <xsl:if test="$diffShowP9B">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -615,7 +642,7 @@
                             </xsl:if>
                             
                             <!-- Discount difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_10">
+                            <xsl:if test="$diffShowP10">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -664,7 +691,7 @@
                             </fo:table-cell>
                             
                             <!-- Net value difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_11">
+                            <xsl:if test="$diffShowP11">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -698,7 +725,7 @@
                             </xsl:if>
                             
                             <!-- VAT amount difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_11Vat">
+                            <xsl:if test="$diffShowP11Vat">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -732,7 +759,7 @@
                             </xsl:if>
                             
                             <!-- Gross value difference with font-size adjustment -->
-                            <xsl:if test="$faWierszAfter/crd:P_11A">
+                            <xsl:if test="$diffShowP11A">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                                     <fo:block>
                                         <xsl:variable name="formattedNumber">
@@ -765,7 +792,7 @@
                                 </fo:table-cell>
                             </xsl:if>
                             <!-- P_6A (Data dostawy) - show only "after" value -->
-                            <xsl:if test="$faWierszAfter/crd:P_6A">
+                            <xsl:if test="$diffShowP6A">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
                                     <fo:block>
                                         <xsl:value-of select="$after/crd:P_6A"/>
