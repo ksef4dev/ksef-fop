@@ -2841,6 +2841,11 @@
                 <xsl:value-of
                         select="crd:DaneIdentyfikacyjne/crd:NIP"/>
             </xsl:if>
+            <xsl:if test="crd:DaneIdentyfikacyjne/crd:IDWew">
+                <fo:inline font-weight="600">
+                    <xsl:value-of select="key('kLabels', 'idWew', $labels)"/>: </fo:inline>
+                <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:IDWew"/>
+            </xsl:if>
         </fo:block>
         <fo:block text-align="left" padding-bottom="3px">
             <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
