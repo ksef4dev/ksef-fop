@@ -1142,7 +1142,7 @@
                                 <fo:block color="#343a40" font-size="10pt" text-align="right" space-before="3mm">
                                     <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'totalDiscount', $labels)"/>: </fo:inline>
                                     <fo:inline>
-                                        <xsl:value-of select="translate(format-number(abs(number(crd:Fa/crd:P_15)), '#,##0.00'), ',.', ' ,')"/>
+                                        <xsl:value-of select="translate(format-number(number(crd:Fa/crd:P_15), '#,##0.00'), ',.', ' ,')"/>
                                         <xsl:text> </xsl:text>
                                         <fo:inline>
                                             <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
