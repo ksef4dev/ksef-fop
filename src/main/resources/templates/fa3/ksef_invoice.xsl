@@ -1175,7 +1175,9 @@
                                                                crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or
                                                                crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or
                                                                crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or
-                                                               crd:Fa/crd:P_13_11 != 0"/>
+                                                               crd:Fa/crd:P_13_11 != 0 or crd:Fa/crd:P_14_1W != 0 or
+                                                               crd:Fa/crd:P_14_2W != 0 or crd:Fa/crd:P_14_3W != 0 or
+                                                               crd:Fa/crd:P_14_4W"/>
 
                     <xsl:if test="$hasAnyTaxRates">
                         <!-- Linia oddzielająca -->
@@ -1237,7 +1239,9 @@
                                                                            crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or
                                                                            crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or
                                                                            crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or
-                                                                           crd:Fa/crd:P_13_11 != 0"/>
+                                                                           crd:Fa/crd:P_13_11 != 0 or crd:Fa/crd:P_14_1W != 0 or
+                                                                           crd:Fa/crd:P_14_2W != 0 or crd:Fa/crd:P_14_3W != 0 or
+                                                                           crd:Fa/crd:P_14_4W"/>
 
                                 <!-- Jeśli nie ma żadnych stawek podatku, wyświetl informację -->
                                 <xsl:if test="not($hasAnyTaxRates)">
@@ -1248,7 +1252,7 @@
                                     </fo:table-row>
                                 </xsl:if>
 
-                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 != 0">
+                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1W">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1288,7 +1292,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 != 0">
+                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2W">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1328,7 +1332,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 != 0">
+                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3W">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1368,7 +1372,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 != 0">
+                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4W">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1822,7 +1826,7 @@
                     <xsl:if test="count(crd:Fa/crd:DodatkowyOpis) > 0">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-                        
+
                         <fo:block>
                             <fo:block text-align="left" space-after="2mm">
                                 <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'additionalDescription', $labels)"/></fo:inline>
