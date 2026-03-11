@@ -983,15 +983,17 @@
                             </xsl:if>
                         </xsl:if>
 
+                        <!-- Section title: omitted for ZAL/KOR_ZAL (each subsection has its own title below) -->
+                        <xsl:if test="not(crd:Fa/crd:RodzajFaktury = 'ZAL') and not(crd:Fa/crd:RodzajFaktury = 'KOR_ZAL')">
                         <fo:block text-align="left" space-after="2mm">
                             <fo:inline font-weight="bold" font-size="12pt">
                                 <xsl:choose>
-                                    <xsl:when test="crd:Fa/crd:RodzajFaktury = 'ZAL'"><xsl:value-of select="key('kLabels', 'order', $labels)"/></xsl:when>
                                     <xsl:when test="crd:Fa/crd:OkresFaKorygowanej"><xsl:value-of select="key('kLabels', 'discount', $labels)"/></xsl:when>
                                     <xsl:otherwise><xsl:value-of select="key('kLabels', 'positions', $labels)"/></xsl:otherwise>
                                 </xsl:choose>
                             </fo:inline>
                         </fo:block>
+                        </xsl:if>
                         <xsl:if test="crd:Fa/crd:OkresFaKorygowanej">
 <!--                            <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>-->
 <!--                            <fo:block text-align="left" space-after="2mm">-->
@@ -1061,9 +1063,35 @@
                             <xsl:otherwise>
                                 <xsl:choose>
                                     <xsl:when test="crd:Fa/crd:RodzajFaktury = 'ZAL' or crd:Fa/crd:RodzajFaktury = 'KOR_ZAL'">
-                                        <xsl:call-template name="zamowienieTable">
-                                            <xsl:with-param name="zamowienieWiersz" select="crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz"/>
-                                        </xsl:call-template>
+                                        <!-- ZAL can have both Zamówienie and FaWiersz: show both sections in order: Pozycje first, then Zamówienie -->
+                                        <xsl:if test="crd:Fa/crd:FaWiersz">
+                                            <fo:block text-align="left" space-after="2mm" space-before="2mm">
+                                                <fo:inline font-weight="bold" font-size="12pt"><xsl:value-of select="key('kLabels', 'positions', $labels)"/></fo:inline>
+                                            </fo:block>
+                                            <xsl:call-template name="positionsTable">
+                                                <xsl:with-param name="faWiersz" select="crd:Fa/crd:FaWiersz"/>
+                                            </xsl:call-template>
+                                        </xsl:if>
+                                        <xsl:if test="crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz or crd:Fa/crd:Zamowienie/crd:WartoscZamowienia">
+                                            <fo:block text-align="left" space-after="2mm" space-before="2mm">
+                                                <fo:inline font-weight="bold" font-size="12pt"><xsl:value-of select="key('kLabels', 'order', $labels)"/></fo:inline>
+                                            </fo:block>
+                                            <xsl:if test="crd:Fa/crd:Zamowienie/crd:WartoscZamowienia">
+                                                <fo:block font-size="8pt" font-weight="bold" text-align="left" space-before="1mm" space-after="3mm">
+                                                    <fo:inline><xsl:value-of select="key('kLabels', 'orderValueWithTax', $labels)"/>: </fo:inline>
+                                                    <fo:inline>
+                                                        <xsl:value-of select="translate(format-number(number(crd:Fa/crd:Zamowienie/crd:WartoscZamowienia), '#,##0.00'), ',.', ' ,')"/>
+                                                        <xsl:text> </xsl:text>
+                                                        <xsl:value-of select="crd:Fa/crd:KodWaluty"/>
+                                                    </fo:inline>
+                                                </fo:block>
+                                            </xsl:if>
+                                            <xsl:if test="crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz">
+                                                <xsl:call-template name="zamowienieTable">
+                                                    <xsl:with-param name="zamowienieWiersz" select="crd:Fa/crd:Zamowienie/crd:ZamowienieWiersz"/>
+                                                </xsl:call-template>
+                                            </xsl:if>
+                                        </xsl:if>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <!-- Show positions table only if there are invoice lines -->

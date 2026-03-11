@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura
+        xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2026-03-10T12:31:01Z</DataWytworzeniaFa>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>5451824119</NIP>
+            <Nazwa>FIRMA TESTOWA sp. z o.o.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Przykladowa 1</AdresL1>
+            <AdresL2>00-001 Warszawa</AdresL2>
+        </Adres>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>2222222222</NIP>
+            <Nazwa>KOWALSKI JAN</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Testowa 10 M.5</AdresL1>
+            <AdresL2>30-001 Krakow</AdresL2>
+        </Adres>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1>2026-03-11</P_1>
+        <P_2>10203040</P_2>
+        <P_6>2026-03-10</P_6>
+        <P_13_1>2699.95</P_13_1>
+        <P_14_1>620.99</P_14_1>
+        <P_15>3320.94</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>ZAL</RodzajFaktury>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>ZALICZKA NA POCZET REALIZACJI UMOWY NR 123/26</P_7>
+            <P_8A>USL</P_8A>
+            <P_8B>1.00</P_8B>
+            <P_9A>1231.93</P_9A>
+            <P_11>1231.93</P_11>
+            <P_12>23</P_12>
+        </FaWiersz>
+        <Zamowienie>
+            <WartoscZamowienia>1234.95</WartoscZamowienia>
+            <ZamowienieWiersz>
+                <NrWierszaZam>1</NrWierszaZam>
+                <P_7Z>Przedpłata</P_7Z>
+                <P_8AZ>PCE</P_8AZ>
+                <P_8BZ>1.000</P_8BZ>
+                <P_9AZ>2699.95</P_9AZ>
+                <P_11NettoZ>2699.95</P_11NettoZ>
+                <P_11VatZ>620.99</P_11VatZ>
+                <P_12Z>23</P_12Z>
+            </ZamowienieWiersz>
+        </Zamowienie>
+        <!-- END OF SECTION -->
+    </Fa>
+</Faktura>
