@@ -29,6 +29,8 @@
         <xsl:param name="faWierszBefore" select="()"/>
         <xsl:param name="faWierszAfter" select="()"/>
 
+        <!-- Only output table when there is at least one row (avoids empty fo:table-body which is invalid in XSL-FO) -->
+        <xsl:if test="($faWierszBefore and $faWierszAfter) or $zamowienieWiersz">
         <!-- Check if columns should be displayed -->
         <xsl:variable name="showP9AZ" select="boolean($zamowienieWiersz[crd:P_9AZ])"/>
         <xsl:variable name="showP11NettoZ" select="boolean($zamowienieWiersz[crd:P_11NettoZ])"/>
@@ -242,6 +244,7 @@
                 </xsl:choose>
             </fo:table-body>
         </fo:table>
+        </xsl:if>
     </xsl:template>
 
     <!-- Template for order positions -->
