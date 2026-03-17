@@ -2852,6 +2852,9 @@
                     <xsl:if test="crd:Rola = '10'">
                         <xsl:value-of select="key('kLabels', 'role.vatGroupRecipient', $labels)"/>
                     </xsl:if>
+                    <xsl:if test="crd:Rola = '11'">
+                        <xsl:value-of select="key('kLabels', 'role.employee', $labels)"/>
+                    </xsl:if>
                 </fo:block>
             </xsl:otherwise>
         </xsl:choose>
