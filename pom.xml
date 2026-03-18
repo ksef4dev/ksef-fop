@@ -4,7 +4,7 @@
 
     <groupId>io.alapierre.ksef</groupId>
     <artifactId>ksef-fop</artifactId>
-    <version>1.2.13-SNAPSHOT</version>
+    <version>1.2.15-SNAPSHOT</version>
 
     <name>KSeF PDF Generator</name>
     <description>Krajowy System eFaktur Generator PDF</description>
@@ -44,6 +44,19 @@
         <!-- Java version -->
         <maven.compiler.release>8</maven.compiler.release>
         <required.jdk.version>21</required.jdk.version>
+        <!--
+            Upper bound (exclusive) of the JDK version used during release builds.
+            By setting this to required.jdk.version + 1, we ensure that the release builds are reproducible.
+         -->
+        <upper.jdk.version>22</upper.jdk.version>
+
+        <!--
+            Makes the build reproducible by setting the same timestamp for all generated files.
+            The value doesn't really matter, but it should be updated during the release process to the last commit date:
+
+            date -u -d "$(git show -s -\-format=%cI HEAD)" +"%Y-%m-%dT%H:%M:%SZ"
+        -->
+        <project.build.outputTimestamp>2026-03-18T09:44:36Z</project.build.outputTimestamp>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -329,6 +342,37 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Release profile -->
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java</id>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[${required.jdk.version},${upper.jdk.version})</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -50,6 +50,7 @@
             <KodKraju>PL</KodKraju>
             <AdresL1>ul. Polna 1</AdresL1>
             <AdresL2>00-001 Warszawa</AdresL2>
+            <GLN>RYM2</GLN>
         </Adres>
         <DaneKontaktowe>
             <Email>jan@kowalski.pl</Email>
@@ -84,12 +85,15 @@
         <RodzajFaktury>VAT</RodzajFaktury>
         <FaWiersz>
             <NrWierszaFa>1</NrWierszaFa>
-            <P_7>Sprzedaż towarów 23%</P_7>
-            <P_8A>szt.</P_8A>
-            <P_8B>2.323</P_8B>
-            <P_9A>234.24</P_9A>
-            <P_11>544.14</P_11>
-            <P_12>zw</P_12>
+            <P_7>GTU_01</P_7>
+            <Indeks>000000000011111111</Indeks>
+            <CN>87089299</CN>
+            <P_8A>SZT</P_8A>
+            <P_8B>8.0</P_8B>
+            <P_9A>1356.00</P_9A>
+            <P_11>100.45</P_11>
+            <P_12>23</P_12>
+            <KursWaluty>4.2142</KursWaluty>
         </FaWiersz>
         <FaWiersz>
             <NrWierszaFa>2</NrWierszaFa>

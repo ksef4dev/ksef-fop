@@ -3,6 +3,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/"
+                xmlns:local="urn:local"
 				xmlns:xs="http://www.w3.org/2001/XMLSchema"
 				>
 
@@ -10,6 +11,13 @@
     <xsl:param name="useExtendedDecimalPlaces" select="false()"/>
 
     <!-- Note: $labels parameter and kLabels key are defined in the main ksef_invoice.xsl -->
+
+    <xsl:function name="local:softWrap" as="xs:string">
+        <xsl:param name="value" as="xs:string?"/>
+        <xsl:param name="chunkSize" as="xs:integer"/>
+        <xsl:variable name="v" select="string($value)"/>
+        <xsl:sequence select="replace($v, concat('(.{', $chunkSize, '})'), concat('$1', '&#x200B;'))"/>
+    </xsl:function>
 
     <!-- Attribute sets required for table styling -->
     <xsl:attribute-set name="tableBorder">
@@ -38,6 +46,7 @@
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
             <xsl:variable name="indeksWidth" select="if ($faWiersz/crd:Indeks) then 8 else 0"/>
+            <xsl:variable name="cnWidth" select="if ($faWiersz/crd:CN) then 8 else 0"/>
             <xsl:variable name="p6aWidth" select="if ($faWiersz/crd:P_6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($faWiersz/crd:P_9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($faWiersz/crd:P_9B) then 10 else 0"/>
@@ -46,7 +55,7 @@
             <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $cnWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -56,6 +65,9 @@
             <fo:table-column column-width="4%"/> <!-- Lp. -->
             <xsl:if test="$faWiersz/crd:Indeks">
                 <fo:table-column column-width="8%"/> <!-- Indeks -->
+            </xsl:if>
+            <xsl:if test="$faWiersz/crd:CN">
+                <fo:table-column column-width="8%"/> <!-- CN -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa - dynamiczna szerokość -->
             <fo:table-column column-width="8%"/> <!-- Ilość -->
@@ -94,6 +106,11 @@
                     <xsl:if test="$faWiersz/crd:Indeks">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$faWiersz/crd:CN">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.cn', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
@@ -153,6 +170,7 @@
             <!-- Apply templates to each position; tunnel column visibility so row output matches this table's columns (correction before/after can differ) -->
             <xsl:apply-templates select="$faWiersz">
                 <xsl:with-param name="showIndeks" select="boolean($faWiersz/crd:Indeks)" tunnel="yes"/>
+                <xsl:with-param name="showCN" select="boolean($faWiersz/crd:CN)" tunnel="yes"/>
                 <xsl:with-param name="showP6A" select="boolean($faWiersz/crd:P_6A)" tunnel="yes"/>
                 <xsl:with-param name="showP9A" select="boolean($faWiersz/crd:P_9A)" tunnel="yes"/>
                 <xsl:with-param name="showP9B" select="boolean($faWiersz/crd:P_9B)" tunnel="yes"/>
@@ -169,6 +187,7 @@
     <!-- Template for each position. Column visibility from tunnel params so correction before/after tables can have different columns. -->
     <xsl:template match="crd:FaWiersz">
         <xsl:param name="showIndeks" select="boolean(//crd:FaWiersz/crd:Indeks)" tunnel="yes"/>
+        <xsl:param name="showCN" select="boolean(//crd:FaWiersz/crd:CN)" tunnel="yes"/>
         <xsl:param name="showP6A" select="boolean(//crd:FaWiersz/crd:P_6A)" tunnel="yes"/>
         <xsl:param name="showP9A" select="boolean(//crd:FaWiersz/crd:P_9A)" tunnel="yes"/>
         <xsl:param name="showP9B" select="boolean(//crd:FaWiersz/crd:P_9B)" tunnel="yes"/>
@@ -185,8 +204,26 @@
             </fo:table-cell>
             <xsl:if test="$showIndeks">
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
-                    <fo:block>
-                        <xsl:value-of select="crd:Indeks"/> <!-- Indeks -->
+                    <xsl:variable name="indeksValue" select="string(crd:Indeks)"/>
+                    <xsl:choose>
+                        <xsl:when test="string-length($indeksValue) &gt; 12">
+                            <fo:block font-size="6pt" wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                                <xsl:value-of select="local:softWrap($indeksValue, 8)"/> <!-- Indeks -->
+                            </fo:block>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <fo:block wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                                <xsl:value-of select="local:softWrap($indeksValue, 8)"/> <!-- Indeks -->
+                            </fo:block>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="$showCN">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
+                    <xsl:variable name="cnValue" select="string(crd:CN)"/>
+                    <fo:block font-size="6pt" wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                        <xsl:value-of select="local:softWrap($cnValue, 6)"/> <!-- CN -->
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>
@@ -388,6 +425,7 @@
 
         <!-- Column visibility: show column if it appears in EITHER before OR after (union), so differing structures don't break the table -->
         <xsl:variable name="diffShowIndeks" select="boolean($faWierszBefore/crd:Indeks or $faWierszAfter/crd:Indeks)"/>
+        <xsl:variable name="diffShowCN" select="boolean($faWierszBefore/crd:CN or $faWierszAfter/crd:CN)"/>
         <xsl:variable name="diffShowP6A" select="boolean($faWierszBefore/crd:P_6A or $faWierszAfter/crd:P_6A)"/>
         <xsl:variable name="diffShowP9A" select="boolean($faWierszBefore/crd:P_9A or $faWierszAfter/crd:P_9A)"/>
         <xsl:variable name="diffShowP9B" select="boolean($faWierszBefore/crd:P_9B or $faWierszAfter/crd:P_9B)"/>
@@ -400,6 +438,7 @@
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/>
             <xsl:variable name="indeksWidth" select="if ($diffShowIndeks) then 8 else 0"/>
+            <xsl:variable name="cnWidth" select="if ($diffShowCN) then 8 else 0"/>
             <xsl:variable name="p6aWidth" select="if ($diffShowP6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($diffShowP9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($diffShowP9B) then 10 else 0"/>
@@ -408,7 +447,7 @@
             <xsl:variable name="p11Width" select="if ($diffShowP11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($diffShowP11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($diffShowP11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $cnWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -416,6 +455,9 @@
             <fo:table-column column-width="4%"/> <!-- Lp. -->
             <xsl:if test="$diffShowIndeks">
                 <fo:table-column column-width="8%"/> <!-- Indeks -->
+            </xsl:if>
+            <xsl:if test="$diffShowCN">
+                <fo:table-column column-width="8%"/> <!-- CN -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
             <fo:table-column column-width="8%"/> <!-- Ilość -->
@@ -452,6 +494,11 @@
                     <xsl:if test="$diffShowIndeks">
                         <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                             <fo:block><xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
+                    <xsl:if test="$diffShowCN">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.cn', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
@@ -520,7 +567,27 @@
                             </fo:table-cell>
                             <xsl:if test="$diffShowIndeks">
                                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
-                                    <fo:block><xsl:value-of select="$after/crd:Indeks"/></fo:block>
+                                    <xsl:variable name="indeksValue" select="string($after/crd:Indeks)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="string-length($indeksValue) &gt; 12">
+                                            <fo:block font-size="6pt" wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                                                <xsl:value-of select="local:softWrap($indeksValue, 8)"/>
+                                            </fo:block>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                                                <xsl:value-of select="local:softWrap($indeksValue, 8)"/>
+                                            </fo:block>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </fo:table-cell>
+                            </xsl:if>
+                            <xsl:if test="$diffShowCN">
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
+                                    <xsl:variable name="cnValue" select="string($after/crd:CN)"/>
+                                    <fo:block font-size="6pt" wrap-option="wrap" white-space-collapse="false" linefeed-treatment="preserve">
+                                        <xsl:value-of select="local:softWrap($cnValue, 6)"/>
+                                    </fo:block>
                                 </fo:table-cell>
                             </xsl:if>
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
