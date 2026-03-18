@@ -9,6 +9,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -16,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Helper class for tests that generate PDFs and need to extract text from them for assertions.
  */
 class AbstractGeneratePdfTest {
+
+    // Switch to `true` to generate PDF files on disk
+    private static final boolean DEBUG = true;
 
     private static InputStream getResourceAsStream(String path) {
         return AbstractGeneratePdfTest.class.getClassLoader().getResourceAsStream(path);
@@ -44,9 +50,18 @@ class AbstractGeneratePdfTest {
             assertNotNull(inputStream);
 
             generator.generateInvoice(IOUtils.toByteArray(inputStream), invoiceGenerationParams, outputStream);
-
-            return outputStream.toByteArray();
+            return writeDebugData(outputStream.toByteArray(), invoiceResource);
         }
+    }
+
+    private byte[] writeDebugData(byte[] pdfData, String resourceName) throws IOException {
+        if (DEBUG) {
+            Path destDir = Paths.get("target/test-output");
+            Path destFile = destDir.resolve(resourceName + ".pdf");
+            Files.createDirectories(destFile.getParent());
+            Files.write(destFile, pdfData);
+        }
+        return pdfData;
     }
 
     String generateFa3InvoiceText(String invoiceResource) throws Exception {
