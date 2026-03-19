@@ -395,29 +395,7 @@
                                                 <xsl:value-of
                                                         select="crd:Fa/crd:Podmiot1K/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                             </fo:block>
-                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                                            </fo:block>
-                                            <fo:block text-align="left">
-                                                <xsl:value-of select="crd:Fa/crd:Podmiot1K/crd:Adres/crd:AdresL1"/>
-                                                <xsl:if test="crd:Fa/crd:Podmiot1K/crd:Adres/crd:AdresL2">
-                                                    <fo:inline>, </fo:inline>
-                                                    <xsl:value-of select="crd:Fa/crd:Podmiot1K/crd:Adres/crd:AdresL2"/>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Fa/crd:Podmiot1K/crd:Adres/crd:KodKraju">
-                                                    <fo:block>
-                                                        <xsl:call-template name="mapKodKrajuToNazwa">
-                                                            <xsl:with-param name="kodKraju" select="crd:Fa/crd:Podmiot1K/crd:Adres/crd:KodKraju"/>
-                                                        </xsl:call-template>
-                                                    </fo:block>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Fa/crd:Podmiot1K/crd:Adres/crd:GLN">
-                                                    <fo:block>
-                                                        <fo:inline font-weight="600">GLN: </fo:inline>
-                                                        <xsl:value-of select="crd:Fa/crd:Podmiot1K/crd:Adres/crd:GLN"/>
-                                                    </fo:block>
-                                                </xsl:if>
-                                            </fo:block>
+                                            <xsl:apply-templates select="crd:Fa/crd:Podmiot1K/crd:Adres" mode="blocks"/>
                                         </fo:table-cell>
 
                                         <fo:table-cell>
@@ -452,29 +430,8 @@
                                                 <xsl:value-of
                                                         select="crd:Podmiot1/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                             </fo:block>
-                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                                            </fo:block>
-                                            <fo:block text-align="left">
-                                                <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:AdresL1"/>
-                                                <xsl:if test="crd:Podmiot1/crd:Adres/crd:AdresL2">
-                                                    <fo:inline>, </fo:inline>
-                                                    <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:AdresL2"/>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Podmiot1/crd:Adres/crd:KodKraju">
-                                                    <fo:block>
-                                                        <xsl:call-template name="mapKodKrajuToNazwa">
-                                                            <xsl:with-param name="kodKraju" select="crd:Podmiot1/crd:Adres/crd:KodKraju"/>
-                                                        </xsl:call-template>
-                                                    </fo:block>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Podmiot1/crd:Adres/crd:GLN">
-                                                    <fo:block>
-                                                        <fo:inline font-weight="600">GLN: </fo:inline>
-                                                        <xsl:value-of select="crd:Podmiot1/crd:Adres/crd:GLN"/>
-                                                    </fo:block>
-                                                </xsl:if>
-                                            </fo:block>
+                                            <xsl:apply-templates select="crd:Podmiot1/crd:Adres" mode="blocks"/>
+                                            <xsl:apply-templates select="crd:Podmiot1/crd:AdresKoresp" mode="blocks"/>
                                         </fo:table-cell>
                                     </fo:table-row>
                                 </fo:table-body>
@@ -713,29 +670,7 @@
                                                 <xsl:value-of
                                                         select="crd:Fa/crd:Podmiot2K/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                             </fo:block>
-                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                                            </fo:block>
-                                            <fo:block text-align="left">
-                                                <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL1"/>
-                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL2">
-                                                    <fo:inline>, </fo:inline>
-                                                    <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:AdresL2"/>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:Adres/crd:KodKraju">
-                                                    <fo:block>
-                                                        <xsl:call-template name="mapKodKrajuToNazwa">
-                                                            <xsl:with-param name="kodKraju" select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:KodKraju"/>
-                                                        </xsl:call-template>
-                                                    </fo:block>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Fa/crd:Podmiot2K/crd:Adres/crd:GLN">
-                                                    <fo:block>
-                                                        <fo:inline font-weight="600">GLN: </fo:inline>
-                                                        <xsl:value-of select="crd:Fa/crd:Podmiot2K/crd:Adres/crd:GLN"/>
-                                                    </fo:block>
-                                                </xsl:if>
-                                            </fo:block>
+                                            <xsl:apply-templates select="crd:Fa/crd:Podmiot2K/crd:Adres" mode="blocks"/>
                                         </fo:table-cell>
 
                                         <fo:table-cell>
@@ -776,29 +711,8 @@
                                                 <xsl:value-of
                                                         select="crd:Podmiot2/crd:DaneIdentyfikacyjne/crd:Nazwa"/>
                                             </fo:block>
-                                            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                                            </fo:block>
-                                            <fo:block text-align="left">
-                                                <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL1"/>
-                                                <xsl:if test="crd:Podmiot2/crd:Adres/crd:AdresL2">
-                                                    <fo:inline>, </fo:inline>
-                                                    <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:AdresL2"/>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Podmiot2/crd:Adres/crd:KodKraju">
-                                                    <fo:block>
-                                                        <xsl:call-template name="mapKodKrajuToNazwa">
-                                                            <xsl:with-param name="kodKraju" select="crd:Podmiot2/crd:Adres/crd:KodKraju"/>
-                                                        </xsl:call-template>
-                                                    </fo:block>
-                                                </xsl:if>
-                                                <xsl:if test="crd:Podmiot2/crd:Adres/crd:GLN">
-                                                    <fo:block>
-                                                        <fo:inline font-weight="600">GLN: </fo:inline>
-                                                        <xsl:value-of select="crd:Podmiot2/crd:Adres/crd:GLN"/>
-                                                    </fo:block>
-                                                </xsl:if>
-                                            </fo:block>
+                                            <xsl:apply-templates select="crd:Podmiot2/crd:Adres" mode="blocks"/>
+                                            <xsl:apply-templates select="crd:Podmiot2/crd:AdresKoresp" mode="blocks"/>
                                         </fo:table-cell>
                                     </fo:table-row>
                                 </fo:table-body>
@@ -846,6 +760,14 @@
                                 </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
+                    </xsl:if>
+
+                    <!-- Podmiot upoważniony -->
+                    <xsl:if test="crd:PodmiotUpowazniony">
+                        <!-- Linia oddzielająca -->
+                        <fo:block border-bottom="solid 1px grey" space-before="5mm"/>
+
+                        <xsl:apply-templates select="crd:PodmiotUpowazniony"/>
                     </xsl:if>
 
                     <!-- Linia oddzielająca -->
@@ -2680,33 +2602,8 @@
                         </fo:block>
                     </fo:table-cell>
                 </fo:table-row>
-                <fo:table-row>
-                    <fo:table-cell padding-top="16px">
-                        <fo:block text-align="left" padding-bottom="3px">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                        </fo:block>
-                        <fo:block text-align="left">
-                            <xsl:value-of select="crd:Adres/crd:AdresL1"/>
-                            <xsl:if test="crd:Adres/crd:AdresL2">
-                                <fo:inline>, </fo:inline>
-                                <xsl:value-of select="crd:Adres/crd:AdresL2"/>
-                            </xsl:if>
-                            <xsl:if test="crd:Adres/crd:KodKraju">
-                                <fo:block>
-                                    <xsl:call-template name="mapKodKrajuToNazwa">
-                                        <xsl:with-param name="kodKraju" select="crd:Adres/crd:KodKraju"/>
-                                    </xsl:call-template>
-                                </fo:block>
-                            </xsl:if>
-                            <xsl:if test="crd:Adres/crd:GLN">
-                                <fo:block>
-                                    <fo:inline font-weight="600">GLN: </fo:inline>
-                                    <xsl:value-of select="crd:Adres/crd:GLN"/>
-                                </fo:block>
-                            </xsl:if>
-                        </fo:block>
-                    </fo:table-cell>
-                </fo:table-row>
+                <xsl:apply-templates select="crd:Adres" mode="table-row"/>
+                <xsl:apply-templates select="crd:AdresKoresp" mode="table-row"/>
                 <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon">
                     <fo:table-row>
                         <fo:table-cell padding-top="16px">
@@ -2796,35 +2693,8 @@
                         </fo:table-cell>
                     </fo:table-row>
                 </xsl:if>
-                <xsl:if test="crd:Adres">
-                <fo:table-row>
-                    <fo:table-cell padding-top="16px">
-                        <fo:block text-align="left" padding-bottom="3px">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-                        </fo:block>
-                        <fo:block text-align="left">
-                            <xsl:value-of select="crd:Adres/crd:AdresL1"/>
-                            <xsl:if test="crd:Adres/crd:AdresL2">
-                                <fo:inline>, </fo:inline>
-                                <xsl:value-of select="crd:Adres/crd:AdresL2"/>
-                            </xsl:if>
-                            <xsl:if test="crd:Adres/crd:KodKraju">
-                                <fo:block>
-                                    <xsl:call-template name="mapKodKrajuToNazwa">
-                                        <xsl:with-param name="kodKraju" select="crd:Adres/crd:KodKraju"/>
-                                    </xsl:call-template>
-                                </fo:block>
-                            </xsl:if>
-                            <xsl:if test="crd:Adres/crd:GLN">
-                                <fo:block>
-                                    <fo:inline font-weight="600">GLN: </fo:inline>
-                                    <xsl:value-of select="crd:Adres/crd:GLN"/>
-                                </fo:block>
-                            </xsl:if>
-                        </fo:block>
-                    </fo:table-cell>
-                </fo:table-row>
-                </xsl:if>
+                <xsl:apply-templates select="crd:Adres" mode="table-row"/>
+                <xsl:apply-templates select="crd:AdresKoresp" mode="table-row"/>
                 <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon|crd:NrKlienta|crd:IDNabywcy">
                     <fo:table-row>
                         <fo:table-cell padding-top="16px">
@@ -2938,31 +2808,8 @@
             <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'share', $labels)"/>: </fo:inline>
             <xsl:value-of select="crd:Udzial"/>%
         </xsl:if>
-        <xsl:if test="crd:Adres">
-            <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
-                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'address', $labels)"/></fo:inline>
-            </fo:block>
-            <fo:block text-align="left">
-                <xsl:value-of select="crd:Adres/crd:AdresL1"/>
-                <xsl:if test="crd:Adres/crd:AdresL2">
-                    <fo:inline>, </fo:inline>
-                    <xsl:value-of select="crd:Adres/crd:AdresL2"/>
-                </xsl:if>
-                <xsl:if test="crd:Adres/crd:KodKraju">
-                    <fo:block>
-                        <xsl:call-template name="mapKodKrajuToNazwa">
-                            <xsl:with-param name="kodKraju" select="crd:Adres/crd:KodKraju"/>
-                        </xsl:call-template>
-                    </fo:block>
-                </xsl:if>
-                <xsl:if test="crd:Adres/crd:GLN">
-                    <fo:block>
-                        <fo:inline font-weight="600">GLN: </fo:inline>
-                        <xsl:value-of select="crd:Adres/crd:GLN"/>
-                    </fo:block>
-                </xsl:if>
-            </fo:block>
-        </xsl:if>
+        <xsl:apply-templates select="crd:Adres" mode="blocks"/>
+        <xsl:apply-templates select="crd:AdresKoresp" mode="blocks"/>
         <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon">
             <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
                 <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'contact.data', $labels)"/>
@@ -2995,6 +2842,61 @@
                 </fo:block>
             </xsl:if>
         </xsl:if>
+    </xsl:template>
+
+    <!-- Podmiot upoważniony -->
+    <xsl:template match="crd:PodmiotUpowazniony">
+        <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
+        <fo:block font-size="7">
+            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
+                <xsl:apply-templates select="crd:RolaPU"/>
+            </fo:block>
+
+            <fo:block text-align="left" padding-bottom="3px">
+                <xsl:if test="crd:NrEORI">
+                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'eori.number', $labels)"/>: </fo:inline>
+                    <xsl:value-of select="crd:NrEORI"/>
+                </xsl:if>
+            </fo:block>
+            <!-- Same identification data as Podmiot1: NIP and Nazwa -->
+            <fo:block text-align="left" padding-bottom="3px">
+                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
+                <xsl:value-of select="$id/crd:NIP"/>
+            </fo:block>
+            <fo:block text-align="left" padding-bottom="3px">
+                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
+                <xsl:value-of select="$id/crd:Nazwa"/>
+            </fo:block>
+            <xsl:apply-templates select="crd:Adres" mode="blocks"/>
+            <xsl:apply-templates select="crd:AdresKoresp" mode="blocks"/>
+            <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon">
+                <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+                    <fo:inline font-weight="bold">
+                        <xsl:value-of select="key('kLabels', 'contact.data', $labels)"/>
+                    </fo:inline>
+                </fo:block>
+                <xsl:if test="crd:DaneKontaktowe/crd:Email">
+                    <fo:block text-align="left" padding-bottom="2px">
+                        <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'email', $labels)"/>: </fo:inline>
+                        <xsl:value-of select="crd:DaneKontaktowe/crd:Email"/>
+                    </fo:block>
+                </xsl:if>
+                <xsl:if test="crd:DaneKontaktowe/crd:Telefon">
+                    <fo:block text-align="left" padding-bottom="2px">
+                        <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'phone', $labels)"/>: </fo:inline>
+                        <xsl:value-of select="crd:DaneKontaktowe/crd:Telefon"/>
+                    </fo:block>
+                </xsl:if>
+            </xsl:if>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:RolaPU">
+        <xsl:choose>
+            <xsl:when test=". = '1'"><xsl:value-of select="key('kLabels', 'role.enforcementAuthority', $labels)"/></xsl:when>
+            <xsl:when test=". = '2'"><xsl:value-of select="key('kLabels', 'role.courtBailiff', $labels)"/></xsl:when>
+            <xsl:when test=". = '3'"><xsl:value-of select="key('kLabels', 'role.taxRepresentative', $labels)"/></xsl:when>
+        </xsl:choose>
     </xsl:template>
 
     <!-- Template do wstawiania punktów łamania w długich tekstach -->
@@ -3423,5 +3325,81 @@
         </fo:block>
     </xsl:template>
 
+    <!-- Templates for displaying address data -->
+    <xsl:template name="renderAddressAsTable">
+        <xsl:param name="label"/>
+
+        <fo:table-row>
+            <fo:table-cell padding-top="16px">
+                <fo:block text-align="left" padding-bottom="3px">
+                    <fo:inline font-weight="bold"><xsl:value-of select="$label"/></fo:inline>
+                </fo:block>
+                <fo:block text-align="left">
+                    <xsl:value-of select="crd:AdresL1"/>
+                    <xsl:apply-templates select="crd:AdresL2"/>
+                    <xsl:apply-templates select="crd:KodKraju"/>
+                    <xsl:apply-templates select="crd:GLN"/>
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+
+    <xsl:template name="renderAddressAsBlocks">
+        <xsl:param name="label"/>
+
+        <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+            <fo:inline font-weight="bold"><xsl:value-of select="$label"/></fo:inline>
+        </fo:block>
+        <fo:block text-align="left">
+            <xsl:value-of select="crd:AdresL1"/>
+            <xsl:apply-templates select="crd:AdresL2"/>
+            <xsl:apply-templates select="crd:KodKraju"/>
+            <xsl:apply-templates select="crd:GLN"/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:AdresL2">
+        <fo:inline>, </fo:inline>
+        <xsl:value-of select="crd:AdresL2"/>
+    </xsl:template>
+
+    <xsl:template match="crd:KodKraju">
+        <fo:block>
+            <xsl:call-template name="mapKodKrajuToNazwa">
+                <xsl:with-param name="kodKraju" select="."/>
+            </xsl:call-template>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:GLN">
+        <fo:block>
+            <fo:inline font-weight="600">GLN: </fo:inline>
+            <xsl:value-of select="."/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:Adres" mode="table-row">
+        <xsl:call-template name="renderAddressAsTable">
+            <xsl:with-param name="label" select="key('kLabels', 'address', $labels)"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template match="crd:Adres" mode="blocks">
+        <xsl:call-template name="renderAddressAsBlocks">
+            <xsl:with-param name="label" select="key('kLabels', 'address', $labels)"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template match="crd:AdresKoresp" mode="table-row">
+        <xsl:call-template name="renderAddressAsTable">
+            <xsl:with-param name="label" select="key('kLabels', 'correspondenceAddress', $labels)"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template match="crd:AdresKoresp" mode="blocks">
+        <xsl:call-template name="renderAddressAsBlocks">
+            <xsl:with-param name="label" select="key('kLabels', 'correspondenceAddress', $labels)"/>
+        </xsl:call-template>
+    </xsl:template>
 
 </xsl:stylesheet>
