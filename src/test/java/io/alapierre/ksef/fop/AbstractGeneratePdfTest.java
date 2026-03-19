@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class AbstractGeneratePdfTest {
 
     // Switch to `true` to generate PDF files on disk
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static InputStream getResourceAsStream(String path) {
         return AbstractGeneratePdfTest.class.getClassLoader().getResourceAsStream(path);
