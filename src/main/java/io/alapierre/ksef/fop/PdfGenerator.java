@@ -48,10 +48,10 @@ public class PdfGenerator {
 
     private static final String MIME_PDF = "application/pdf";
 
-    private final FopFactory fopFactory;
     private InvoicePdfConfig invoicePdfConfig = new InvoicePdfConfig();
     private final TranslationService translationService = new TranslationService();
     private final QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
+    private final Configuration fopConfiguration;
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
         this(loadResource(fopConfig));
@@ -68,15 +68,8 @@ public class PdfGenerator {
     }
 
     public PdfGenerator(InputStream fopConfig) throws ConfigurationException {
-        URI baseUri = new File(".").toURI();
-        ClasspathResourceResolver resourceResolver = new ClasspathResourceResolver();
-        InternalResourceResolver internalResourceResolver = ResourceResolverFactory.createInternalResourceResolver(baseUri, resourceResolver);
-        FopFactoryBuilder builder = new FopFactoryBuilder(baseUri, resourceResolver);
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg = cfgBuilder.build(fopConfig);
-        builder.setConfiguration(cfg);
-        builder.getFontManager().setResourceResolver(internalResourceResolver);
-        this.fopFactory = builder.build();
+        this.fopConfiguration = cfgBuilder.build(fopConfig);
     }
 
     /**
@@ -106,7 +99,7 @@ public class PdfGenerator {
      * @throws FOPException         throws when FOP error occurs
      */
     public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws IOException, TransformerException, FOPException {
-
+        FopFactory fopFactory = createFopFactory();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
 
         Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
@@ -186,6 +179,7 @@ public class PdfGenerator {
                                     OutputStream out)
             throws FOPException, IOException, TransformerException {
 
+        FopFactory fopFactory = createFopFactory();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
@@ -281,7 +275,16 @@ public class PdfGenerator {
         if (value != null) transformer.setParameter(name, value);
     }
 
+    private FopFactory createFopFactory() {
+        URI baseUri = new File(".").toURI();
+        ClasspathResourceResolver resourceResolver = new ClasspathResourceResolver();
+        InternalResourceResolver internalResourceResolver = ResourceResolverFactory.createInternalResourceResolver(baseUri, resourceResolver);
+        FopFactoryBuilder builder = new FopFactoryBuilder(baseUri, resourceResolver);
 
+        builder.setConfiguration(fopConfiguration);
+        builder.getFontManager().setResourceResolver(internalResourceResolver);
+        return builder.build();
+    }
 
     private static InputStream loadResource(String resource) throws IOException {
         val res = PdfGenerator.class.getClassLoader().getResourceAsStream(resource);
