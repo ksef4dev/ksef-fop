@@ -783,17 +783,22 @@
                                     </xsl:if>
                                     <xsl:if test="crd:Fa/crd:P_6">
                                         <fo:block font-size="8pt" text-align="left">
-                                            <xsl:choose>
-                                                <xsl:when test="local:norm(crd:Fa/crd:RodzajFaktury) = 'ZAL'">
-                                                    <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentReceivedDate', $labels)"/>:
-                                                    </fo:inline>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-<fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'deliveryDate', $labels)"/>:
-                                                    </fo:inline>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
+                                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'deliveryDate', $labels)"/>:
+                                            </fo:inline>
                                             <xsl:value-of select="crd:Fa/crd:P_6"/>
+                                        </fo:block>
+                                    </xsl:if>
+                                    <xsl:if test="crd:Fa/crd:OkresFa">
+                                        <fo:block font-size="8pt" text-align="left">
+                                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'deliveryDate', $labels)"/>:
+                                            </fo:inline>
+                                            <xsl:value-of select="key('kLabels', 'dateRange.from', $labels)"/>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="crd:Fa/crd:OkresFa/crd:P_6_Od"/>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="key('kLabels', 'dateRange.to', $labels)"/>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="crd:Fa/crd:OkresFa/crd:P_6_Do"/>
                                         </fo:block>
                                     </xsl:if>
                                     <xsl:if test="crd:Fa/crd:PrzyczynaKorekty">
