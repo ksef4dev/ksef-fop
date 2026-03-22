@@ -93,16 +93,19 @@
             <P_9A>1356.00</P_9A>
             <P_11>100.45</P_11>
             <P_12>23</P_12>
+            <KwotaAkcyzy>0.64</KwotaAkcyzy>
             <KursWaluty>4.2142</KursWaluty>
         </FaWiersz>
         <FaWiersz>
             <NrWierszaFa>2</NrWierszaFa>
             <P_7>GTU_01</P_7>
+            <PKWiU>ABCD ABCD ABCD ABCD ABCD ABCD ABCD ABCD ABCD ABCD</PKWiU>
             <P_8A>-</P_8A>
             <P_8B>2.561</P_8B>
             <P_9A>1350.00</P_9A>
             <P_11>3457.35</P_11>
             <P_12>zw</P_12>
+            <KwotaAkcyzy>1393.41</KwotaAkcyzy>
         </FaWiersz>
         <Platnosc>
             <Zaplacono>1</Zaplacono>
