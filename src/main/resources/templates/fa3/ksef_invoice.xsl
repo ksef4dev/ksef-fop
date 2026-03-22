@@ -1745,55 +1745,8 @@
                         </fo:table>
                     </xsl:if>
 
-                    <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_16 = 1 or crd:Fa/crd:Adnotacje/crd:P_17 = 1 or crd:Fa/crd:Adnotacje/crd:P_18 = 1 or crd:Fa/crd:Adnotacje/crd:P_18A = 1">
-
-                        <!-- Adnotacje -->
-                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-
-                        <fo:block font-size="12pt" text-align="left" space-after="5mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'annotations', $labels)"/></fo:inline>
-                        </fo:block>
-
-                        <fo:table table-layout="fixed" width="100%" space-after="2mm">
-                            <fo:table-column column-width="50%"/>
-                            <fo:table-column column-width="50%"/>
-                            <fo:table-body>
-                                <fo:table-row>
-                                    <fo:table-cell padding-right="5mm">
-                                        <fo:block font-size="7pt" text-align="left">
-                                            <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_16 = 1">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'cashMethod', $labels)"/></fo:inline>
-                                            </xsl:if>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell padding-left="5mm">
-                                        <fo:block font-size="7pt" text-align="left">
-                                            <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_17 = 1">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'selfBilling', $labels)"/></fo:inline>
-                                            </xsl:if>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                                <fo:table-row>
-                                    <fo:table-cell padding-right="5mm">
-                                        <fo:block font-size="7pt" text-align="left">
-                                            <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_18 = 1">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'reverseCharge', $labels)"/></fo:inline>
-                                            </xsl:if>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                    <fo:table-cell padding-left="5mm">
-                                        <fo:block font-size="7pt" text-align="left">
-                                            <xsl:if test="crd:Fa/crd:Adnotacje/crd:P_18A = 1">
-                                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'splitPayment', $labels)"/></fo:inline>
-                                            </xsl:if>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
-                            </fo:table-body>
-                        </fo:table>
-
-                    </xsl:if>
+                    <!-- Adnotacje -->
+                    <xsl:apply-templates select="crd:Fa/crd:Adnotacje"/>
 
                     <!-- Dodatkowy opis-->
                     <xsl:if test="count(crd:Fa/crd:DodatkowyOpis) > 0">
@@ -2833,6 +2786,95 @@
                     <xsl:value-of select="crd:IDNabywcy"/>
                 </fo:block>
             </xsl:if>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="crd:Adnotacje">
+        <xsl:variable name="annFlags" select="(crd:P_16, crd:P_17, crd:P_18, crd:P_18A)"/>
+        <xsl:variable name="zw" select="crd:Zwolnienie"/>
+
+        <xsl:if test="exists($annFlags[. = 1]) or $zw/crd:P_19 = 1 or crd:P_23 = 1">
+
+            <!-- Nagłówek -->
+            <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+            <fo:block font-size="12pt" text-align="left" space-after="5mm">
+                <fo:inline font-weight="bold">
+                    <xsl:value-of select="key('kLabels', 'annotations', $labels)"/>
+                </fo:inline>
+            </fo:block>
+
+            <!-- Flagi proste -->
+            <xsl:if test="exists($annFlags[. = 1])">
+                <fo:table table-layout="fixed" width="100%" space-after="2mm">
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-body>
+                        <fo:table-row>
+                            <fo:table-cell padding-right="5mm">
+                                <fo:block font-size="7pt" text-align="left">
+                                    <xsl:if test="crd:P_16 = 1">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'cashMethod', $labels)"/>
+                                        </fo:inline>
+                                    </xsl:if>
+                                </fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell padding-left="5mm">
+                                <fo:block font-size="7pt" text-align="left">
+                                    <xsl:if test="crd:P_17 = 1">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'selfBilling', $labels)"/>
+                                        </fo:inline>
+                                    </xsl:if>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+
+                        <fo:table-row>
+                            <fo:table-cell padding-right="5mm">
+                                <fo:block font-size="7pt" text-align="left">
+                                    <xsl:if test="crd:P_18 = 1">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'reverseCharge', $labels)"/>
+                                        </fo:inline>
+                                    </xsl:if>
+                                </fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell padding-left="5mm">
+                                <fo:block font-size="7pt" text-align="left">
+                                    <xsl:if test="crd:P_18A = 1">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'splitPayment', $labels)"/>
+                                        </fo:inline>
+                                    </xsl:if>
+                                </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
+            </xsl:if>
+
+            <!-- Zwolnienie: P_19 -->
+            <xsl:if test="$zw/crd:P_19 = 1">
+                <fo:block font-size="7pt" text-align="left">
+                    <fo:inline font-weight="bold">
+                        <xsl:value-of select="key('kLabels', 'exemption.legalBasis', $labels)"/>:
+                    </fo:inline>
+                    <fo:inline>
+                        <xsl:value-of select="string-join($zw/(crd:P_19A, crd:P_19B, crd:P_19C)[normalize-space()], ' ')"/>
+                    </fo:inline>
+                </fo:block>
+            </xsl:if>
+
+            <!-- Faktura uproszczona: P_23 -->
+            <xsl:if test="crd:P_23 = 1">
+                <fo:block font-size="7pt" text-align="left">
+                    <fo:inline font-weight="bold">
+                        <xsl:value-of select="key('kLabels', 'invoice.simplified', $labels)"/>
+                    </fo:inline>
+                </fo:block>
+            </xsl:if>
+
         </xsl:if>
     </xsl:template>
 
