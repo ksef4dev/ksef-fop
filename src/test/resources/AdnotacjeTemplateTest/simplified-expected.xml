@@ -1,0 +1,17 @@
+<root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:block
+            border-bottom="solid 1px grey"
+            space-after="4mm"
+            space-before="4mm"/>
+    <fo:block
+            font-size="12pt"
+            space-after="5mm"
+            text-align="left">
+        <fo:inline font-weight="bold">Adnotacje</fo:inline>
+    </fo:block>
+    <fo:block
+            font-size="7pt"
+            text-align="left">
+        <fo:inline font-weight="bold">Faktura uproszczona</fo:inline>
+    </fo:block>
+</root>
