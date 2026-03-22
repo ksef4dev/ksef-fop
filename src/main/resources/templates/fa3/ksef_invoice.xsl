@@ -1140,17 +1140,18 @@
 
 
                     <!-- Podsumowanie stawek podatku-->
-                    <xsl:variable name="hasAnyTaxRates" select="crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1 != 0 or
+                    <xsl:variable name="hasAnyTaxRates" select="crd:Fa/crd:P_13_1 != 0   or crd:Fa/crd:P_14_1 != 0 or
                                                                crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2 != 0 or
                                                                crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3 != 0 or
                                                                crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4 != 0 or
                                                                crd:Fa/crd:P_13_5 != 0 or crd:Fa/crd:P_14_5 != 0 or
                                                                crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or
+                                                               crd:Fa/crd:P_13_6_3 != 0 or
                                                                crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or
                                                                crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or
                                                                crd:Fa/crd:P_13_11 != 0 or crd:Fa/crd:P_14_1W != 0 or
                                                                crd:Fa/crd:P_14_2W != 0 or crd:Fa/crd:P_14_3W != 0 or
-                                                               crd:Fa/crd:P_14_4W"/>
+                                                               crd:Fa/crd:P_14_4W != 0"/>
 
                     <xsl:if test="$hasAnyTaxRates">
                         <!-- Linia oddzielająca -->
@@ -1159,7 +1160,8 @@
                         <fo:block font-size="12pt" text-align="left" space-after="2mm">
                             <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'taxRateSummary', $labels)"/></fo:inline>
                         </fo:block>
-                        <xsl:variable name="hasTaxAmountPln" select="crd:Fa/crd:P_14_1W | crd:Fa/crd:P_14_2W | crd:Fa/crd:P_14_3W | crd:Fa/crd:P_14_4W"/>
+                        <!-- Non-zero PLN tax amounts only (do not use union of nodes — presence of 0-valued elements would wrongly enable the column) -->
+                        <xsl:variable name="hasTaxAmountPln" select="crd:Fa/crd:P_14_1W != 0 or crd:Fa/crd:P_14_2W != 0 or crd:Fa/crd:P_14_3W != 0 or crd:Fa/crd:P_14_4W != 0"/>
                         <fo:table table-layout="fixed" width="100%" border-collapse="separate">
                             <xsl:choose>
                                 <xsl:when test="$hasTaxAmountPln">
@@ -1210,11 +1212,12 @@
                                                                            crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4 != 0 or
                                                                            crd:Fa/crd:P_13_5 != 0 or crd:Fa/crd:P_14_5 != 0 or
                                                                            crd:Fa/crd:P_13_6_1 != 0 or crd:Fa/crd:P_13_6_2 != 0 or
-                                                                           crd:Fa/crd:P_13_7 != 0 or crd:Fa/crd:P_13_8 != 0 or
+                                                                           crd:Fa/crd:P_13_6_3 != 0 or crd:Fa/crd:P_13_7 != 0 or
+                                                                           crd:Fa/crd:P_13_8 != 0 or
                                                                            crd:Fa/crd:P_13_9 != 0 or crd:Fa/crd:P_13_10 != 0 or
                                                                            crd:Fa/crd:P_13_11 != 0 or crd:Fa/crd:P_14_1W != 0 or
                                                                            crd:Fa/crd:P_14_2W != 0 or crd:Fa/crd:P_14_3W != 0 or
-                                                                           crd:Fa/crd:P_14_4W"/>
+                                                                           crd:Fa/crd:P_14_4W != 0"/>
 
                                 <!-- Jeśli nie ma żadnych stawek podatku, wyświetl informację -->
                                 <xsl:if test="not($hasAnyTaxRates)">
@@ -1225,7 +1228,8 @@
                                     </fo:table-row>
                                 </xsl:if>
 
-                                <xsl:if test="crd:Fa/crd:P_13_1 | crd:Fa/crd:P_14_1 and crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1W">
+                                <!-- Show row only when net, tax or PLN tax in this bracket is non-zero (not union of nodes — 0 amounts must not show a row) -->
+                                <xsl:if test="crd:Fa/crd:P_13_1 != 0 or crd:Fa/crd:P_14_1 != 0 or crd:Fa/crd:P_14_1W != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1254,7 +1258,7 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_1) + number(crd:Fa/crd:P_14_1), '#,##0.00'), ',.', ' ,')"/>  <!-- Kwota brutto -->
                                             </fo:block>
                                         </fo:table-cell>
-                                        <xsl:if test="crd:Fa/crd:P_14_1W">
+                                        <xsl:if test="crd:Fa/crd:P_14_1W != 0">
                                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
                                                            text-align="right">
                                                 <fo:block>
@@ -1265,7 +1269,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_2 | crd:Fa/crd:P_14_2  and crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2W">
+                                <xsl:if test="crd:Fa/crd:P_13_2 != 0 or crd:Fa/crd:P_14_2 != 0 or crd:Fa/crd:P_14_2W != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1294,7 +1298,7 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_2) + number(crd:Fa/crd:P_14_2), '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <xsl:if test="crd:Fa/crd:P_14_2W">
+                                        <xsl:if test="crd:Fa/crd:P_14_2W != 0">
                                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
                                                            text-align="right">
                                                 <fo:block>
@@ -1305,7 +1309,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_3 | crd:Fa/crd:P_14_3  and crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3W">
+                                <xsl:if test="crd:Fa/crd:P_13_3 != 0 or crd:Fa/crd:P_14_3 != 0 or crd:Fa/crd:P_14_3W != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1334,7 +1338,7 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_3) + number(crd:Fa/crd:P_14_3), '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <xsl:if test="crd:Fa/crd:P_14_3W">
+                                        <xsl:if test="crd:Fa/crd:P_14_3W != 0">
                                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
                                                            text-align="right">
                                                 <fo:block>
@@ -1345,7 +1349,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_4 | crd:Fa/crd:P_14_4  and crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4W">
+                                <xsl:if test="crd:Fa/crd:P_13_4 != 0 or crd:Fa/crd:P_14_4 != 0 or crd:Fa/crd:P_14_4W != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
@@ -1374,7 +1378,7 @@
                                                         select="translate(format-number(number(crd:Fa/crd:P_13_4) + number(crd:Fa/crd:P_14_4), '#,##0.00'), ',.', ' ,')"/>
                                             </fo:block>
                                         </fo:table-cell>
-                                        <xsl:if test="crd:Fa/crd:P_14_4W">
+                                        <xsl:if test="crd:Fa/crd:P_14_4W != 0">
                                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding"
                                                            text-align="right">
                                                 <fo:block>
@@ -1385,7 +1389,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_5 | crd:Fa/crd:P_14_5  and crd:Fa/crd:P_13_5 != 0">
+                                <xsl:if test="crd:Fa/crd:P_13_5 != 0 or crd:Fa/crd:P_14_5 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
