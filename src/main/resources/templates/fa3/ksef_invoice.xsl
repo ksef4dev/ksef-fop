@@ -721,7 +721,8 @@
                     </xsl:choose>
 
                     <!-- Podmioty inne -->
-                    <xsl:if test="crd:Podmiot3[crd:Rola != 5]">
+                    <xsl:variable name="otherParties" select="crd:Podmiot3[crd:RolaInna or crd:Rola != 5]"/>
+                    <xsl:if test="$otherParties">
                         <!-- Linia oddzielająca -->
                         <fo:block border-bottom="solid 1px grey" space-before="5mm"/>
                         <!-- Table z podmiotami innymi-->
@@ -730,34 +731,22 @@
                             <fo:table-column column-width="50%"/>
 
                             <fo:table-body>
-                                <!-- Iterujemy przez wszystkie elementy Podmiot3, zaczynając od pierwszego elementu -->
-                                <xsl:for-each select="crd:Podmiot3[crd:Rola != 5][position() mod 2 = 1]">
+                                <!-- Iterujemy parami -->
+                                <xsl:for-each-group select="$otherParties" group-adjacent="(position() - 1) idiv 2">
                                     <fo:table-row>
-                                        <!-- Pierwsza komórka w wierszu -->
                                         <fo:table-cell>
                                             <fo:block font-size="7pt">
-                                                <xsl:apply-templates select="."/>
+                                                <xsl:apply-templates select="current-group()[1]"/>
                                             </fo:block>
                                         </fo:table-cell>
 
-                                        <!-- Druga komórka, jeśli istnieje element na następnej pozycji -->
-                                        <xsl:choose>
-                                            <xsl:when test="following-sibling::crd:Podmiot3[crd:Rola != 5]">
-                                                <fo:table-cell>
-                                                    <fo:block font-size="7pt">
-                                                        <xsl:apply-templates select="following-sibling::crd:Podmiot3[1]"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                            </xsl:when>
-                                            <!-- Jeśli nie ma następnego elementu, dodajemy pustą komórkę -->
-                                            <xsl:otherwise>
-                                                <fo:table-cell>
-                                                    <fo:block/>
-                                                </fo:table-cell>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
+                                        <fo:table-cell>
+                                            <fo:block font-size="7pt">
+                                                <xsl:apply-templates select="current-group()[2]"/>
+                                            </fo:block>
+                                        </fo:table-cell>
                                     </fo:table-row>
-                                </xsl:for-each>
+                                </xsl:for-each-group>
                             </fo:table-body>
                         </fo:table>
                     </xsl:if>
@@ -2690,45 +2679,47 @@
 
     <xsl:template match="crd:Podmiot3">
         <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
-        <xsl:choose>
-            <xsl:when test="crd:Rola = 5">
-                <fo:block/>
-            </xsl:when>
-            <xsl:otherwise>
-                <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
-                    <xsl:if test="crd:Rola = '1'">
-                        <xsl:value-of select="key('kLabels', 'role.factor', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '2'">
-                        <xsl:value-of select="key('kLabels', 'role.recipient', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '3'">
-                        <xsl:value-of select="key('kLabels', 'role.originalEntity', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '4'">
-                        <xsl:value-of select="key('kLabels', 'role.additionalBuyer', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '6'">
-                        <xsl:value-of select="key('kLabels', 'role.payer', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '7'">
-                        <xsl:value-of select="key('kLabels', 'role.localGovIssuer', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '8'">
-                        <xsl:value-of select="key('kLabels', 'role.localGovRecipient', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '9'">
-                        <xsl:value-of select="key('kLabels', 'role.vatGroupIssuer', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '10'">
-                        <xsl:value-of select="key('kLabels', 'role.vatGroupRecipient', $labels)"/>
-                    </xsl:if>
-                    <xsl:if test="crd:Rola = '11'">
-                        <xsl:value-of select="key('kLabels', 'role.employee', $labels)"/>
-                    </xsl:if>
-                </fo:block>
-            </xsl:otherwise>
-        </xsl:choose>
+        <!-- If crd:Rola exists and is different than '5' (issuer), display the role label as section header -->
+        <xsl:if test="crd:Rola != '5'">
+            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
+                <xsl:if test="crd:Rola = '1'">
+                    <xsl:value-of select="key('kLabels', 'role.factor', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '2'">
+                    <xsl:value-of select="key('kLabels', 'role.recipient', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '3'">
+                    <xsl:value-of select="key('kLabels', 'role.originalEntity', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '4'">
+                    <xsl:value-of select="key('kLabels', 'role.additionalBuyer', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '6'">
+                    <xsl:value-of select="key('kLabels', 'role.payer', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '7'">
+                    <xsl:value-of select="key('kLabels', 'role.localGovIssuer', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '8'">
+                    <xsl:value-of select="key('kLabels', 'role.localGovRecipient', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '9'">
+                    <xsl:value-of select="key('kLabels', 'role.vatGroupIssuer', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '10'">
+                    <xsl:value-of select="key('kLabels', 'role.vatGroupRecipient', $labels)"/>
+                </xsl:if>
+                <xsl:if test="crd:Rola = '11'">
+                    <xsl:value-of select="key('kLabels', 'role.employee', $labels)"/>
+                </xsl:if>
+            </fo:block>
+        </xsl:if>
+        <!-- Otherwise, use the description from crd:OpisRoli -->
+        <xsl:if test="crd:RolaInna">
+            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
+                <xsl:value-of select="crd:OpisRoli"/>
+            </fo:block>
+        </xsl:if>
         <fo:block text-align="left" padding-bottom="3px">
             <xsl:if test="crd:NrEORI">
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'eori.number', $labels)"/>: </fo:inline>
