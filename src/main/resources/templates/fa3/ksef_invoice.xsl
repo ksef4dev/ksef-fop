@@ -2871,16 +2871,87 @@
                 </fo:table>
             </xsl:if>
 
-            <!-- Zwolnienie: P_19 -->
-            <xsl:if test="$zw/crd:P_19 = 1">
-                <fo:block font-size="7pt" text-align="left">
-                    <fo:inline font-weight="bold">
-                        <xsl:value-of select="key('kLabels', 'exemption.legalBasis', $labels)"/>:
-                    </fo:inline>
-                    <fo:inline>
-                        <xsl:value-of select="string-join($zw/(crd:P_19A, crd:P_19B, crd:P_19C)[normalize-space()], ' ')"/>
-                    </fo:inline>
-                </fo:block>
+            <!-- Zwolnienie: jak pozostałe adnotacje — układ dwukolumnowy; treść zwolnienia w lewej kolumnie -->
+            <xsl:if test="$zw/crd:P_19">
+                <fo:table table-layout="fixed" width="100%" space-after="2mm">
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-column column-width="50%"/>
+                    <fo:table-body>
+                        <fo:table-row>
+                            <fo:table-cell padding-right="5mm">
+                                <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                    <xsl:value-of select="key('kLabels', 'exemption.p19.annotation', $labels)"/>
+                                </fo:block>
+                                <xsl:if test="$zw/crd:P_19A">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.label.valueA', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:value-of select="normalize-space(string($zw/crd:P_19A))"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="$zw/crd:P_19B">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.label.valueB', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:value-of select="normalize-space(string($zw/crd:P_19B))"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="$zw/crd:P_19C">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.label.valueC', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:value-of select="normalize-space(string($zw/crd:P_19C))"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="$zw/crd:P_19A">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="key('kLabels', 'exemption.p19a.basisBody', $labels)"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="$zw/crd:P_19B">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="key('kLabels', 'exemption.p19b.basisBody', $labels)"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                                <xsl:if test="$zw/crd:P_19C">
+                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                        <fo:inline font-weight="bold">
+                                            <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
+                                        </fo:inline>
+                                        <fo:inline>
+                                            <xsl:text> </xsl:text>
+                                            <xsl:value-of select="key('kLabels', 'exemption.p19c.basisBody', $labels)"/>
+                                        </fo:inline>
+                                    </fo:block>
+                                </xsl:if>
+                            </fo:table-cell>
+                            <fo:table-cell padding-left="5mm">
+                                <fo:block font-size="7pt" text-align="left"/>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
             </xsl:if>
 
             <!-- Faktura uproszczona: P_23 -->
