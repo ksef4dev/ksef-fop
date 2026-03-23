@@ -2797,8 +2797,7 @@
         <xsl:variable name="annFlags" select="(crd:P_16, crd:P_17, crd:P_18, crd:P_18A)"/>
         <xsl:variable name="zw" select="crd:Zwolnienie"/>
 
-        <xsl:variable name="hasP19Detail" select="normalize-space(string($zw/crd:P_19A)) != '' or normalize-space(string($zw/crd:P_19B)) != '' or normalize-space(string($zw/crd:P_19C)) != ''"/>
-        <xsl:if test="exists($annFlags[. = 1]) or $zw/crd:P_19 = 1 or $hasP19Detail or crd:P_23 = 1">
+        <xsl:if test="exists($annFlags[. = 1]) or $zw/crd:P_19 = 1 or crd:P_23 = 1">
 
             <!-- Nagłówek -->
             <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
@@ -2860,19 +2859,17 @@
             </xsl:if>
 
             <!-- Zwolnienie: jak pozostałe adnotacje — układ dwukolumnowy; treść zwolnienia w lewej kolumnie -->
-            <xsl:if test="$zw/crd:P_19 = 1 or $hasP19Detail">
+            <xsl:if test="$zw/crd:P_19">
                 <fo:table table-layout="fixed" width="100%" space-after="2mm">
                     <fo:table-column column-width="50%"/>
                     <fo:table-column column-width="50%"/>
                     <fo:table-body>
                         <fo:table-row>
                             <fo:table-cell padding-right="5mm">
-                                <xsl:if test="$zw/crd:P_19 = 1">
-                                    <fo:block font-size="7pt" text-align="left" space-after="2mm">
-                                        <xsl:value-of select="key('kLabels', 'exemption.p19.annotation', $labels)"/>
-                                    </fo:block>
-                                </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19A)) != ''">
+                                <fo:block font-size="7pt" text-align="left" space-after="2mm">
+                                    <xsl:value-of select="key('kLabels', 'exemption.p19.annotation', $labels)"/>
+                                </fo:block>
+                                <xsl:if test="$zw/crd:P_19A">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.label.valueA', $labels)"/>:
@@ -2882,7 +2879,7 @@
                                         </fo:inline>
                                     </fo:block>
                                 </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19B)) != ''">
+                                <xsl:if test="$zw/crd:P_19B">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.label.valueB', $labels)"/>:
@@ -2892,7 +2889,7 @@
                                         </fo:inline>
                                     </fo:block>
                                 </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19C)) != ''">
+                                <xsl:if test="$zw/crd:P_19C">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.label.valueC', $labels)"/>:
@@ -2902,7 +2899,7 @@
                                         </fo:inline>
                                     </fo:block>
                                 </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19A)) != ''">
+                                <xsl:if test="$zw/crd:P_19A">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
@@ -2913,7 +2910,7 @@
                                         </fo:inline>
                                     </fo:block>
                                 </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19B)) != ''">
+                                <xsl:if test="$zw/crd:P_19B">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
@@ -2924,7 +2921,7 @@
                                         </fo:inline>
                                     </fo:block>
                                 </xsl:if>
-                                <xsl:if test="normalize-space(string($zw/crd:P_19C)) != ''">
+                                <xsl:if test="$zw/crd:P_19C">
                                     <fo:block font-size="7pt" text-align="left" space-after="2mm">
                                         <fo:inline font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exemption.basisTitle', $labels)"/>:
