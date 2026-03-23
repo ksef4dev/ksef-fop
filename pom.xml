@@ -62,9 +62,11 @@
 
         <!-- Dependency versions -->
         <annotations.version>24.1.0</annotations.version>
+        <assertj.version>3.27.7</assertj.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <slf4j.version>2.0.17</slf4j.version>
         <zxing.version>3.5.2</zxing.version>
+        <xmlunit.version>2.11.0</xmlunit.version>
 
         <!-- Maven plugin versions -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
@@ -311,9 +313,30 @@
         </dependency>
 
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj3</artifactId>
+            <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
 

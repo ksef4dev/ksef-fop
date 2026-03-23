@@ -14,7 +14,11 @@ class PodmiotTemplateTest extends AbstractGeneratePdfTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "minimal_3_parties",
-            "full_3_parties"
+            "full_3_parties",
+            "correspondence_address",
+            "court_bailiff",
+            "enforcement_authority",
+            "tax_representative"
     })
     void testOptionalNazwaAndAdres(String resource) throws Exception {
         String actual = generateFa3InvoiceText("faktury/PodmiotTemplateTest/" + resource + ".xml");

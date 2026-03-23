@@ -1,0 +1,48 @@
+<root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:block
+            border-bottom="solid 1px grey"
+            space-after="4mm"
+            space-before="4mm"/>
+    <fo:block
+            font-size="12pt"
+            space-after="5mm"
+            text-align="left">
+        <fo:inline font-weight="bold">Adnotacje</fo:inline>
+    </fo:block>
+    <fo:table
+            space-after="2mm"
+            table-layout="fixed"
+            width="100%">
+        <fo:table-column column-width="50%"/>
+        <fo:table-column column-width="50%"/>
+        <fo:table-body>
+            <fo:table-row>
+                <fo:table-cell padding-right="5mm">
+                    <fo:block
+                            font-size="7pt"
+                            space-after="2mm"
+                            text-align="left">
+                        Dostawa towarów lub świadczenie usług zwolnionych od podatku na podstawie art. 43 ust. 1, art. 113 ust. 1 i 9 albo przepisów wydanych na podstawie art. 82 ust. 3 lub na podstawie innych przepisów
+                    </fo:block>
+                    <fo:block
+                            font-size="7pt"
+                            space-after="2mm"
+                            text-align="left">
+                        <fo:inline font-weight="bold">Przepis ustawy albo aktu wydanego na podstawie ustawy:</fo:inline>
+                        <fo:inline>przepis ustawy lub aktu wydanego na podstawie ustawy</fo:inline>
+                    </fo:block>
+                    <fo:block
+                            font-size="7pt"
+                            space-after="2mm"
+                            text-align="left">
+                        <fo:inline font-weight="bold">Podstawa zwolnienia od podatku:</fo:inline>
+                        <fo:inline> Przepis ustawy albo aktu wydanego na podstawie ustawy, na podstawie którego podatnik stosuje zwolnienie od podatku</fo:inline>
+                    </fo:block>
+                </fo:table-cell>
+                <fo:table-cell padding-left="5mm">
+                    <fo:block font-size="7pt" text-align="left"/>
+                </fo:table-cell>
+            </fo:table-row>
+        </fo:table-body>
+    </fo:table>
+</root>
