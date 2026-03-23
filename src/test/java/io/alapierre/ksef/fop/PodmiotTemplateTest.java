@@ -18,7 +18,9 @@ class PodmiotTemplateTest extends AbstractGeneratePdfTest {
             "correspondence_address",
             "court_bailiff",
             "enforcement_authority",
-            "tax_representative"
+            "tax_representative",
+            "multiple_rola_inna",
+            "multiple_roles"
     })
     void testOptionalNazwaAndAdres(String resource) throws Exception {
         String actual = generateFa3InvoiceText("faktury/PodmiotTemplateTest/" + resource + ".xml");
