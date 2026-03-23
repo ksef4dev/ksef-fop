@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://crd.gov.pl/wzor/2025/06/25/13775/ schemat_fa3.xsd">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2025-09-01T00:00:00Z</DataWytworzeniaFa>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>Sprzedawca Sp. z o.o.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Przykładowa 1, 00-001 Warszawa</AdresL1>
+        </Adres>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>2222222222</NIP>
+        </DaneIdentyfikacyjne>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>USD</KodWaluty>
+        <P_1>2006-01-01</P_1>
+        <P_2>01/2006</P_2>
+        <P_13_1>1000</P_13_1>
+        <P_14_1>230</P_14_1>
+        <P_14_1W>230</P_14_1W>
+        <P_13_2>2000</P_13_2>
+        <P_14_2>160</P_14_2>
+        <P_14_2W>160</P_14_2W>
+        <P_13_3>3000</P_13_3>
+        <P_14_3>150</P_14_3>
+        <P_14_3W>150</P_14_3W>
+        <P_13_4>4000</P_13_4>
+        <P_14_4>160</P_14_4>
+        <P_14_4W>160</P_14_4W>
+        <P_13_5>5000</P_13_5>
+        <P_14_5>170</P_14_5>
+        <P_13_6_1>1000</P_13_6_1>
+        <P_13_6_2>2000</P_13_6_2>
+        <P_13_6_3>3000</P_13_6_3>
+        <P_13_7>7000</P_13_7>
+        <P_13_8>8000</P_13_8>
+        <P_13_9>9000</P_13_9>
+        <P_13_10>10000</P_13_10>
+        <P_13_11>11000</P_13_11>
+        <P_15>3450</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>VAT</RodzajFaktury>
+    </Fa>
+</Faktura>
