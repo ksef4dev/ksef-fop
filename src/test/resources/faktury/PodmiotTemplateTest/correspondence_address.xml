@@ -19,7 +19,8 @@
         </Adres>
         <AdresKoresp>
             <KodKraju>PL</KodKraju>
-            <AdresL1>Skrytka pocztowa 101, 00-950 Warszawa</AdresL1>
+            <AdresL1>Skrytka pocztowa 101</AdresL1>
+            <AdresL2>00-950 Warszawa</AdresL2>
         </AdresKoresp>
     </Podmiot1>
 

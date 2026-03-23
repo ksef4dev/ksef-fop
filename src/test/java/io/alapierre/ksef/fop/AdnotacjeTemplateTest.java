@@ -55,7 +55,7 @@ class AdnotacjeTemplateTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"minimal", "exemption_a", "exemption_b", "exemption_c", "simplified"})
+    @ValueSource(strings = {"minimal", "exemption_a", "exemption_b", "exemption_c", "exemption_abc", "exemption_p19_only", "simplified"})
     void testTemplate(String resourceName) throws Exception {
         URL inputUrl = resource("AdnotacjeTemplateTest/" + resourceName + ".xml");
         URL expectedUrl = resource("AdnotacjeTemplateTest/" + resourceName + "-expected.xml");

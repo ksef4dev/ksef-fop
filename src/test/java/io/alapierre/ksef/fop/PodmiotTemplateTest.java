@@ -16,6 +16,9 @@ class PodmiotTemplateTest extends AbstractGeneratePdfTest {
             "minimal_3_parties",
             "full_3_parties",
             "correspondence_address",
+            "court_bailiff",
+            "enforcement_authority",
+            "tax_representative",
             "multiple_rola_inna",
             "multiple_roles"
     })
