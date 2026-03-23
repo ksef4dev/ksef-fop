@@ -3482,7 +3482,7 @@
 
     <xsl:template match="crd:AdresL2">
         <fo:inline>, </fo:inline>
-        <xsl:value-of select="crd:AdresL2"/>
+        <xsl:value-of select="."/>
     </xsl:template>
 
     <xsl:template match="crd:KodKraju">

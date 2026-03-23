@@ -15,7 +15,8 @@
         </DaneIdentyfikacyjne>
         <Adres>
             <KodKraju>PL</KodKraju>
-            <AdresL1>ul. Przykładowa 1, 00-001 Warszawa</AdresL1>
+            <AdresL1>ul. Przykładowa 1</AdresL1>
+            <AdresL2>00-001 Warszawa</AdresL2>
         </Adres>
     </Podmiot1>
 
@@ -26,7 +27,8 @@
         </DaneIdentyfikacyjne>
         <Adres>
             <KodKraju>PL</KodKraju>
-            <AdresL1>ul. Miętowa 2, 00-002 Warszawa</AdresL1>
+            <AdresL1>ul. Miętowa 2</AdresL1>
+            <AdresL2>00-002 Warszawa</AdresL2>
         </Adres>
         <JST>2</JST>
         <GV>2</GV>
@@ -39,7 +41,8 @@
         </DaneIdentyfikacyjne>
         <Adres>
             <KodKraju>PL</KodKraju>
-            <AdresL1>ul. Wiejska 3, 00-003 Warszawa</AdresL1>
+            <AdresL1>ul. Wiejska 3</AdresL1>
+            <AdresL2>00-003 Warszawa</AdresL2>
         </Adres>
         <Rola>4</Rola>
     </Podmiot3>
