@@ -762,6 +762,14 @@
                         </fo:table>
                     </xsl:if>
 
+                    <!-- Podmiot upoważniony -->
+                    <xsl:if test="crd:PodmiotUpowazniony">
+                        <!-- Linia oddzielająca -->
+                        <fo:block border-bottom="solid 1px grey" space-before="5mm"/>
+
+                        <xsl:apply-templates select="crd:PodmiotUpowazniony"/>
+                    </xsl:if>
+
                     <!-- Linia oddzielająca -->
                    <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
@@ -2885,6 +2893,61 @@
             </xsl:if>
 
         </xsl:if>
+    </xsl:template>
+
+    <!-- Podmiot upoważniony -->
+    <xsl:template match="crd:PodmiotUpowazniony">
+        <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
+        <fo:block font-size="7">
+            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
+                <xsl:apply-templates select="crd:RolaPU"/>
+            </fo:block>
+
+            <fo:block text-align="left" padding-bottom="3px">
+                <xsl:if test="crd:NrEORI">
+                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'eori.number', $labels)"/>: </fo:inline>
+                    <xsl:value-of select="crd:NrEORI"/>
+                </xsl:if>
+            </fo:block>
+            <!-- Same identification data as Podmiot1: NIP and Nazwa -->
+            <fo:block text-align="left" padding-bottom="3px">
+                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
+                <xsl:value-of select="$id/crd:NIP"/>
+            </fo:block>
+            <fo:block text-align="left" padding-bottom="3px">
+                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>
+                <xsl:value-of select="$id/crd:Nazwa"/>
+            </fo:block>
+            <xsl:apply-templates select="crd:Adres" mode="blocks"/>
+            <xsl:apply-templates select="crd:AdresKoresp" mode="blocks"/>
+            <xsl:if test="crd:DaneKontaktowe/crd:Email|crd:DaneKontaktowe/crd:Telefon">
+                <fo:block text-align="left" padding-bottom="3px" padding-top="16px">
+                    <fo:inline font-weight="bold">
+                        <xsl:value-of select="key('kLabels', 'contact.data', $labels)"/>
+                    </fo:inline>
+                </fo:block>
+                <xsl:if test="crd:DaneKontaktowe/crd:Email">
+                    <fo:block text-align="left" padding-bottom="2px">
+                        <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'email', $labels)"/>: </fo:inline>
+                        <xsl:value-of select="crd:DaneKontaktowe/crd:Email"/>
+                    </fo:block>
+                </xsl:if>
+                <xsl:if test="crd:DaneKontaktowe/crd:Telefon">
+                    <fo:block text-align="left" padding-bottom="2px">
+                        <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'phone', $labels)"/>: </fo:inline>
+                        <xsl:value-of select="crd:DaneKontaktowe/crd:Telefon"/>
+                    </fo:block>
+                </xsl:if>
+            </xsl:if>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:RolaPU">
+        <xsl:choose>
+            <xsl:when test=". = '1'"><xsl:value-of select="key('kLabels', 'role.enforcementAuthority', $labels)"/></xsl:when>
+            <xsl:when test=". = '2'"><xsl:value-of select="key('kLabels', 'role.courtBailiff', $labels)"/></xsl:when>
+            <xsl:when test=". = '3'"><xsl:value-of select="key('kLabels', 'role.taxRepresentative', $labels)"/></xsl:when>
+        </xsl:choose>
     </xsl:template>
 
     <!-- Template do wstawiania punktów łamania w długich tekstach -->
