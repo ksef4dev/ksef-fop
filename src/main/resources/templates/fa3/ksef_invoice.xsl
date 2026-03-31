@@ -1827,6 +1827,7 @@
                         crd:Fa/crd:Rozliczenie/crd:SumaOdliczen or
                         crd:Fa/crd:Rozliczenie/crd:DoZaplaty or
                         crd:Fa/crd:Rozliczenie/crd:DoRozliczenia)">
+                        <fo:block id="Rozliczenie">
                         <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
                         <fo:block font-size="12pt" text-align="left" space-after="2mm">
@@ -1946,6 +1947,7 @@
                                 <xsl:text> PLN</xsl:text>
                             </fo:block>
                         </xsl:if>
+                        </fo:block>
                     </xsl:if>
 
                     <!-- Płatność -->
@@ -3522,6 +3524,10 @@
         <xsl:call-template name="renderAddressAsBlocks">
             <xsl:with-param name="label" select="key('kLabels', 'correspondenceAddress', $labels)"/>
         </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template match="crd:Rozliczenie">
+
     </xsl:template>
 
 </xsl:stylesheet>
