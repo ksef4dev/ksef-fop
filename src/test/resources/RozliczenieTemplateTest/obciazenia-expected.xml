@@ -42,6 +42,6 @@
     <fo:inline font-weight="bold">Suma obciążeń:</fo:inline>50,00
   </fo:block>
   <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
-    Kwota do zapłaty: 1 050,00 PLN
+    Kwota do zapłaty: 1 050,00 AED
   </fo:block>
 </fo:block>

@@ -42,6 +42,6 @@
     <fo:inline font-weight="bold">Suma odliczeń:</fo:inline>200,00
   </fo:block>
   <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
-    Kwota nadpłacona do rozliczenia/zwrotu: 800,00 PLN
+    Kwota nadpłacona do rozliczenia/zwrotu: 800,00 AED
   </fo:block>
 </fo:block>

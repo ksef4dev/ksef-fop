@@ -3550,7 +3550,8 @@
                 <xsl:text>: </xsl:text>
                 <xsl:value-of
                         select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
-                <xsl:text> PLN</xsl:text>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="//crd:KodWaluty"/>
             </fo:block>
     </xsl:template>
 
@@ -3560,7 +3561,8 @@
             <xsl:text>: </xsl:text>
             <xsl:value-of
                     select="translate(format-number(number(.), '#,##0.00'), ',.', ' ,')"/>
-            <xsl:text> PLN</xsl:text>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="//crd:KodWaluty"/>
         </fo:block>
     </xsl:template>
 

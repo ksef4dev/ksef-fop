@@ -4,6 +4,6 @@
     <fo:inline font-weight="bold">Dodatkowe rozliczenia na fakturze</fo:inline>
   </fo:block>
   <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
-    Kwota nadpłacona do rozliczenia/zwrotu: 500,00 PLN
+    Kwota nadpłacona do rozliczenia/zwrotu: 500,00 AED
   </fo:block>
 </fo:block>
