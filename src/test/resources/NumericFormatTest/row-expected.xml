@@ -1,0 +1,170 @@
+<root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:table-row>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block>1</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block linefeed-treatment="preserve"
+                      white-space-collapse="false"
+                      wrap-option="wrap">1234</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block font-size="6pt"
+                      linefeed-treatment="preserve"
+                      white-space-collapse="false"
+                      wrap-option="wrap">GTIN</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block font-size="6pt"
+                      linefeed-treatment="preserve"
+                      white-space-collapse="false"
+                      wrap-option="wrap">PKWiU</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block font-size="6pt"
+                      linefeed-treatment="preserve"
+                      white-space-collapse="false"
+                      wrap-option="wrap">CN</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="left">
+            <fo:block font-size="6pt"
+                      linefeed-treatment="preserve"
+                      white-space-collapse="false"
+                      wrap-option="wrap">PKOB</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>50,00</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="3pt"
+                       padding-right="4pt"
+                       padding-top="4pt">
+            <fo:block>Towar</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>0,123456</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>szt.</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>1 000,00</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>1 230,00</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>100,00</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>23%</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>123,45</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>28,39</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="center">
+            <fo:block>2025-09-01</fo:block>
+        </fo:table-cell>
+    </fo:table-row>
+</root>
