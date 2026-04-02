@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://crd.gov.pl/wzor/2025/06/25/13775/ schemat_fa3.xsd">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2025-09-01T00:00:00Z</DataWytworzeniaFa>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>Sprzedawca Sp. z o.o.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Przykładowa 1, 00-001 Warszawa</AdresL1>
+        </Adres>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>2222222222</NIP>
+        </DaneIdentyfikacyjne>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Fa>
+        <KodWaluty>USD</KodWaluty>
+        <P_1>2006-01-01</P_1>
+        <P_2>01/2006</P_2>
+        <P_15>1000</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>VAT</RodzajFaktury>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <UU_ID>138d60dd-f488-4cc9-8e05-a168edcaa12e</UU_ID>
+            <P_6A>2025-09-01</P_6A>
+            <P_7>Towar</P_7>
+            <Indeks>1234</Indeks>
+            <GTIN>GTIN</GTIN>
+            <PKWiU>PKWiU</PKWiU>
+            <CN>CN</CN>
+            <PKOB>PKOB</PKOB>
+            <P_8A>szt.</P_8A>
+            <P_8B>0.123456</P_8B>
+            <P_9A>1234.56789012</P_9A>
+            <P_9B>1518.51850485</P_9B>
+            <P_10>102.03040506</P_10>
+            <P_11>152.41</P_11>
+            <P_11Vat>35.05</P_11Vat>
+            <P_12>23</P_12>
+            <KwotaAkcyzy>50</KwotaAkcyzy>
+            <GTU>GTU_01</GTU>
+            <Procedura>I_42</Procedura>
+            <KursWaluty>4.123456</KursWaluty>
+            <StanPrzed>1</StanPrzed>
+        </FaWiersz>
+    </Fa>
+</Faktura>
