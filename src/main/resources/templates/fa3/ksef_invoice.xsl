@@ -2118,6 +2118,54 @@
                             </fo:table-body>
                         </fo:table>
                     </xsl:if>
+                    <xsl:if test="count(crd:Fa/crd:Platnosc/crd:RachunekBankowyFaktora) > 0">
+                        <!-- Blok tytułu -->
+                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+                        <fo:block font-size="12pt" text-align="left">
+                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'bankAccountNumberFactor', $labels)"/></fo:inline>
+                        </fo:block>
+
+                        <!-- Tabela z rachunkami bankowymi faktora -->
+                        <fo:table table-layout="fixed" width="100%">
+                            <fo:table-column column-width="50%"/>
+                            <fo:table-column column-width="50%"/>
+
+                            <fo:table-body>
+                                <!-- Iterujemy przez wszystkie elementy RachunekBankowyFaktora, zaczynając od pierwszego -->
+                                <xsl:for-each select="crd:Fa/crd:Platnosc/crd:RachunekBankowyFaktora[position() mod 2 = 1]">
+                                    <fo:table-row>
+                                        <!-- Pierwsza komórka w wierszu -->
+                                        <fo:table-cell>
+                                            <fo:block font-size="7pt" space-after="5mm">
+                                                <xsl:call-template name="renderBankAccountTable">
+                                                    <xsl:with-param name="bankAccountNode" select="."/>
+                                                </xsl:call-template>
+                                            </fo:block>
+                                        </fo:table-cell>
+
+                                        <!-- Druga komórka, jeśli istnieje następny element -->
+                                        <xsl:choose>
+                                            <xsl:when test="following-sibling::crd:RachunekBankowyFaktora[1]">
+                                                <fo:table-cell padding-left="6pt">
+                                                    <fo:block font-size="7pt" space-after="5mm">
+                                                        <xsl:call-template name="renderBankAccountTable">
+                                                            <xsl:with-param name="bankAccountNode" select="following-sibling::crd:RachunekBankowyFaktora[1]"/>
+                                                        </xsl:call-template>
+                                                    </fo:block>
+                                                </fo:table-cell>
+                                            </xsl:when>
+                                            <!-- Jeśli nie ma następnego elementu, wstawiamy pustą komórkę -->
+                                            <xsl:otherwise>
+                                                <fo:table-cell>
+                                                    <fo:block/>
+                                                </fo:table-cell>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </fo:table-row>
+                                </xsl:for-each>
+                            </fo:table-body>
+                        </fo:table>
+                    </xsl:if>
                     <xsl:if test="crd:Fa/crd:WarunkiTransakcji">
                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
 
