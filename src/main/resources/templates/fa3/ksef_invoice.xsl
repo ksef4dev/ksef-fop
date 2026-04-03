@@ -1806,134 +1806,8 @@
                         </fo:block>
                     </xsl:if>
 
-                    <!-- Rozliczenie (Obciążenia, Odliczenia, Do zapłaty / Do rozliczenia) -->
-                    <xsl:if test="crd:Fa/crd:Rozliczenie and (
-                        crd:Fa/crd:Rozliczenie/crd:Obciazenia or
-                        crd:Fa/crd:Rozliczenie/crd:SumaObciazen or
-                        crd:Fa/crd:Rozliczenie/crd:Odliczenia or
-                        crd:Fa/crd:Rozliczenie/crd:SumaOdliczen or
-                        crd:Fa/crd:Rozliczenie/crd:DoZaplaty or
-                        crd:Fa/crd:Rozliczenie/crd:DoRozliczenia)">
-                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
-
-                        <fo:block font-size="12pt" text-align="left" space-after="2mm">
-                            <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'settlement', $labels)"/></fo:inline>
-                        </fo:block>
-
-                        <!-- Obciążenia -->
-                        <xsl:if test="crd:Fa/crd:Rozliczenie/crd:Obciazenia">
-                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'settlement.charges', $labels)"/>:</fo:inline>
-                            </fo:block>
-                            <fo:block space-before="1mm" space-after="2mm">
-                                <fo:table table-layout="fixed" width="100%">
-                                    <fo:table-column column-width="70%"/>
-                                    <fo:table-column column-width="30%"/>
-                                    <fo:table-header>
-                                        <fo:table-row background-color="#f0f0f0">
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" font-weight="bold" text-align="left">
-                                                    <xsl:value-of select="key('kLabels', 'settlement.chargeReason', $labels)"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" font-weight="bold" text-align="right">
-                                                    <xsl:value-of select="key('kLabels', 'settlement.amount', $labels)"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </fo:table-header>
-                                    <fo:table-body>
-                                        <xsl:for-each select="crd:Fa/crd:Rozliczenie/crd:Obciazenia">
-                                            <fo:table-row>
-                                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
-                                                    <fo:block font-size="7pt" text-align="left">
-                                                        <xsl:value-of select="crd:Powod"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
-                                                    <fo:block font-size="7pt" text-align="right">
-                                                        <xsl:value-of select="local:format-amount(crd:Kwota)"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                            </fo:table-row>
-                                        </xsl:for-each>
-                                    </fo:table-body>
-                                </fo:table>
-                            </fo:block>
-                            <xsl:if test="crd:Fa/crd:Rozliczenie/crd:SumaObciazen">
-                                <fo:block font-size="7pt" text-align="right" space-after="2mm">
-                                    <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'settlement.sumCharges', $labels)"/>: </fo:inline>
-                                    <xsl:value-of select="local:format-amount(crd:Fa/crd:Rozliczenie/crd:SumaObciazen)"/>
-                                </fo:block>
-                            </xsl:if>
-                        </xsl:if>
-
-                        <!-- Odliczenia -->
-                        <xsl:if test="crd:Fa/crd:Rozliczenie/crd:Odliczenia">
-                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
-                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'settlement.deductions', $labels)"/>:</fo:inline>
-                            </fo:block>
-                            <fo:block space-before="1mm" space-after="2mm">
-                                <fo:table table-layout="fixed" width="100%">
-                                    <fo:table-column column-width="70%"/>
-                                    <fo:table-column column-width="30%"/>
-                                    <fo:table-header>
-                                        <fo:table-row background-color="#f0f0f0">
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" font-weight="bold" text-align="left">
-                                                    <xsl:value-of select="key('kLabels', 'settlement.deductionReason', $labels)"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                            <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
-                                                <fo:block font-size="7pt" font-weight="bold" text-align="right">
-                                                    <xsl:value-of select="key('kLabels', 'settlement.deductionAmount', $labels)"/>
-                                                </fo:block>
-                                            </fo:table-cell>
-                                        </fo:table-row>
-                                    </fo:table-header>
-                                    <fo:table-body>
-                                        <xsl:for-each select="crd:Fa/crd:Rozliczenie/crd:Odliczenia">
-                                            <fo:table-row>
-                                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
-                                                    <fo:block font-size="7pt" text-align="left">
-                                                        <xsl:value-of select="crd:Powod"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                                <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
-                                                    <fo:block font-size="7pt" text-align="right">
-                                                        <xsl:value-of select="local:format-amount(crd:Kwota)"/>
-                                                    </fo:block>
-                                                </fo:table-cell>
-                                            </fo:table-row>
-                                        </xsl:for-each>
-                                    </fo:table-body>
-                                </fo:table>
-                            </fo:block>
-                            <xsl:if test="crd:Fa/crd:Rozliczenie/crd:SumaOdliczen">
-                                <fo:block font-size="7pt" text-align="right" space-after="2mm">
-                                    <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'settlement.sumDeductions', $labels)"/>: </fo:inline>
-                                    <xsl:value-of select="local:format-amount(crd:Fa/crd:Rozliczenie/crd:SumaOdliczen)"/>
-                                </fo:block>
-                            </xsl:if>
-                        </xsl:if>
-
-                        <!-- Do zapłaty / Do rozliczenia -->
-                        <xsl:if test="crd:Fa/crd:Rozliczenie/crd:DoZaplaty">
-                            <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
-                                <fo:inline><xsl:value-of select="key('kLabels', 'settlement.amountToPay', $labels)"/>: </fo:inline>
-                                <xsl:value-of select="local:format-amount(crd:Fa/crd:Rozliczenie/crd:DoZaplaty)"/>
-                                <xsl:text> PLN</xsl:text>
-                            </fo:block>
-                        </xsl:if>
-                        <xsl:if test="crd:Fa/crd:Rozliczenie/crd:DoRozliczenia">
-                            <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
-                                <fo:inline><xsl:value-of select="key('kLabels', 'settlement.amountToSettle', $labels)"/>: </fo:inline>
-                                <xsl:value-of select="local:format-amount(crd:Fa/crd:Rozliczenie/crd:DoRozliczenia)"/>
-                                <xsl:text> PLN</xsl:text>
-                            </fo:block>
-                        </xsl:if>
-                    </xsl:if>
+                    <!-- Rozliczenie -->
+                    <xsl:apply-templates select="crd:Fa/crd:Rozliczenie"/>
 
                     <!-- Płatność -->
                     <xsl:if test="crd:Fa/crd:Platnosc and (
@@ -3559,6 +3433,174 @@
         <xsl:call-template name="renderAddressAsBlocks">
             <xsl:with-param name="label" select="key('kLabels', 'correspondenceAddress', $labels)"/>
         </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template match="crd:Rozliczenie">
+
+        <!-- Rozliczenie (Obciążenia, Odliczenia, Do zapłaty / Do rozliczenia) -->
+        <xsl:if test="*">
+            <fo:block id="Rozliczenie" font-size="7pt">
+                <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+
+                <fo:block font-size="12pt" text-align="left" space-after="2mm">
+                    <fo:inline font-weight="bold">
+                        <xsl:value-of select="key('kLabels', 'settlement', $labels)"/>
+                    </fo:inline>
+                </fo:block>
+
+                <!-- Obciążenia -->
+                <xsl:if test="crd:Obciazenia">
+                    <fo:block text-align="left" space-after="1mm">
+                        <fo:inline font-weight="bold">
+                            <xsl:value-of select="key('kLabels', 'settlement.charges', $labels)"/>:
+                        </fo:inline>
+                    </fo:block>
+                    <fo:block space-before="1mm" space-after="2mm">
+                        <fo:table table-layout="fixed" width="100%">
+                            <fo:table-column column-width="70%"/>
+                            <fo:table-column column-width="30%"/>
+                            <fo:table-header>
+                                <fo:table-row background-color="#f0f0f0">
+                                    <fo:table-cell
+                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block font-weight="bold" text-align="left">
+                                            <xsl:value-of select="key('kLabels', 'settlement.chargeReason', $labels)"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell
+                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block font-weight="bold" text-align="right">
+                                            <xsl:value-of select="key('kLabels', 'settlement.amount', $labels)"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:apply-templates select="crd:Obciazenia"/>
+                            </fo:table-body>
+                        </fo:table>
+                    </fo:block>
+                    <xsl:apply-templates select="crd:SumaObciazen"/>
+                </xsl:if>
+
+                <!-- Odliczenia -->
+                <xsl:if test="crd:Odliczenia">
+                    <fo:block text-align="left" space-after="1mm">
+                        <fo:inline font-weight="bold"><xsl:value-of
+                                select="key('kLabels', 'settlement.deductions', $labels)"/>:
+                        </fo:inline>
+                    </fo:block>
+                    <fo:block space-before="1mm" space-after="2mm">
+                        <fo:table table-layout="fixed" width="100%">
+                            <fo:table-column column-width="70%"/>
+                            <fo:table-column column-width="30%"/>
+                            <fo:table-header>
+                                <fo:table-row background-color="#f0f0f0">
+                                    <fo:table-cell
+                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block font-weight="bold" text-align="left">
+                                            <xsl:value-of
+                                                    select="key('kLabels', 'settlement.deductionReason', $labels)"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell
+                                            xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                                        <fo:block font-weight="bold" text-align="right">
+                                            <xsl:value-of
+                                                    select="key('kLabels', 'settlement.deductionAmount', $labels)"/>
+                                        </fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:apply-templates select="crd:Odliczenia"/>
+                            </fo:table-body>
+                        </fo:table>
+                    </fo:block>
+                    <xsl:apply-templates select="crd:SumaOdliczen"/>
+                </xsl:if>
+
+                <!-- Do zapłaty / Do rozliczenia -->
+                <xsl:apply-templates select="crd:DoZaplaty"/>
+                <xsl:apply-templates select="crd:DoRozliczenia"/>
+            </fo:block>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="crd:Obciazenia">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                <fo:block text-align="left">
+                    <xsl:value-of select="crd:Powod"/>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                <fo:block text-align="right">
+                    <xsl:value-of
+                            select="local:format-amount(crd:Kwota)"/>
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+
+    <xsl:template match="crd:Odliczenia">
+        <fo:table-row>
+            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                <fo:block text-align="left">
+                    <xsl:value-of select="crd:Powod"/>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell xsl:use-attribute-sets="tableBorder table.cell.padding">
+                <fo:block text-align="right">
+                    <xsl:value-of
+                            select="local:format-amount(crd:Kwota)"/>
+                </fo:block>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+
+    <xsl:template match="crd:SumaObciazen">
+        <fo:block text-align="right" space-after="2mm">
+            <fo:inline font-weight="bold">
+                <xsl:value-of select="key('kLabels', 'settlement.sumCharges', $labels)"/>
+                <xsl:text>: </xsl:text>
+            </fo:inline>
+            <xsl:value-of
+                    select="local:format-amount(.)"/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:SumaOdliczen">
+        <fo:block text-align="right" space-after="2mm">
+            <fo:inline font-weight="bold">
+                <xsl:value-of select="key('kLabels', 'settlement.sumDeductions', $labels)"/>
+                <xsl:text>: </xsl:text>
+            </fo:inline>
+            <xsl:value-of
+                    select="local:format-amount(.)"/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:DoZaplaty">
+            <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
+                <xsl:value-of select="key('kLabels', 'settlement.amountToPay', $labels)"/>
+                <xsl:text>: </xsl:text>
+                <xsl:value-of
+                        select="local:format-amount(.)"/>
+                <xsl:text> </xsl:text>
+                <xsl:value-of select="//crd:KodWaluty"/>
+            </fo:block>
+    </xsl:template>
+
+    <xsl:template match="crd:DoRozliczenia">
+        <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
+            <xsl:value-of select="key('kLabels', 'settlement.amountToSettle', $labels)"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of
+                    select="local:format-amount(.)"/>
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="//crd:KodWaluty"/>
+        </fo:block>
     </xsl:template>
 
 </xsl:stylesheet>

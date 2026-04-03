@@ -1,0 +1,47 @@
+<fo:block id="Rozliczenie" font-size="7pt" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+  <fo:block font-size="12pt" text-align="left" space-after="2mm">
+    <fo:inline font-weight="bold">Dodatkowe rozliczenia na fakturze</fo:inline>
+  </fo:block>
+  <fo:block text-align="left" space-after="1mm">
+    <fo:inline font-weight="bold">Obciążenia:</fo:inline>
+  </fo:block>
+  <fo:block space-before="1mm" space-after="2mm">
+    <fo:table table-layout="fixed" width="100%">
+      <fo:table-column column-width="70%"/>
+      <fo:table-column column-width="30%"/>
+      <fo:table-header>
+        <fo:table-row background-color="#f0f0f0">
+          <fo:table-cell font-size="7" border="solid 0.2mm black" padding-left="4pt" padding-right="4pt"
+                         padding-top="4pt" padding-bottom="4pt">
+            <fo:block font-weight="bold" text-align="left">Powód obciążenia</fo:block>
+          </fo:table-cell>
+          <fo:table-cell font-size="7" border="solid 0.2mm black" padding-left="4pt" padding-right="4pt"
+                         padding-top="4pt" padding-bottom="4pt">
+            <fo:block font-weight="bold" text-align="right">
+              Kwota doliczona do kwoty należności ogółem
+            </fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+      </fo:table-header>
+      <fo:table-body>
+        <fo:table-row>
+          <fo:table-cell border="solid 0.2mm black" padding-left="4pt" padding-right="4pt" padding-top="4pt"
+                         padding-bottom="4pt">
+            <fo:block text-align="left">Transport</fo:block>
+          </fo:table-cell>
+          <fo:table-cell border="solid 0.2mm black" padding-left="4pt" padding-right="4pt" padding-top="4pt"
+                         padding-bottom="4pt">
+            <fo:block text-align="right">50,00</fo:block>
+          </fo:table-cell>
+        </fo:table-row>
+      </fo:table-body>
+    </fo:table>
+  </fo:block>
+  <fo:block text-align="right" space-after="2mm">
+    <fo:inline font-weight="bold">Suma obciążeń:</fo:inline>50,00
+  </fo:block>
+  <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
+    Kwota do zapłaty: 1 050,00 AED
+  </fo:block>
+</fo:block>
