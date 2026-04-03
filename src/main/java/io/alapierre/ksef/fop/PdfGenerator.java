@@ -6,11 +6,7 @@ import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.saxon.TransformerFactoryImpl;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
@@ -20,18 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -185,7 +173,7 @@ public class PdfGenerator {
 
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClasspathUriResolver());
-        String xslPath = resolveXslTemplate(params);
+        String xslPath = resolveTemplatePath(params);
 
         URL xslUrl = getResourceUrl(xslPath);
         try (InputStream xsl = loadResource(xslPath)) {
@@ -196,6 +184,14 @@ public class PdfGenerator {
             Result result = new SAXResult(fop.getDefaultHandler());
             transformer.transform(xmlSource, result);
         }
+    }
+
+    private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {
+        String templatePath = params.getTemplatePath();
+
+        return (templatePath != null && !templatePath.isEmpty())
+                ? templatePath
+                : resolveXslTemplate(params);
     }
 
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {
