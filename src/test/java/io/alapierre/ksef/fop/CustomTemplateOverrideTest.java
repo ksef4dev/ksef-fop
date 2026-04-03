@@ -38,10 +38,11 @@ class CustomTemplateOverrideTest {
                 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                         .schema(InvoiceSchema.FA3_1_0_E)
                         .ksefNumber("TEST-KSEF-NUMBER")
+                        .templatePath("templates/custom/custom_invoice.xsl")
                         .build();
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                generator.generateInvoice(invoiceXml, params, "templates/custom/custom_invoice.xsl", out);
+                generator.generateInvoice(invoiceXml, params, out);
 
                 String text = extractTextFromPdf(out.toByteArray());
                 assertTrue(text.contains("CUSTOM_TEMPLATE_MARKER"), "Expected marker from custom template in PDF text");

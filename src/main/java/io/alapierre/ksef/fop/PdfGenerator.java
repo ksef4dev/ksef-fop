@@ -6,11 +6,7 @@ import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.saxon.TransformerFactoryImpl;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
@@ -20,18 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -136,30 +124,7 @@ public class PdfGenerator {
                                 OutputStream out) throws IOException, TransformerException, FOPException {
         String langCode = params.getLanguage().getCode();
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
-        generatePdfInvoice(invoiceXml, params, qrCodes, null, null, out);
-    }
-
-    /**
-     * Generates a regular invoice PDF using a caller-provided XSL template instead of the default one selected
-     * from {@link InvoiceGenerationParams#getSchema()}.
-     *
-     * The {@code templatePath} must be a classpath resource path, e.g. {@code templates/fa3/ksef_invoice.xsl}.
-     *
-     * @param invoiceXml e-invoice XML
-     * @param params invoice generation parameters
-     * @param templatePath classpath path to XSL template to be used
-     * @param out The OutputStream where the generated PDF will be written.
-     * @throws IOException throws when IO error occurs
-     * @throws TransformerException throws when XSLT transformer error occurs
-     * @throws FOPException throws when FOP error occurs
-     */
-    public void generateInvoice(byte[] invoiceXml,
-                                InvoiceGenerationParams params,
-                                @NotNull String templatePath,
-                                OutputStream out) throws IOException, TransformerException, FOPException {
-        String langCode = params.getLanguage().getCode();
-        List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
-        generatePdfInvoice(invoiceXml, params, qrCodes, null, templatePath, out);
+        generatePdfInvoice(invoiceXml, params, qrCodes, null, out);
     }
 
     /**
@@ -180,30 +145,7 @@ public class PdfGenerator {
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
                                          OutputStream out) throws IOException, TransformerException, FOPException {
-        generatePdfInvoice(invoiceXml, params, null, duplicateDate, null, out);
-    }
-
-    /**
-     * Generates a duplicate invoice PDF using a caller-provided XSL template.
-     *
-     * The {@code templatePath} must be a classpath resource path, e.g. {@code templates/fa3/ksef_invoice.xsl}.
-     *
-     * @param invoiceXml The source XML representing the e-invoice.
-     * @param params invoice generation parameters
-     * @param templatePath classpath path to XSL template to be used
-     * @param duplicateDate The date when the duplicate invoice was issued.
-     * @param out The OutputStream where the generated PDF will be written.
-     * @throws IOException If an I/O error occurs during the generation process.
-     * @throws TransformerException If an error occurs during the XSLT transformation.
-     * @throws FOPException If an error occurs during the PDF rendering process.
-     */
-    @SuppressWarnings("unused")
-    public void generateDuplicateInvoice(byte[] invoiceXml,
-                                         InvoiceGenerationParams params,
-                                         @NotNull String templatePath,
-                                         LocalDate duplicateDate,
-                                         OutputStream out) throws IOException, TransformerException, FOPException {
-        generatePdfInvoice(invoiceXml, params, null, duplicateDate, templatePath, out);
+        generatePdfInvoice(invoiceXml, params, null, duplicateDate, out);
     }
 
     /**
@@ -222,7 +164,6 @@ public class PdfGenerator {
                                     InvoiceGenerationParams params,
                                     @Nullable List<QrCodeData> qrCodes,
                                     @Nullable LocalDate duplicateDate,
-                                    @Nullable String xslTemplatePathOverride,
                                     OutputStream out)
             throws FOPException, IOException, TransformerException {
 
@@ -232,7 +173,7 @@ public class PdfGenerator {
 
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClasspathUriResolver());
-        String xslPath = (xslTemplatePathOverride != null) ? xslTemplatePathOverride : resolveXslTemplate(params);
+        String xslPath = resolveTemplatePath(params);
 
         URL xslUrl = getResourceUrl(xslPath);
         try (InputStream xsl = loadResource(xslPath)) {
@@ -243,6 +184,14 @@ public class PdfGenerator {
             Result result = new SAXResult(fop.getDefaultHandler());
             transformer.transform(xmlSource, result);
         }
+    }
+
+    private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {
+        String templatePath = params.getTemplatePath();
+
+        return (templatePath != null && !templatePath.isEmpty())
+                ? templatePath
+                : resolveXslTemplate(params);
     }
 
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {

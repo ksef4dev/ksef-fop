@@ -42,6 +42,16 @@ public class InvoiceGenerationParams {
     @Nullable
     private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
 
+    /**
+     * Optional classpath-relative path to a custom XSLT invoice template.
+     * <p>
+     * Security note: This value must reference a trusted stylesheet available on the application's classpath.
+     * The library does not validate where this path comes from; callers are responsible for ensuring that
+     * untrusted users cannot control this value or the underlying XSLT content.
+     */
+    @Nullable
+    private String templatePath;
+
     @Builder.Default
     private Language language = Language.PL;
 }
