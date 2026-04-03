@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
@@ -51,6 +53,9 @@ public class InvoiceGenerationParams {
      */
     @Nullable
     private String templatePath;
+
+    @Builder.Default
+    private Map<String, Object> customProperties = new HashMap<>();
 
     @Builder.Default
     private Language language = Language.PL;
