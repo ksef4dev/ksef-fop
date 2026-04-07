@@ -153,7 +153,7 @@ class TranslationServiceTest {
         String key3 = translationService.getTranslation("en", "seller");
         
         assertEquals("Invoice Number", key1);
-        assertEquals("Date of issue", key2);
+        assertEquals("Issue date", key2);
         assertEquals("Seller", key3);
     }
 

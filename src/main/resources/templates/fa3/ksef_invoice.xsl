@@ -863,6 +863,11 @@
                             </fo:table-row>
                         </fo:table-body>
                     </fo:table>
+                    <xsl:if test="crd:Fa/crd:P_1">
+                        <fo:block font-size="7pt" text-align="left" space-before="2mm">
+                            <xsl:value-of select="key('kLabels', 'issueDate.footnote', $labels)"/>
+                        </fo:block>
+                    </xsl:if>
 
                     <!-- Numery wcześniejszych faktur zaliczkowych -->
                     <xsl:if test="count(crd:Fa/crd:FakturaZaliczkowa/crd:NrKSeFFaZaliczkowej) > 0 or count(crd:Fa/crd:FakturaZaliczkowa/crd:NrFaZaliczkowej) > 0">

@@ -31,7 +31,8 @@ NIP: 1111111111
 Obserwator
 NIP: 1212121212
 Szczegóły
-Data wystawienia: 2026-02-01
+Data wystawienia¹: 2026-02-01
+¹ z zastrzeżeniem art. 106na ust. 1 ustawy
 Faktura wystawiona w cenach netto w walucie PLN
 Pozycje
 Lp. Nazwa towaru lub usługi Ilość Jedn. Cena jedn.
