@@ -14,7 +14,7 @@ ul. Miętowa 2, 00-002 Warszawa
 POLSKA
 Dodatkowy nabywca
 Rola: Dodatkowy nabywca - w przypadku gdy na fakturze występują dane
-kolejnych (innych niż wymieniony w części Podmiot2) nabywców
+kolejnych nabywców, innych niż główny nabywca w części „Dane nabywcy”
 NIP: 3333333333
 Nazwa: Dodatkowy nabywca Sp. z o.o.
 Adres
