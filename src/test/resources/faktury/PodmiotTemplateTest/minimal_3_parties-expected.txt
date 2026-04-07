@@ -10,9 +10,10 @@ POLSKA
 NIP: 2222222222
 Dodatkowy nabywca1
 NIP: 3333333333
-Dodatkowy nabywca
+Dodatkowy nabywca1
 Brak identyfikatora
 Nazwa: Dodatkowy nabywca bez identyfikatora
+1 Dodatkowy nabywca - w przypadku gdy na fakturze występują dane kolejnych nabywców, innych niż główny nabywca w części „Dane nabywcy”
 Szczegóły
 Data wystawienia¹: 2026-02-01
 ¹ z zastrzeżeniem art. 106na ust. 1 ustawy
