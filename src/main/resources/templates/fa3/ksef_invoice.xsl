@@ -7,20 +7,17 @@
                 xmlns:local="urn:local">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
-    <!-- Załadowanie schematu XSD jako dokument XML -->
+    <!-- Załadowanie schematu XSD jako dokument XML (nazwy krajów w adresach — KodKraju) -->
     <xsl:variable name="kodyKrajowXSD" select="document('http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/KodyKrajow_v10-0E.xsd')"/>
 
     <!-- Import common functions -->
     <xsl:import href="common-functions.xsl"/>
 
-    <!-- Szablon do mapowania kodu kraju na nazwę -->
+    <!-- Mapowanie kodu ISO na nazwę z XSD (dla crd:KodKraju w adresie; nie używać dla PrefiksPodatnika) -->
     <xsl:template name="mapKodKrajuToNazwa">
         <xsl:param name="kodKraju"/>
 
-        <!-- Szukanie elementu enumeration z odpowiednim value -->
         <xsl:variable name="enumeration" select="$kodyKrajowXSD//xsd:enumeration[@value=$kodKraju]"/>
-
-        <!-- Pobieranie tekstu z elementu documentation -->
         <xsl:variable name="nazwaKraju" select="$enumeration/xsd:annotation/xsd:documentation/text()"/>
 
         <xsl:choose>
@@ -28,7 +25,7 @@
                 <xsl:value-of select="$nazwaKraju"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="$kodKraju"/> <!-- Zwraca kod, jeśli nie znaleziono mapowania -->
+                <xsl:value-of select="$kodKraju"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -371,9 +368,7 @@
                                             <xsl:if test="crd:Fa/crd:Podmiot1K/crd:PrefiksPodatnika">
                                                 <fo:block text-align="left" padding-bottom="3px">
                                                     <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'vatUe.prefix', $labels)"/>: </fo:inline>
-                                                    <xsl:call-template name="mapKodKrajuToNazwa">
-                                                        <xsl:with-param name="kodKraju" select="crd:Fa/crd:Podmiot1K/crd:PrefiksPodatnika"/>
-                                                    </xsl:call-template>
+                                                    <xsl:value-of select="crd:Fa/crd:Podmiot1K/crd:PrefiksPodatnika"/>
                                                 </fo:block>
                                             </xsl:if>
                                             <fo:block text-align="left" padding-bottom="3px" font-size="7pt">
@@ -406,9 +401,7 @@
                                             <xsl:if test="crd:Podmiot1/crd:PrefiksPodatnika">
                                                 <fo:block text-align="left" padding-bottom="3px">
                                                     <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'vatUe.prefix', $labels)"/>: </fo:inline>
-                                                    <xsl:call-template name="mapKodKrajuToNazwa">
-                                                        <xsl:with-param name="kodKraju" select="crd:Podmiot1/crd:PrefiksPodatnika"/>
-                                                    </xsl:call-template>
+                                                    <xsl:value-of select="crd:Podmiot1/crd:PrefiksPodatnika"/>
                                                 </fo:block>
                                             </xsl:if>
                                             <fo:block text-align="left" padding-bottom="3px" font-size="7pt">
@@ -2448,9 +2441,7 @@
                         <fo:table-cell>
                             <fo:block text-align="left" padding-bottom="3px">
                                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'vatUe.prefix', $labels)"/>: </fo:inline>
-                                <xsl:call-template name="mapKodKrajuToNazwa">
-                                    <xsl:with-param name="kodKraju" select="crd:PrefiksPodatnika"/>
-                                </xsl:call-template>
+                                <xsl:value-of select="crd:PrefiksPodatnika"/>
                             </fo:block>
                         </fo:table-cell>
                     </fo:table-row>
