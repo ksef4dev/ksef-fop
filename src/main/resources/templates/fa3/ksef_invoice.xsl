@@ -2603,9 +2603,9 @@
 
     <xsl:template match="crd:Podmiot3">
         <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
-        <!-- If crd:Rola exists and is different than '5' (issuer), display the role label as section header -->
+        <!-- If crd:Rola exists and is different than '5' (issuer), display the role label as section header and XSD role description -->
         <xsl:if test="crd:Rola != '5'">
-            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
+            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="4px" padding-top="5mm">
                 <xsl:if test="crd:Rola = '1'">
                     <xsl:value-of select="key('kLabels', 'role.factor', $labels)"/>
                 </xsl:if>
@@ -2637,6 +2637,25 @@
                     <xsl:value-of select="key('kLabels', 'role.employee', $labels)"/>
                 </xsl:if>
             </fo:block>
+            <xsl:variable name="roleDescription" select="
+                if (crd:Rola = '1') then string(key('kLabels', 'role.factor.description', $labels))
+                else if (crd:Rola = '2') then string(key('kLabels', 'role.recipient.description', $labels))
+                else if (crd:Rola = '3') then string(key('kLabels', 'role.originalEntity.description', $labels))
+                else if (crd:Rola = '4') then string(key('kLabels', 'role.additionalBuyer.description', $labels))
+                else if (crd:Rola = '6') then string(key('kLabels', 'role.payer.description', $labels))
+                else if (crd:Rola = '7') then string(key('kLabels', 'role.localGovIssuer.description', $labels))
+                else if (crd:Rola = '8') then string(key('kLabels', 'role.localGovRecipient.description', $labels))
+                else if (crd:Rola = '9') then string(key('kLabels', 'role.vatGroupIssuer.description', $labels))
+                else if (crd:Rola = '10') then string(key('kLabels', 'role.vatGroupRecipient.description', $labels))
+                else if (crd:Rola = '11') then string(key('kLabels', 'role.employee.description', $labels))
+                else ''"/>
+            <xsl:if test="normalize-space($roleDescription) != ''">
+                <fo:block font-size="7pt" text-align="left" padding-bottom="8px">
+                    <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'role.descriptionLabel', $labels)"/></fo:inline>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$roleDescription"/>
+                </fo:block>
+            </xsl:if>
         </xsl:if>
         <!-- Otherwise, use the description from crd:OpisRoli -->
         <xsl:if test="crd:RolaInna">

@@ -60,6 +60,91 @@
         <Udzial>50</Udzial>
         <NrKlienta>nrklienta12345</NrKlienta>
     </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>1</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>2222222222</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>2</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>3333333333</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>3</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>4444444444</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>4</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>5555555555</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>5</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>6666666666</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>6</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>7777777777</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>7</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>8888888888</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>8</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>9999999999</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>9</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1010101010</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>10</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+        </DaneIdentyfikacyjne>
+        <Rola>11</Rola>
+    </Podmiot3>
+
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1212121212</NIP>
+        </DaneIdentyfikacyjne>
+        <RolaInna>1</RolaInna>
+        <OpisRoli>Obserwator</OpisRoli>
+    </Podmiot3>
     <Fa>
         <KodWaluty>PLN</KodWaluty>
         <P_1>2025-11-13</P_1>

@@ -9,14 +9,27 @@ ul. Przykładowa 1, 00-001 Warszawa
 POLSKA
 NIP: 5555555555 NIP: 2222222222
 Faktor
+Rola: Faktor - w przypadku gdy na fakturze występują dane faktora
 NIP: 1111111111
 Odbiorca
+Rola: Odbiorca - w przypadku gdy na fakturze występują dane jednostek
+wewnętrznych, oddziałów, wyodrębnionych w ramach nabywcy, które same nie
+stanowią nabywcy w rozumieniu ustawy
 NIP: 2222222222
 Podmiot pierwotny
+Rola: Podmiot pierwotny - w przypadku gdy na fakturze występują dane podmiotu
+będącego w stosunku do podatnika podmiotem przejętym lub przekształconym,
+który dokonywał dostawy lub świadczył usługę. Z wyłączeniem przypadków, o
+których mowa w art. 106j ust.2 pkt 3 ustawy, gdy dane te wykazywane są w części
+Podmiot1K
 NIP: 3333333333
 Dodatkowy nabywca
+Rola: Dodatkowy nabywca - w przypadku gdy na fakturze występują dane
+kolejnych (innych niż wymieniony w części Podmiot2) nabywców
 NIP: 4444444444
 Płatnik
+Rola: Dokonujący płatności - w przypadku gdy na fakturze występują dane
+podmiotu regulującego zobowiązanie w miejsce nabywcy
 NIP: 6666666666
 Wystawca (JST)
 NIP: 7777777777

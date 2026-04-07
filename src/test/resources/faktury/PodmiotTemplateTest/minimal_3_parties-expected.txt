@@ -9,6 +9,8 @@ ul. Przykładowa 1, 00-001 Warszawa
 POLSKA
 NIP: 2222222222
 Dodatkowy nabywca
+Rola: Dodatkowy nabywca - w przypadku gdy na fakturze występują dane
+kolejnych (innych niż wymieniony w części Podmiot2) nabywców
 NIP: 3333333333
 Dodatkowy nabywca
 Brak identyfikatora

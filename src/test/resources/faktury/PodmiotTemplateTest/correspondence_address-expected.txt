@@ -19,6 +19,8 @@ Adres korespondencyjny
 ul. Korespondencyjna 22, 00-102 Warszawa
 POLSKA
 Dodatkowy nabywca
+Rola: Dodatkowy nabywca - w przypadku gdy na fakturze występują dane
+kolejnych (innych niż wymieniony w części Podmiot2) nabywców
 NIP: 3333333333
 Nazwa: Dodatkowy nabywca Sp. z o.o.
 Adres
