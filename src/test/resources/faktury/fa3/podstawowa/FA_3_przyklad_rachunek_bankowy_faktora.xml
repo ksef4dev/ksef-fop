@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura
+        xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2026-03-12T16:22:03.885268</DataWytworzeniaFa>
+        <SystemInfo>Symfonia KSeF Plus</SystemInfo>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>test</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>test</AdresL1>
+        </Adres>
+        <DaneKontaktowe/>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>test</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Test-Wilcza 1 Nowy Sącz 33-300 Nowy Sącz</AdresL1>
+        </Adres>
+        <DaneKontaktowe>
+            <Email>test@test.pl</Email>
+        </DaneKontaktowe>
+        <JST>2</JST>
+        <GV>2</GV>
+    </Podmiot2>
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>TEST FACTOR POLSKA S.A.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Test-Wilcza 1 Nowy Sącz 33-300 Nowy Sącz</AdresL1>
+        </Adres>
+        <DaneKontaktowe/>
+        <Rola>1</Rola>
+    </Podmiot3>
+    <Fa>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1>2026-02-11</P_1>
+        <P_2>5t4343trgfds</P_2>
+        <P_13_1>777</P_13_1>
+        <P_14_1>178.71</P_14_1>
+        <P_15>955.71</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>VAT</RodzajFaktury>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_6A>2026-02-11</P_6A>
+            <P_7>test1</P_7>
+            <Indeks>55</Indeks>
+            <P_8A>szt</P_8A>
+            <P_8B>1</P_8B>
+            <P_9A>222</P_9A>
+            <P_11>222</P_11>
+            <P_12>23</P_12>
+        </FaWiersz>
+        <FaWiersz>
+            <NrWierszaFa>2</NrWierszaFa>
+            <P_6A>2026-02-15</P_6A>
+            <P_7>tesat2</P_7>
+            <Indeks>55</Indeks>
+            <P_8A>szt</P_8A>
+            <P_8B>1</P_8B>
+            <P_9A>555</P_9A>
+            <P_11>555</P_11>
+            <P_12>23</P_12>
+        </FaWiersz>
+        <Platnosc>
+            <TerminPlatnosci>
+                <Termin>2026-04-26</Termin>
+            </TerminPlatnosci>
+            <FormaPlatnosci>6</FormaPlatnosci>
+            <RachunekBankowyFaktora>
+                <NrRB>62101000000000001234567890</NrRB>
+                <SWIFT>AGRIPLPR</SWIFT>
+                <NazwaBanku>TEST Bank Polska S.A.</NazwaBanku>
+                <OpisRachunku>EUR</OpisRachunku>
+            </RachunekBankowyFaktora>
+            <RachunekBankowyFaktora>
+                <NrRB>27102010260000098765432101</NrRB>
+                <SWIFT>AGRIPLPR</SWIFT>
+                <NazwaBanku>TEST Bank Polska S.A.</NazwaBanku>
+                <OpisRachunku>PLN</OpisRachunku>
+            </RachunekBankowyFaktora>
+        </Platnosc>
+    </Fa>
+</Faktura>

@@ -1,0 +1,9 @@
+<fo:block id="Rozliczenie" font-size="7pt" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+  <fo:block font-size="12pt" text-align="left" space-after="2mm">
+    <fo:inline font-weight="bold">Dodatkowe rozliczenia na fakturze</fo:inline>
+  </fo:block>
+  <fo:block font-size="8pt" text-align="right" space-after="1mm" font-weight="bold">
+    Kwota do zapłaty: 1 000,00 AED
+  </fo:block>
+</fo:block>

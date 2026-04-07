@@ -21,5 +21,5 @@ podatku
 Wartość
 sprzedaży
 netto
-1 Towar 4 001,49 szt. 1 23% 4 001,49
+1 Towar 4 001,49 szt. 1,00 23% 4 001,49
 Kwota należności ogółem: 4 001,49 PLN
