@@ -4,7 +4,8 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
                 xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/"
-                xmlns:local="urn:local">
+                xmlns:local="urn:local"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <!-- Autor: Karol Bryzgiel (karol.bryzgiel@soft-project.pl) -->
 
     <!-- Załadowanie schematu XSD jako dokument XML (nazwy krajów w adresach — KodKraju) -->
@@ -740,6 +741,27 @@
                                 </xsl:for-each-group>
                             </fo:table-body>
                         </fo:table>
+                        <xsl:variable name="otherPartyRolesWithDescriptionSorted" as="xs:string*">
+                            <xsl:call-template name="rolesWithDescriptionInDocOrder">
+                                <xsl:with-param name="invoiceRoot" select="."/>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        <xsl:if test="exists($otherPartyRolesWithDescriptionSorted)">
+                            <fo:block space-before="2mm">
+                                <xsl:for-each select="$otherPartyRolesWithDescriptionSorted">
+                                    <xsl:variable name="descKey">
+                                        <xsl:call-template name="roleDescriptionPropertyKey">
+                                            <xsl:with-param name="rola" select="."/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <fo:block font-size="7pt" text-align="left" line-height="1.15">
+                                        <fo:inline font-size="5pt" vertical-align="super"><xsl:value-of select="position()"/></fo:inline>
+                                        <xsl:text> </xsl:text>
+                                        <xsl:value-of select="string(key('kLabels', string($descKey), $labels))"/>
+                                    </fo:block>
+                                </xsl:for-each>
+                            </fo:block>
+                        </xsl:if>
                     </xsl:if>
 
                     <!-- Podmiot upoważniony -->
@@ -2601,42 +2623,94 @@
         </fo:table>
     </xsl:template>
 
+    <!-- Unikalne Rola z niepustym opisem w i18n — kolejność jak pierwsze wystąpienie Podmiot3 w XML (zgodna ze stopkami pod tabelą) -->
+    <xsl:template name="rolesWithDescriptionInDocOrder" as="xs:string*">
+        <xsl:param name="invoiceRoot" as="element()"/>
+        <xsl:call-template name="uniqRolesWithDescDocOrder">
+            <xsl:with-param name="pods" select="$invoiceRoot/crd:Podmiot3"/>
+            <xsl:with-param name="acc" select="()"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <xsl:template name="uniqRolesWithDescDocOrder" as="xs:string*">
+        <xsl:param name="pods" as="element()*"/>
+        <xsl:param name="acc" as="xs:string*"/>
+        <xsl:choose>
+            <xsl:when test="empty($pods)">
+                <xsl:sequence select="$acc"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="r" select="string($pods[1]/crd:Rola)"/>
+                <xsl:variable name="eligible" select="normalize-space($r) != '' and $r != '5'"/>
+                <xsl:variable name="descKey">
+                    <xsl:if test="$eligible">
+                        <xsl:call-template name="roleDescriptionPropertyKey">
+                            <xsl:with-param name="rola" select="$r"/>
+                        </xsl:call-template>
+                    </xsl:if>
+                </xsl:variable>
+                <xsl:variable name="hasDesc" select="
+                    $eligible
+                    and normalize-space($descKey) != ''
+                    and normalize-space(string(key('kLabels', string($descKey), $labels))) != ''"/>
+                <xsl:variable name="newAcc" select="if ($hasDesc and not($r = $acc)) then ($acc, $r) else $acc"/>
+                <xsl:call-template name="uniqRolesWithDescDocOrder">
+                    <xsl:with-param name="pods" select="$pods[position() gt 1]"/>
+                    <xsl:with-param name="acc" select="$newAcc"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- Klucz i18n dla opisu roli Podmiot3 (TRolaPodmiotu3) -->
+    <xsl:template name="roleDescriptionPropertyKey">
+        <xsl:param name="rola" as="xs:string"/>
+        <xsl:choose>
+            <xsl:when test="$rola = '1'">role.factor.description</xsl:when>
+            <xsl:when test="$rola = '2'">role.recipient.description</xsl:when>
+            <xsl:when test="$rola = '3'">role.originalEntity.description</xsl:when>
+            <xsl:when test="$rola = '4'">role.additionalBuyer.description</xsl:when>
+            <xsl:when test="$rola = '6'">role.payer.description</xsl:when>
+            <xsl:when test="$rola = '7'">role.localGovIssuer.description</xsl:when>
+            <xsl:when test="$rola = '8'">role.localGovRecipient.description</xsl:when>
+            <xsl:when test="$rola = '9'">role.vatGroupIssuer.description</xsl:when>
+            <xsl:when test="$rola = '10'">role.vatGroupRecipient.description</xsl:when>
+            <xsl:when test="$rola = '11'">role.employee.description</xsl:when>
+            <xsl:otherwise/>
+        </xsl:choose>
+    </xsl:template>
+
     <xsl:template match="crd:Podmiot3">
         <xsl:variable name="id" select="crd:DaneIdentyfikacyjne"/>
-        <!-- If crd:Rola exists and is different than '5' (issuer), display the role label as section header -->
+        <xsl:variable name="invoiceRoot" select="ancestor::crd:Faktura[1]"/>
+        <xsl:variable name="rolesWithDescriptionInDocOrder" as="xs:string*">
+            <xsl:call-template name="rolesWithDescriptionInDocOrder">
+                <xsl:with-param name="invoiceRoot" select="$invoiceRoot"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="roleFn" select="if (crd:Rola) then index-of($rolesWithDescriptionInDocOrder, string(crd:Rola))[1] else ()"/>
+        <!-- Nagłówek roli z numerem przypisu; opisy zbiorczo pod tabelą Podmiot3 -->
         <xsl:if test="crd:Rola != '5'">
-            <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="8px" padding-top="5mm">
-                <xsl:if test="crd:Rola = '1'">
-                    <xsl:value-of select="key('kLabels', 'role.factor', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '2'">
-                    <xsl:value-of select="key('kLabels', 'role.recipient', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '3'">
-                    <xsl:value-of select="key('kLabels', 'role.originalEntity', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '4'">
-                    <xsl:value-of select="key('kLabels', 'role.additionalBuyer', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '6'">
-                    <xsl:value-of select="key('kLabels', 'role.payer', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '7'">
-                    <xsl:value-of select="key('kLabels', 'role.localGovIssuer', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '8'">
-                    <xsl:value-of select="key('kLabels', 'role.localGovRecipient', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '9'">
-                    <xsl:value-of select="key('kLabels', 'role.vatGroupIssuer', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '10'">
-                    <xsl:value-of select="key('kLabels', 'role.vatGroupRecipient', $labels)"/>
-                </xsl:if>
-                <xsl:if test="crd:Rola = '11'">
-                    <xsl:value-of select="key('kLabels', 'role.employee', $labels)"/>
-                </xsl:if>
-            </fo:block>
+            <xsl:variable name="roleTitleKey" select="
+                if (crd:Rola = '1') then 'role.factor'
+                else if (crd:Rola = '2') then 'role.recipient'
+                else if (crd:Rola = '3') then 'role.originalEntity'
+                else if (crd:Rola = '4') then 'role.additionalBuyer'
+                else if (crd:Rola = '6') then 'role.payer'
+                else if (crd:Rola = '7') then 'role.localGovIssuer'
+                else if (crd:Rola = '8') then 'role.localGovRecipient'
+                else if (crd:Rola = '9') then 'role.vatGroupIssuer'
+                else if (crd:Rola = '10') then 'role.vatGroupRecipient'
+                else if (crd:Rola = '11') then 'role.employee'
+                else ''"/>
+            <xsl:if test="normalize-space($roleTitleKey) != ''">
+                <fo:block font-weight="bold" font-size="12pt" text-align="left" padding-bottom="4px" padding-top="5mm">
+                    <xsl:value-of select="key('kLabels', $roleTitleKey, $labels)"/>
+                    <xsl:if test="exists($roleFn)">
+                        <fo:inline font-size="5pt" vertical-align="super"><xsl:value-of select="$roleFn"/></fo:inline>
+                    </xsl:if>
+                </fo:block>
+            </xsl:if>
         </xsl:if>
         <!-- Otherwise, use the description from crd:OpisRoli -->
         <xsl:if test="crd:RolaInna">
