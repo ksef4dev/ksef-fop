@@ -15,8 +15,8 @@ Adres
 ul. Autoryzacyjna 3, 00-003 Warszawa
 POLSKA
 Szczegóły
-Data wystawienia, z zastrzeżeniem art. 106na ust. 1 ustawy:
-2026-02-01
+Data wystawienia¹: 2026-02-01
+¹ z zastrzeżeniem art. 106na ust. 1 ustawy
 Faktura wystawiona w cenach netto w walucie PLN
 Pozycje
 Lp. Nazwa towaru lub usługi Ilość Jedn. Cena jedn.
