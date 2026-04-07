@@ -34,6 +34,14 @@
         <Rola>4</Rola>
     </Podmiot3>
 
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <BrakID>1</BrakID>
+            <Nazwa>Dodatkowy nabywca bez identyfikatora</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Rola>4</Rola>
+    </Podmiot3>
+
     <Fa>
         <KodWaluty>PLN</KodWaluty>
         <P_1>2026-02-01</P_1>

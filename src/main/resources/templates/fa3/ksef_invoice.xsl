@@ -2667,6 +2667,11 @@
                 <xsl:value-of select="crd:DaneIdentyfikacyjne/crd:IDWew"/>
             </xsl:if>
         </fo:block>
+        <xsl:if test="$id/crd:BrakID = '1'">
+            <fo:block text-align="left" padding-bottom="3px">
+                <xsl:value-of select="key('kLabels', 'podmiot3.brakIdentyfikatora', $labels)"/>
+            </fo:block>
+        </xsl:if>
         <xsl:if test="$id/crd:Nazwa">
             <fo:block text-align="left" padding-bottom="3px">
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'name', $labels)"/>: </fo:inline>

@@ -10,6 +10,9 @@ POLSKA
 NIP: 2222222222
 Dodatkowy nabywca
 NIP: 3333333333
+Dodatkowy nabywca
+Brak identyfikatora
+Nazwa: Dodatkowy nabywca bez identyfikatora
 Szczegóły
 Data wystawienia¹: 2026-02-01
 ¹ z zastrzeżeniem art. 106na ust. 1 ustawy
