@@ -12,14 +12,13 @@ Nazwa: Nabywca Sp. z o.o.
 Adres
 ul. Miętowa 2, 00-002 Warszawa
 POLSKA
-Dodatkowy nabywca
-Rola: Dodatkowy nabywca - w przypadku gdy na fakturze występują dane
-kolejnych nabywców, innych niż główny nabywca w części „Dane nabywcy”
+Dodatkowy nabywca1
 NIP: 3333333333
 Nazwa: Dodatkowy nabywca Sp. z o.o.
 Adres
 ul. Wiejska 3, 00-003 Warszawa
 POLSKA
+1 Dodatkowy nabywca - w przypadku gdy na fakturze występują dane kolejnych nabywców, innych niż główny nabywca w części „Dane nabywcy”
 Szczegóły
 Data wystawienia¹: 2026-02-01
 ¹ z zastrzeżeniem art. 106na ust. 1 ustawy
