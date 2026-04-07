@@ -1,19 +1,35 @@
 Numer faktury
 FV/1/02/2026
 Faktura podstawowa
-Sprzedawca Nabywca
+Sprzedawca Wystawca Nabywca
 NIP: 1111111111
 Nazwa: Sprzedawca Sp. z o.o.
 Adres
 ul. Przykładowa 1, 00-001 Warszawa
 POLSKA
+NIP: 5555555555 NIP: 2222222222
+Faktor
+NIP: 1111111111
+Odbiorca
 NIP: 2222222222
-Komornik sądowy
+Podmiot pierwotny
 NIP: 3333333333
-Nazwa: Upoważniona Sp. k.
-Adres
-ul. Autoryzacyjna 3, 00-003 Warszawa
-POLSKA
+Dodatkowy nabywca
+NIP: 4444444444
+Płatnik
+NIP: 6666666666
+Wystawca (JST)
+NIP: 7777777777
+Odbiorca (JST)
+NIP: 8888888888
+Wystawca (członek grupy VAT)
+NIP: 9999999999
+Odbiorca (członek grupy VAT)
+NIP: 1010101010
+Pracownik
+NIP: 1111111111
+Obserwator
+NIP: 1212121212
 Szczegóły
 Data wystawienia: 2026-02-01
 Faktura wystawiona w cenach netto w walucie PLN
