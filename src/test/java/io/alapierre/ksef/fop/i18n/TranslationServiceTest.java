@@ -142,7 +142,7 @@ class TranslationServiceTest {
         String key3 = translationService.getTranslation("pl", "seller");
         
         assertEquals("Numer faktury", key1);
-        assertEquals("Data wystawienia", key2);
+        assertEquals("Data wystawienia, z zastrzeżeniem art. 106na ust. 1 ustawy", key2);
         assertEquals("Sprzedawca", key3);
     }
 
@@ -153,7 +153,7 @@ class TranslationServiceTest {
         String key3 = translationService.getTranslation("en", "seller");
         
         assertEquals("Invoice Number", key1);
-        assertEquals("Date of issue", key2);
+        assertEquals("Issue date, subject to Art. 106na(1) of the Act", key2);
         assertEquals("Seller", key3);
     }
 

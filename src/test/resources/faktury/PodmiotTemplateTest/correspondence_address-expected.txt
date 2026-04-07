@@ -28,7 +28,8 @@ Adres korespondencyjny
 ul. Alternatywna 33, 00-203 Warszawa
 POLSKA
 Szczegóły
-Data wystawienia: 2026-02-01
+Data wystawienia, z zastrzeżeniem art. 106na ust. 1 ustawy:
+2026-02-01
 Faktura wystawiona w cenach netto w walucie PLN
 Pozycje
 Lp. Nazwa towaru lub usługi Ilość Jedn. Cena jedn.
