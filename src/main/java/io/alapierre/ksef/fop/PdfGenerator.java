@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -248,6 +249,11 @@ public class PdfGenerator {
         setParam(transformer, "useExtendedDecimalPlaces", invoicePdfConfig.isUseExtendedPriceDecimalPlaces());
         setParam(transformer, "issuerUser", params.getIssuerUser());
         setParam(transformer, "showCorrectionDifferences", params.isShowCorrectionDifferences());
+
+        Map<String, Object> customProperties = params.getCustomProperties();
+        if (customProperties != null) {
+            customProperties.forEach((key, value) -> setParam(transformer, key, value));
+        }
     }
 
     private void setQrParameters(@Nullable List<QrCodeData> qrCodes, @NotNull Transformer transformer) {

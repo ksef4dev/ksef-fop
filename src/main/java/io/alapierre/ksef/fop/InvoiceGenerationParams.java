@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
@@ -51,6 +53,16 @@ public class InvoiceGenerationParams {
      */
     @Nullable
     private String templatePath;
+
+    /**
+     * Optional template-specific XSLT parameters forwarded to the transformer.
+     * <p>
+     * Security note: Values in this map are passed directly as XSLT parameters.
+     * The library does not validate parameter names or values; callers are responsible for ensuring that
+     * untrusted users cannot control this map when rendering trusted templates.
+     */
+    @Builder.Default
+    private Map<String, Object> customProperties = new HashMap<>();
 
     @Builder.Default
     private Language language = Language.PL;

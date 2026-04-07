@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,6 +40,7 @@ class CustomTemplateOverrideTest {
                         .schema(InvoiceSchema.FA3_1_0_E)
                         .ksefNumber("TEST-KSEF-NUMBER")
                         .templatePath("templates/custom/custom_invoice.xsl")
+                        .customProperties(Collections.singletonMap("customPropertyDemo", "HELLO-CUSTOM-PROPERTY"))
                         .build();
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -47,6 +49,7 @@ class CustomTemplateOverrideTest {
                 String text = extractTextFromPdf(out.toByteArray());
                 assertTrue(text.contains("CUSTOM_TEMPLATE_MARKER"), "Expected marker from custom template in PDF text");
                 assertTrue(text.contains("nrKsef=TEST-KSEF-NUMBER"), "Expected nrKsef parameter rendered by custom template");
+                assertTrue(text.contains("customPropertyDemo=HELLO-CUSTOM-PROPERTY"), "Expected custom property rendered by custom template");
             }
         }
     }

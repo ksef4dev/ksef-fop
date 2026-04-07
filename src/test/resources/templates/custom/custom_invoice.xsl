@@ -13,6 +13,7 @@
     <xsl:param name="duplicateDate"/>
     <xsl:param name="currencyDate"/>
     <xsl:param name="qrCodesCount"/>
+    <xsl:param name="customPropertyDemo"/>
 
     <xsl:template match="/">
         <fo:root>
@@ -33,6 +34,10 @@
                     <fo:block font-size="10pt" font-family="Helvetica">
                         <xsl:text>nrKsef=</xsl:text>
                         <xsl:value-of select="$nrKsef"/>
+                    </fo:block>
+                    <fo:block font-size="10pt" font-family="Helvetica">
+                        <xsl:text>customPropertyDemo=</xsl:text>
+                        <xsl:value-of select="$customPropertyDemo"/>
                     </fo:block>
                 </fo:flow>
             </fo:page-sequence>
