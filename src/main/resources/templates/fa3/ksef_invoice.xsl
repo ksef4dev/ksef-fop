@@ -1917,7 +1917,11 @@
                         <xsl:if test="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis">
                             <fo:block font-size="7pt" text-align="left" space-after="1mm">
                                 <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentDescription', $labels)"/>: </fo:inline>
-                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis"/>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis/crd:Ilosc"/>
+                                <xsl:text> </xsl:text>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis/crd:Jednostka"/>
+                                <xsl:text> </xsl:text>
+                                <xsl:value-of select="crd:Fa/crd:Platnosc/crd:TerminPlatnosci/crd:TerminOpis/crd:ZdarzeniePoczatkowe"/>
                             </fo:block>
                         </xsl:if>
 
