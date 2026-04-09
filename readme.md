@@ -9,6 +9,7 @@
 * [Invoice PDF](#invoices)
 * [Examples](#examples)
 * [Custom templates](#custom-templates)
+* [Custom translations](#custom-translations)
 * [Custom properties](#custom-properties)
 * [FOP Schema](#fop-schema)
 * [References](#references)
@@ -127,6 +128,86 @@ template is resolved automatically from the schema.
 
 > **Security note:** `templatePath` is used as-is to load a classpath resource. Make sure
 > untrusted users cannot control this value or the underlying XSL content.
+
+## Custom translations
+
+The library ships with built-in Polish and English translations for all PDF labels
+(invoice headers, column names, annotations, QR code captions, etc.).
+You can **override any subset** of these labels - only the keys you provide will be
+replaced; everything else falls back to the built-in defaults.
+
+### 1. Create your properties files
+
+Place them on the classpath using the standard Java `ResourceBundle` naming convention.
+Pick any base name you like, for example `i18n/custom_messages`:
+
+```
+src/main/resources/
+└── i18n/
+    ├── custom_messages.properties        ← default / Polish overrides
+    └── custom_messages_en.properties     ← English overrides (optional)
+```
+
+Each file should contain **only the keys you want to change**. For example, to rename
+the seller and buyer labels:
+
+`i18n/custom_messages.properties`:
+
+````properties
+seller=Dostawca
+buyer=Klient
+````
+
+`i18n/custom_messages_en.properties`:
+
+````properties
+seller=Vendor
+buyer=Client
+````
+
+You don't need to copy the entire default file - unlisted keys will keep their
+built-in values automatically.
+
+### 2. Create a TranslationService with your bundle base name
+
+Pass the classpath-relative base name (without the `.properties` extension and without
+the locale suffix) to the `TranslationService` constructor:
+
+````java
+TranslationService translationService = new TranslationService("i18n/custom_messages");
+````
+
+### 3. Pass the TranslationService to PdfGenerator
+
+````java
+TranslationService translationService = new TranslationService("i18n/custom_messages");
+PdfGenerator generator = new PdfGenerator("fop.xconf", translationService);
+````
+
+Or together with `InvoicePdfConfig`:
+
+````java
+TranslationService translationService = new TranslationService("i18n/custom_messages");
+PdfGenerator generator = new PdfGenerator("fop.xconf", invoicePdfConfig, translationService);
+````
+
+That's it - the generator will now use your values for the overridden keys and the
+library defaults for everything else, for both invoice and UPO PDFs.
+
+### How it works
+
+| Priority | Source | Description |
+|----------|--------|-------------|
+| 1 (highest) | Your `.properties` file | Only the keys you defined |
+| 2 (fallback) | Built-in `i18n/messages.properties` / `i18n/messages_en.properties` | All remaining keys |
+
+The resolution happens **per language**: if you provide `custom_messages_en.properties`,
+it only affects English output. Polish output will use `custom_messages.properties`
+(or fall back to the built-in Polish bundle if that file doesn't exist).
+
+> **Tip:** To see the full list of available translation keys, look at the built-in
+> `i18n/messages.properties` (Polish) and `i18n/messages_en.properties` (English)
+> inside the library JAR or in the source repository under `src/main/resources/i18n/`.
 
 ## Custom properties
 
