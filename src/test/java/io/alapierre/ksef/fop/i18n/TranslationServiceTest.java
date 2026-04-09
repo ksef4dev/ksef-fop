@@ -157,6 +157,119 @@ class TranslationServiceTest {
         assertEquals("Seller", key3);
     }
 
+    // --- Override tests ---
+
+    @Test
+    void getTranslation_withOverrides_shouldReturnOverriddenValue() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenKey() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_shouldReturnOverriddenValueForEnglish() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Overridden Seller", withOverrides.getTranslation("en", "seller"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenEnglishKey() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_shouldReturnCustomKey() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Własna wartość", withOverrides.getTranslation("pl", "custom.key"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_shouldReturnKeyWhenNotFoundAnywhere() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("nonexistent.key", withOverrides.getTranslation("pl", "nonexistent.key"));
+    }
+
+    @Test
+    void getTranslation_withNonExistentOverridePath_shouldFallbackToDefaults() {
+        TranslationService withOverrides = new TranslationService("i18n/no_such_bundle");
+        assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
+        assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+    }
+
+    @Test
+    void getTranslationsAsXml_withOverrides_shouldContainOverriddenValue() {
+        clearCaches();
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        Document doc = withOverrides.getTranslationsAsXml("pl");
+
+        String sellerValue = findEntryValue(doc, "seller");
+        assertEquals("Nadpisany Sprzedawca", sellerValue);
+    }
+
+    @Test
+    void getTranslationsAsXml_withOverrides_shouldKeepDefaultForNonOverriddenKey() {
+        clearCaches();
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        Document doc = withOverrides.getTranslationsAsXml("pl");
+
+        String invoiceNumber = findEntryValue(doc, "invoice.number");
+        assertEquals("Numer faktury", invoiceNumber);
+    }
+
+    @Test
+    void getTranslationsAsXml_withOverrides_shouldContainCustomKey() {
+        clearCaches();
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        Document doc = withOverrides.getTranslationsAsXml("pl");
+
+        String customValue = findEntryValue(doc, "custom.key");
+        assertEquals("Własna wartość", customValue);
+    }
+
+    @Test
+    void getTranslationsAsXml_withOverrides_shouldWorkForEnglish() {
+        clearCaches();
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        Document doc = withOverrides.getTranslationsAsXml("en");
+
+        assertEquals("Overridden Seller", findEntryValue(doc, "seller"));
+        assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
+        assertEquals("Custom value", findEntryValue(doc, "custom.key"));
+    }
+
+    @Test
+    void getTranslation_withOverrides_multipleOverriddenKeys() {
+        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
+        assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
+        assertEquals("Nadpisany Nabywca", withOverrides.getTranslation("pl", "buyer"));
+    }
+
+    @Test
+    void getTranslation_withNullOverridePath_shouldBehaveAsDefault() {
+        TranslationService withNull = new TranslationService(null);
+        assertEquals("Sprzedawca", withNull.getTranslation("pl", "seller"));
+        assertEquals("Seller", withNull.getTranslation("en", "seller"));
+    }
+
+    private String findEntryValue(Document doc, String key) {
+        NodeList entries = doc.getElementsByTagName("entry");
+        for (int i = 0; i < entries.getLength(); i++) {
+            Element entry = (Element) entries.item(i);
+            if (key.equals(entry.getAttribute("key"))) {
+                return entry.getTextContent();
+            }
+        }
+        return null;
+    }
+
+    // --- Cache helpers ---
+
     @SuppressWarnings("unchecked")
     private Map<String, ?> getDocumentCache() {
         try {

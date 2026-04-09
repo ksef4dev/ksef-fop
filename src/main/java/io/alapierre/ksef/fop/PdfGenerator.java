@@ -37,28 +37,41 @@ public class PdfGenerator {
 
     private static final String MIME_PDF = "application/pdf";
 
-    private InvoicePdfConfig invoicePdfConfig = new InvoicePdfConfig();
-    private final TranslationService translationService = new TranslationService();
-    private final QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
+    private final InvoicePdfConfig invoicePdfConfig;
+    private final TranslationService translationService;
+    private final QrCodeBuilder qrCodeBuilder;
     private final Configuration fopConfiguration;
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig));
-        this.invoicePdfConfig = invoicePdfConfig;
+        this(loadResource(fopConfig), invoicePdfConfig, new TranslationService());
     }
 
     public PdfGenerator(String fopConfig) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig));
+        this(loadResource(fopConfig), new InvoicePdfConfig(), new TranslationService());
     }
 
     public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig) throws ConfigurationException {
-        this(fopConfig);
-        this.invoicePdfConfig = invoicePdfConfig;
+        this(fopConfig, invoicePdfConfig, new TranslationService());
     }
 
     public PdfGenerator(InputStream fopConfig) throws ConfigurationException {
+        this(fopConfig, new InvoicePdfConfig(), new TranslationService());
+    }
+
+    public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig, TranslationService translationService) throws IOException, ConfigurationException {
+        this(loadResource(fopConfig), invoicePdfConfig, translationService);
+    }
+
+    public PdfGenerator(String fopConfig, TranslationService translationService) throws IOException, ConfigurationException {
+        this(loadResource(fopConfig), new InvoicePdfConfig(), translationService);
+    }
+
+    public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig, TranslationService translationService) throws ConfigurationException {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         this.fopConfiguration = cfgBuilder.build(fopConfig);
+        this.invoicePdfConfig = invoicePdfConfig;
+        this.translationService = translationService;
+        this.qrCodeBuilder = new QrCodeBuilder(translationService);
     }
 
     /**
