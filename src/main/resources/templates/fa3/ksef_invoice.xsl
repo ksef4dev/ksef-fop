@@ -1728,7 +1728,7 @@
                                         </xsl:if>
                                     </fo:table-row>
                                 </xsl:if>
-                                <xsl:if test="crd:Fa/crd:P_13_11 and crd:Fa/crd:P_13_11 > 0">
+                                <xsl:if test="crd:Fa/crd:P_13_11 and crd:Fa/crd:P_13_11 != 0">
                                     <fo:table-row>
                                         <fo:table-cell
                                                 xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
