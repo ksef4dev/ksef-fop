@@ -25,11 +25,19 @@
                        padding-right="4pt"
                        padding-top="4pt">
             <fo:block>Towar</fo:block>
-            <fo:block color="#555555" font-size="6pt">Indeks: 1234</fo:block>
             <fo:block color="#555555" font-size="6pt">GTIN: GTIN</fo:block>
             <fo:block color="#555555" font-size="6pt">PKWiU: PKWiU</fo:block>
             <fo:block color="#555555" font-size="6pt">CN: CN</fo:block>
             <fo:block color="#555555" font-size="6pt">PKOB: PKOB</fo:block>
+        </fo:table-cell>
+        <fo:table-cell border="solid 0.2mm black"
+                       font-size="7"
+                       padding-bottom="4pt"
+                       padding-left="4pt"
+                       padding-right="4pt"
+                       padding-top="4pt"
+                       text-align="right">
+            <fo:block>1234</fo:block>
         </fo:table-cell>
         <fo:table-cell border="solid 0.2mm black"
                        font-size="7"

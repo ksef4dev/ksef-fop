@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+<Naglowek>
+        <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+        <WariantFormularza>3</WariantFormularza>
+        <DataWytworzeniaFa>2026-02-14T01:45:58</DataWytworzeniaFa>
+        <SystemInfo>Fakturka</SystemInfo>
+</Naglowek>
+<Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>0000000001</NIP>
+            <Nazwa>Spzedawca S.A.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>il. Sprzedawców 1 00-001 Sprzedawczyki</AdresL1>
+        </Adres>
+</Podmiot1>
+<Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>0000000002</NIP>
+            <Nazwa>kupiec Sp. z o.o.</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>ul. Kupiecka 1 01-002 Warszawa</AdresL1>
+        </Adres>
+        <NrKlienta>131</NrKlienta>
+        <JST>2</JST>
+        <GV>2</GV>    
+</Podmiot2>
+<Fa>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1>2026-02-13</P_1>
+        <P_2>25000071/FU</P_2>
+        <P_6>2026-02-13</P_6>
+        <P_13_1>2000.00</P_13_1>
+        <P_14_1>460.00</P_14_1>
+        <P_15>2460.00</P_15>
+        <Adnotacje>
+            <P_16>2</P_16>
+            <P_17>2</P_17>
+            <P_18>2</P_18>
+            <P_18A>2</P_18A>
+            <Zwolnienie>
+                <P_19N>1</P_19N>
+            </Zwolnienie>
+            <NoweSrodkiTransportu>
+                <P_22N>1</P_22N>
+            </NoweSrodkiTransportu>
+            <P_23>2</P_23>
+            <PMarzy>
+                <P_PMarzyN>1</P_PMarzyN>
+            </PMarzy>
+        </Adnotacje>
+        <RodzajFaktury>VAT</RodzajFaktury>
+        <TP>1</TP>
+        <FaWiersz>
+            <NrWierszaFa>1</NrWierszaFa>
+            <P_7>test 01/26</P_7>
+            <Indeks>AAAA</Indeks>
+            <P_8A>SZ</P_8A>
+            <P_8B>1.000</P_8B>
+            <P_9A>2000.0000</P_9A>
+            <P_11>2000.00</P_11>
+            <P_12>23</P_12>
+			<GTIN>889919991999</GTIN>
+        </FaWiersz>
+    <Platnosc>
+        <TerminPlatnosci>
+            <Termin>2026-04-14</Termin>
+        </TerminPlatnosci>
+        <FormaPlatnosci>6</FormaPlatnosci>
+        <RachunekBankowy>
+        <NrRB>PL12231231414</NrRB>
+        <SWIFT>BPLPL</SWIFT>
+        <NazwaBanku>Bank Bardzo Polski S.A.</NazwaBanku>
+        </RachunekBankowy>
+     </Platnosc>
+    <WarunkiTransakcji>
+        <Zamowienia>
+            <DataZamowienia>2026-02-13</DataZamowienia>
+            <NrZamowienia>TP</NrZamowienia>
+        </Zamowienia>
+    </WarunkiTransakcji>
+</Fa>
+<Stopka>
+    <Informacje>
+        <StopkaFaktury>Kapiał zakładowy 100 PLN</StopkaFaktury>
+    </Informacje>
+    <Rejestry>
+        <KRS>01</KRS>
+        <REGON>02</REGON>
+        <BDO>03</BDO>
+    </Rejestry>
+</Stopka>
+</Faktura>

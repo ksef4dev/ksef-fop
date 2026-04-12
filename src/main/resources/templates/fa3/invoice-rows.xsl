@@ -36,10 +36,11 @@
         <!-- Calculate column width for name based on presence of other columns -->
         <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
         <!-- Optional columns: KwotaAkcyzy (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
-        <!-- Classification codes (Indeks, GTIN, PKWiU, CN, PKOB) are displayed under the product name -->
+        <!-- Classification codes (GTIN, PKWiU, CN, PKOB) are displayed under the product name -->
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
             <xsl:variable name="kwotaAkcyzyWidth" select="if ($faWiersz/crd:KwotaAkcyzy) then 8 else 0"/>
+            <xsl:variable name="indeksWidth" select="if ($faWiersz/crd:Indeks) then 8 else 0"/>
             <xsl:variable name="p6aWidth" select="if ($faWiersz/crd:P_6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($faWiersz/crd:P_9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($faWiersz/crd:P_9B) then 10 else 0"/>
@@ -48,7 +49,7 @@
             <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $kwotaAkcyzyWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -60,6 +61,9 @@
                 <fo:table-column column-width="8%"/> <!-- Kwota akcyzy -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa - dynamiczna szerokość -->
+            <xsl:if test="$faWiersz/crd:Indeks">
+                <fo:table-column column-width="8%"/> <!-- Indeks -->
+            </xsl:if>
             <fo:table-column column-width="8%"/> <!-- Ilość -->
             <fo:table-column column-width="5%"/> <!-- Jednostka -->
             <xsl:if test="$faWiersz/crd:P_9A">
@@ -101,6 +105,11 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.productName', $labels)"/></fo:block>
                     </fo:table-cell>
+                    <xsl:if test="$faWiersz/crd:Indeks">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.quantity', $labels)"/></fo:block>
                     </fo:table-cell>
@@ -155,6 +164,7 @@
             <!-- Apply templates to each position; tunnel column visibility so row output matches this table's columns (correction before/after can differ) -->
             <xsl:apply-templates select="$faWiersz">
                 <xsl:with-param name="showKwotaAkcyzy" select="boolean($faWiersz/crd:KwotaAkcyzy)" tunnel="yes"/>
+                <xsl:with-param name="showIndeks" select="boolean($faWiersz/crd:Indeks)" tunnel="yes"/>
                 <xsl:with-param name="showP6A" select="boolean($faWiersz/crd:P_6A)" tunnel="yes"/>
                 <xsl:with-param name="showP9A" select="boolean($faWiersz/crd:P_9A)" tunnel="yes"/>
                 <xsl:with-param name="showP9B" select="boolean($faWiersz/crd:P_9B)" tunnel="yes"/>
@@ -171,6 +181,7 @@
     <!-- Template for each position. Column visibility from tunnel params so correction before/after tables can have different columns. -->
     <xsl:template match="crd:FaWiersz">
         <xsl:param name="showKwotaAkcyzy" select="boolean(//crd:FaWiersz/crd:KwotaAkcyzy)" tunnel="yes"/>
+        <xsl:param name="showIndeks" select="boolean(//crd:FaWiersz/crd:Indeks)" tunnel="yes"/>
         <xsl:param name="showP6A" select="boolean(//crd:FaWiersz/crd:P_6A)" tunnel="yes"/>
         <xsl:param name="showP9A" select="boolean(//crd:FaWiersz/crd:P_9A)" tunnel="yes"/>
         <xsl:param name="showP9B" select="boolean(//crd:FaWiersz/crd:P_9B)" tunnel="yes"/>
@@ -211,11 +222,6 @@
                 <fo:block>
                     <xsl:value-of select="crd:P_7"/> <!-- Nazwa -->
                 </fo:block>
-                <xsl:if test="crd:Indeks">
-                    <fo:block font-size="6pt" color="#555555">
-                        <xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/>: <xsl:value-of select="crd:Indeks"/>
-                    </fo:block>
-                </xsl:if>
                 <xsl:if test="crd:GTIN">
                     <fo:block font-size="6pt" color="#555555">
                         GTIN: <xsl:value-of select="crd:GTIN"/>
@@ -237,6 +243,15 @@
                     </fo:block>
                 </xsl:if>
             </fo:table-cell>
+            <xsl:if test="$showIndeks">
+                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:if test="crd:Indeks">
+                            <xsl:value-of select="local:softWrap(crd:Indeks, 12)"/>
+                        </xsl:if>
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
                 <xsl:variable name="formattedQty" select="local:format-quantity(crd:P_8B)"/>
                 <xsl:variable name="qtyLength" select="string-length($formattedQty)"/>
@@ -430,6 +445,7 @@
 
         <!-- Column visibility: show column if it appears in EITHER before OR after (union), so differing structures don't break the table -->
         <xsl:variable name="diffShowKwotaAkcyzy" select="boolean($faWierszBefore/crd:KwotaAkcyzy or $faWierszAfter/crd:KwotaAkcyzy)"/>
+        <xsl:variable name="diffShowIndeks" select="boolean($faWierszBefore/crd:Indeks or $faWierszAfter/crd:Indeks)"/>
         <xsl:variable name="diffShowP6A" select="boolean($faWierszBefore/crd:P_6A or $faWierszAfter/crd:P_6A)"/>
         <xsl:variable name="diffShowP9A" select="boolean($faWierszBefore/crd:P_9A or $faWierszAfter/crd:P_9A)"/>
         <xsl:variable name="diffShowP9B" select="boolean($faWierszBefore/crd:P_9B or $faWierszAfter/crd:P_9B)"/>
@@ -442,6 +458,7 @@
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/>
             <xsl:variable name="kwotaAkcyzyWidth" select="if ($diffShowKwotaAkcyzy) then 8 else 0"/>
+            <xsl:variable name="indeksWidth" select="if ($diffShowIndeks) then 8 else 0"/>
             <xsl:variable name="p6aWidth" select="if ($diffShowP6A) then 9 else 0"/>
             <xsl:variable name="p9aWidth" select="if ($diffShowP9A) then 10 else 0"/>
             <xsl:variable name="p9bWidth" select="if ($diffShowP9B) then 10 else 0"/>
@@ -450,7 +467,7 @@
             <xsl:variable name="p11Width" select="if ($diffShowP11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($diffShowP11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($diffShowP11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $kwotaAkcyzyWidth - $indeksWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -460,6 +477,9 @@
                 <fo:table-column column-width="8%"/> <!-- Kwota akcyzy -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
+            <xsl:if test="$diffShowIndeks">
+                <fo:table-column column-width="8%"/> <!-- Indeks -->
+            </xsl:if>
             <fo:table-column column-width="8%"/> <!-- Ilość -->
             <fo:table-column column-width="5%"/> <!-- Jednostka -->
             <xsl:if test="$diffShowP9A">
@@ -499,6 +519,11 @@
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.productName', $labels)"/></fo:block>
                     </fo:table-cell>
+                    <xsl:if test="$diffShowIndeks">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
                     <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
                         <fo:block><xsl:value-of select="key('kLabels', 'row.quantity', $labels)"/></fo:block>
                     </fo:table-cell>
@@ -584,11 +609,6 @@
                             </xsl:if>
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" padding-left="3pt">
                                 <fo:block><xsl:value-of select="$after/crd:P_7"/></fo:block>
-                                <xsl:if test="$after/crd:Indeks">
-                                    <fo:block font-size="6pt" color="#555555">
-                                        <xsl:value-of select="key('kLabels', 'row.indeks', $labels)"/>: <xsl:value-of select="$after/crd:Indeks"/>
-                                    </fo:block>
-                                </xsl:if>
                                 <xsl:if test="$after/crd:GTIN">
                                     <fo:block font-size="6pt" color="#555555">
                                         GTIN: <xsl:value-of select="$after/crd:GTIN"/>
@@ -610,6 +630,15 @@
                                     </fo:block>
                                 </xsl:if>
                             </fo:table-cell>
+                            <xsl:if test="$diffShowIndeks">
+                                <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                                    <fo:block>
+                                        <xsl:if test="$after/crd:Indeks">
+                                            <xsl:value-of select="local:softWrap($after/crd:Indeks, 12)"/>
+                                        </xsl:if>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </xsl:if>
 
                             <!-- Quantity - for new rows, show exact "after" value, otherwise show difference -->
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">

@@ -1,0 +1,93 @@
+<Faktura xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+  <Naglowek>
+    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+    <WariantFormularza>3</WariantFormularza>
+    <DataWytworzeniaFa>2026-04-07T12:35:39Z</DataWytworzeniaFa>
+    <SystemInfo>ET Faktury</SystemInfo>
+  </Naglowek>
+  <Podmiot1>
+    <DaneIdentyfikacyjne>
+      <NIP>11111111111</NIP>
+      <Nazwa>Sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>Ul. 1</AdresL1>
+      <AdresL2>00-011 Warszawa</AdresL2>
+    </Adres>
+  </Podmiot1>
+  <Podmiot2>
+    <DaneIdentyfikacyjne>
+      <NIP>222222222</NIP>
+      <Nazwa>Spółka Sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul 14</AdresL1>
+      <AdresL2>01-001 Warszawa</AdresL2>
+    </Adres>
+    <JST>2</JST>
+    <GV>2</GV>
+  </Podmiot2>
+  <Fa>
+    <KodWaluty>PLN</KodWaluty>
+    <P_1>2026-04-07</P_1>
+    <P_2>FV 1/2026</P_2>
+    <P_6>2026-02-25</P_6>
+    <P_13_11>-100</P_13_11>
+    <P_15>-100</P_15>
+    <Adnotacje>
+      <P_16>2</P_16>
+      <P_17>2</P_17>
+      <P_18>2</P_18>
+      <P_18A>2</P_18A>
+      <Zwolnienie>
+        <P_19N>1</P_19N>
+      </Zwolnienie>
+      <NoweSrodkiTransportu>
+        <P_22N>1</P_22N>
+      </NoweSrodkiTransportu>
+      <P_23>2</P_23>
+      <PMarzy>
+        <P_PMarzy>1</P_PMarzy>
+        <P_PMarzy_2>1</P_PMarzy_2>
+      </PMarzy>
+    </Adnotacje>
+    <RodzajFaktury>KOR</RodzajFaktury>
+    <PrzyczynaKorekty>zle</PrzyczynaKorekty>
+    <TypKorekty>1</TypKorekty>
+    <DaneFaKorygowanej>
+      <DataWystFaKorygowanej>2026-02-26</DataWystFaKorygowanej>
+      <NrFaKorygowanej>0/20026</NrFaKorygowanej>
+      <NrKSeF>1</NrKSeF>
+      <NrKSeFFaKorygowanej>11111111111-20260226-AAAAAAAAAA-00</NrKSeFFaKorygowanej>
+    </DaneFaKorygowanej>
+    <FaWiersz>
+      <NrWierszaFa>1</NrWierszaFa>
+      <UU_ID>1-1</UU_ID>
+      <P_6A>2026-02-25</P_6A>
+      <P_7>cos</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9B>100</P_9B>
+      <P_11A>100</P_11A>
+      <StanPrzed>1</StanPrzed>
+    </FaWiersz>
+    <FaWiersz>
+      <NrWierszaFa>1</NrWierszaFa>
+      <UU_ID>1-2</UU_ID>
+      <P_6A>2026-02-25</P_6A>
+      <P_7>cos</P_7>
+      <P_8A>szt.</P_8A>
+      <P_8B>1</P_8B>
+      <P_9B>0.00</P_9B>
+      <P_11A>0.00</P_11A>
+    </FaWiersz>
+  </Fa>
+  <Stopka>
+    <Informacje>
+      <StopkaFaktury>Kapitał zakładowy opłacony w całości: 10 PLN</StopkaFaktury>
+    </Informacje>
+    
+  </Stopka>
+</Faktura>
