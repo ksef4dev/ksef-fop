@@ -111,22 +111,25 @@ By default the library picks a built-in XSL-FO template based on the `InvoiceSch
 (`FA2_1_0_E` → `templates/fa2/ksef_invoice.xsl`, `FA3_1_0_E` → `templates/fa3/ksef_invoice.xsl`).
 If you need full control over the PDF layout you can provide your own XSL-FO stylesheet instead.
 
-Set `templatePath` on `InvoiceGenerationParams` to a **classpath-relative** path pointing to
+Set `templatePath` on `InvoiceGenerationParams` to a local file path pointing to
 your custom XSL file:
 
 ````java
 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
         .schema(InvoiceSchema.FA3_1_0_E)
         .ksefNumber("1234567890-20231221-XXXXXXXX-XX")
-        .templatePath("templates/custom/my_invoice.xsl")
+        .templatePath("/opt/my-app/templates/my_invoice.xsl")
         .build();
 ````
 
-When `templatePath` is set the library uses it directly; when it is `null` (the default) the
-template is resolved automatically from the schema.
+When `templatePath` is set and points to an existing local file, that file is used directly.
+When it is `null` (the default), the template is resolved automatically from the schema and
+loaded from classpath.
 
-> **Security note:** `templatePath` is used as-is to load a classpath resource. Make sure
-> untrusted users cannot control this value or the underlying XSL content.
+When `templatePath` is set, it must point to an existing local file.
+
+> **Security note:** XSLT is executable content. Make sure untrusted users cannot control
+> `templatePath` or the underlying XSL file/resource.
 
 ## Custom properties
 
@@ -142,7 +145,7 @@ template can declare and use it like any other parameter.
 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
         .schema(InvoiceSchema.FA3_1_0_E)
         .ksefNumber("1234567890-20231221-XXXXXXXX-XX")
-        .templatePath("templates/custom/my_invoice.xsl")
+        .templatePath("/opt/my-app/templates/my_invoice.xsl")
         .customProperties(Map.of(
                 "companySlogan", "We deliver on time!",
                 "showWatermark", true
