@@ -20,6 +20,9 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
@@ -187,11 +190,9 @@ public class PdfGenerator {
 
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClasspathUriResolver());
-        String xslPath = resolveTemplatePath(params);
-
-        URL xslUrl = getResourceUrl(xslPath);
-        try (InputStream xsl = loadResource(xslPath)) {
-            Transformer transformer = factory.newTransformer(new StreamSource(xsl, xslUrl.toExternalForm()));
+        StreamSource templateSource = resolveInvoiceTemplateSource(params);
+        try (InputStream xsl = templateSource.getInputStream()) {
+            Transformer transformer = factory.newTransformer(new StreamSource(xsl, templateSource.getSystemId()));
             applyParameters(params, qrCodes, duplicateDate, transformer);
 
             Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
@@ -200,12 +201,20 @@ public class PdfGenerator {
         }
     }
 
-    private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {
+    private @NotNull StreamSource resolveInvoiceTemplateSource(InvoiceGenerationParams params) throws IOException {
         String templatePath = params.getTemplatePath();
 
-        return (templatePath != null && !templatePath.isEmpty())
-                ? templatePath
-                : resolveXslTemplate(params);
+        if (templatePath == null || templatePath.isEmpty()) {
+            String defaultTemplate = resolveXslTemplate(params);
+            URL xslUrl = getResourceUrl(defaultTemplate);
+            return new StreamSource(loadResource(defaultTemplate), xslUrl.toExternalForm());
+        }
+
+        Path candidatePath = Paths.get(templatePath);
+        if (!Files.isRegularFile(candidatePath)) {
+            throw new IOException("Template path does not point to an existing local file: " + candidatePath);
+        }
+        return new StreamSource(Files.newInputStream(candidatePath), candidatePath.toUri().toString());
     }
 
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {

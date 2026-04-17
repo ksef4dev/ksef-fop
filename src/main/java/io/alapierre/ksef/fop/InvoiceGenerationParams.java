@@ -45,11 +45,13 @@ public class InvoiceGenerationParams {
     private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
 
     /**
-     * Optional classpath-relative path to a custom XSLT invoice template.
+     * Optional path to a custom XSLT invoice template.
      * <p>
-     * Security note: This value must reference a trusted stylesheet available on the application's classpath.
-     * The library does not validate where this path comes from; callers are responsible for ensuring that
-     * untrusted users cannot control this value or the underlying XSLT content.
+     * <ul>
+     *     <li>If this value is {@code null} or blank, the default built-in template is loaded from classpath based on schema.</li>
+     *     <li>If this value is provided, it must point to an existing local file and that file is used as the custom template.</li>
+     * </ul>
+     * Security note: XSLT is executable content. Make sure untrusted users cannot control this value or the underlying XSLT file.
      */
     @Nullable
     private String templatePath;

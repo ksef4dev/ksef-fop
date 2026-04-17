@@ -9,8 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,11 +39,12 @@ class CustomTemplateOverrideTest {
             try (InputStream invoiceIs = getResourceAsStream("faktury/fa3/podstawowa/FA_3_Przyklad_1.xml")) {
                 assertNotNull(invoiceIs);
                 byte[] invoiceXml = IOUtils.toByteArray(invoiceIs);
+                Path customTemplate = createCustomTemplateFile();
 
                 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                         .schema(InvoiceSchema.FA3_1_0_E)
                         .ksefNumber("TEST-KSEF-NUMBER")
-                        .templatePath("templates/custom/custom_invoice.xsl")
+                        .templatePath(customTemplate.toString())
                         .customProperties(Collections.singletonMap("customPropertyDemo", "HELLO-CUSTOM-PROPERTY"))
                         .build();
 
@@ -51,6 +56,39 @@ class CustomTemplateOverrideTest {
                 assertTrue(text.contains("nrKsef=TEST-KSEF-NUMBER"), "Expected nrKsef parameter rendered by custom template");
                 assertTrue(text.contains("customPropertyDemo=HELLO-CUSTOM-PROPERTY"), "Expected custom property rendered by custom template");
             }
+        }
+    }
+
+    @Test
+    void generateInvoice_failsWhenTemplatePathIsNotAnExistingLocalFile() throws Exception {
+        try (InputStream fopCfg = getResourceAsStream("fop.xconf")) {
+            assertNotNull(fopCfg);
+            PdfGenerator generator = new PdfGenerator(fopCfg);
+
+            try (InputStream invoiceIs = getResourceAsStream("faktury/fa3/podstawowa/FA_3_Przyklad_1.xml")) {
+                assertNotNull(invoiceIs);
+                byte[] invoiceXml = IOUtils.toByteArray(invoiceIs);
+
+                InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+                        .schema(InvoiceSchema.FA3_1_0_E)
+                        .ksefNumber("TEST-KSEF-NUMBER")
+                        .templatePath("templates/custom/custom_invoice.xsl")
+                        .build();
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                IOException ex = assertThrows(IOException.class, () -> generator.generateInvoice(invoiceXml, params, out));
+                assertTrue(ex.getMessage().contains("existing local file"));
+            }
+        }
+    }
+
+    private Path createCustomTemplateFile() throws IOException {
+        try (InputStream customTemplate = getResourceAsStream("templates/custom/custom_invoice.xsl")) {
+            assertNotNull(customTemplate);
+            Path tempFile = Files.createTempFile("ksef-custom-template-", ".xsl");
+            Files.copy(customTemplate, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            tempFile.toFile().deleteOnExit();
+            return tempFile;
         }
     }
 }
