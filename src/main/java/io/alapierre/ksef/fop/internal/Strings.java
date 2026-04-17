@@ -13,7 +13,17 @@ public final class Strings {
      * @return {@code defaultStr} if {@code str} is {@code null} or empty; otherwise, returns {@code str}
      */
     public static String defaultIfEmpty(String str, String defaultStr) {
-        return str == null || str.isEmpty() ? defaultStr : str;
+        return isEmpty(str) ? defaultStr : str;
+    }
+
+    /**
+     * Checks if the input string is null or empty.
+     *
+     * @param str the string to check
+     * @return {@code true} if {@code str} is {@code null} or empty
+     */
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 
     private Strings() {

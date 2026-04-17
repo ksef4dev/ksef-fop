@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <!-- External URLs resolve to a resource file with or without leading '/' -->
+    <uri name="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/KodyKrajow_v10-0E.xsd"
+         uri="xsd/KodyKrajow_v10-0E.xsd"/>
+    <uri name="https://example.com/KodyKrajow_v10-0E.xsd"
+         uri="/xsd/KodyKrajow_v10-0E.xsd"/>
+</catalog>

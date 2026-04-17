@@ -1,10 +1,11 @@
 package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.internal.Strings;
+import io.alapierre.ksef.fop.internal.TemplateResolver;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.InternalResourceResolver;
@@ -16,12 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -103,12 +105,9 @@ public class PdfGenerator {
     public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws IOException, TransformerException, FOPException {
         FopFactory fopFactory = createFopFactory();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Fop fop = fopFactory.newFop("application/pdf", foUserAgent, out);
-        TransformerFactory factory = TransformerFactory.newInstance();
-
-        String templatePath = getUpoTemplatePathForSchema(params);
-        Transformer transformer = factory.newTransformer(new StreamSource(loadResource(templatePath)));
+        Transformer transformer = createTransformer(params.getTemplateRoots(), resolveUpoTemplatePath(params));
 
         try {
             Document labels = translationService.getTranslationsAsXml(params.getLanguage().getCode());
@@ -185,46 +184,53 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
+        Transformer transformer = createTransformer(params.getTemplateRoots(), resolveTemplatePath(params));
+
+        applyParameters(params, qrCodes, duplicateDate, transformer);
+
+        Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
+        Result result = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(xmlSource, result);
+    }
+
+    private static Transformer createTransformer(List<Path> roots, String systemId) throws TransformerException {
+        TemplateResolver resolver = new TemplateResolver(roots);
+        return createTransformerFactory(resolver).newTransformer(resolver.resolve(systemId, null));
+    }
+
+    private static TransformerFactory createTransformerFactory(TemplateResolver resolver) throws TransformerException {
         TransformerFactory factory = new TransformerFactoryImpl();
-        factory.setURIResolver(new ClasspathUriResolver());
-        String xslPath = resolveTemplatePath(params);
-
-        URL xslUrl = getResourceUrl(xslPath);
-        try (InputStream xsl = loadResource(xslPath)) {
-            Transformer transformer = factory.newTransformer(new StreamSource(xsl, xslUrl.toExternalForm()));
-            applyParameters(params, qrCodes, duplicateDate, transformer);
-
-            Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
-            Result result = new SAXResult(fop.getDefaultHandler());
-            transformer.transform(xmlSource, result);
-        }
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setURIResolver(resolver);
+        return factory;
     }
 
     private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {
         String templatePath = params.getTemplatePath();
+        return Strings.isEmpty(templatePath)
+                ? resolveXslTemplate(params)
+                : templatePath;
+    }
 
-        return (templatePath != null && !templatePath.isEmpty())
-                ? templatePath
-                : resolveXslTemplate(params);
+    private static @NotNull String resolveUpoTemplatePath(UpoGenerationParams params) {
+        String templatePath = params.getTemplatePath();
+        return Strings.isEmpty(templatePath)
+                ? getUpoTemplatePathForSchema(params)
+                : templatePath;
     }
 
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {
-        String templateFileName;
         switch (params.getSchema()) {
             case UPO_V3:
-                templateFileName = "templates/upo_v3/ksef_upo.fop";
-                break;
+                return "templates/upo_v3/ksef_upo.fop";
             case UPO_V4_2:
-                templateFileName = "templates/upo_v4/ksef_upo_v4_2.fop";
-                break;
+                return "templates/upo_v4/ksef_upo_v4_2.fop";
             case UPO_V4_3:
-                templateFileName = "templates/upo_v4/ksef_upo_v4_3.fop";
-                break;
+                return "templates/upo_v4/ksef_upo_v4_3.fop";
             default:
                 log.warn("UPO Schema is not provided in UpoGenerationParams or not supported, using default v3");
-                templateFileName = "templates/upo_v3/ksef_upo.fop";
+                return "templates/upo_v3/ksef_upo.fop";
         }
-        return templateFileName;
     }
 
     private void applyParameters(InvoiceGenerationParams params,
@@ -256,7 +262,6 @@ public class PdfGenerator {
             setParam(transformer, "currencyDate", params.getCurrencyDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
 
-        // proste flagi/teksty
         setParam(transformer, "nrKsef", params.getKsefNumber());
         setParam(transformer, "showFooter", invoicePdfConfig.isShowFooter());
         setParam(transformer, "useExtendedDecimalPlaces", invoicePdfConfig.isUseExtendedPriceDecimalPlaces());
@@ -302,15 +307,9 @@ public class PdfGenerator {
     }
 
     private static InputStream loadResource(String resource) throws IOException {
-        val res = PdfGenerator.class.getClassLoader().getResourceAsStream(resource);
+        InputStream res = PdfGenerator.class.getClassLoader().getResourceAsStream(resource);
         if (res == null) throw new IOException("Can't load classpath resource " + resource);
         return res;
-    }
-
-    private URL getResourceUrl(String resource) throws IOException {
-        URL url = getClass().getClassLoader().getResource(resource);
-        if (url == null) throw new IOException("Can't resolve classpath resource URL " + resource);
-        return url;
     }
 
     private static String resolveXslTemplate(InvoiceGenerationParams params) {
