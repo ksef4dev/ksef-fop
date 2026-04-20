@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 name: SonarCloud Scan
 on:
-  workflow_run:
+  pull_request:
     types:
       - completed
     workflows:
