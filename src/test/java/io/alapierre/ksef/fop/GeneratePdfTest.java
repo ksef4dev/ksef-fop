@@ -60,7 +60,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v3-classpath.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
+            InputStream xml = Files.newInputStream(Paths.get("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml"));
             Source src = new StreamSource(xml);
 
             UpoGenerationParams params = UpoGenerationParams.builder()
@@ -74,11 +74,11 @@ class GeneratePdfTest {
     @Test
     void genV4_2UpoByService() throws Exception {
 
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-2-service.pdf"))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
+            InputStream xml = Files.newInputStream(Paths.get("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml"));
             Source src = new StreamSource(xml);
 
             UpoGenerationParams params = UpoGenerationParams.builder()
@@ -94,9 +94,9 @@ class GeneratePdfTest {
 
         PdfGenerator generator = new PdfGenerator("fop.xconf");
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-2-classpath.pdf"))) {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get("src/test/resources/upo-v4-2-classpath.pdf")))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml");
+            InputStream xml = Files.newInputStream(Paths.get("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-2.xml"));
             Source src = new StreamSource(xml);
 
             UpoGenerationParams params = UpoGenerationParams.builder()
@@ -110,11 +110,11 @@ class GeneratePdfTest {
     @Test
     void genV4_3UpoByService() throws Exception {
 
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/upo-v4-3-service.pdf"))) {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get("src/test/resources/upo-v4-3-service.pdf")))) {
 
-            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-3.xml");
+            InputStream xml = Files.newInputStream(Paths.get("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC-v4-3.xml"));
             Source src = new StreamSource(xml);
 
             UpoGenerationParams params = UpoGenerationParams.builder()
@@ -141,7 +141,7 @@ class GeneratePdfTest {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource("src/main/resources/templates/upo_v3/ksef_upo.fop"));
 
-            InputStream xml = new FileInputStream("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml");
+            InputStream xml = Files.newInputStream(Paths.get("src/test/resources/20231111-SE-E8DDA726E2-F87F056923-EC.xml"));
             Source src = new StreamSource(xml);
             Result res = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, res);
@@ -150,7 +150,7 @@ class GeneratePdfTest {
 
     @Test
     void generateFa2InvoicePdf() throws Exception {
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
@@ -165,7 +165,7 @@ class GeneratePdfTest {
 
     @Test
     void generateFa3InvoicePdf() throws Exception {
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3.pdf"))) {
 
@@ -184,7 +184,7 @@ class GeneratePdfTest {
 
     @Test
     void generateFa3InvoicePdfWithAttachment() throws Exception {
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa3_zalacznik.pdf"))) {
 
@@ -204,7 +204,7 @@ class GeneratePdfTest {
 
     @Test
     void generateFa3InvoicePdfNonUE() throws Exception {
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out =
                      new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_non_ue.pdf"))) {
@@ -225,7 +225,7 @@ class GeneratePdfTest {
         File logoFile = new File("src/test/resources/Logo.svg");
         byte[] logo = Files.readAllBytes(logoFile.toPath());
 
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice.pdf"))) {
 
@@ -250,7 +250,7 @@ class GeneratePdfTest {
         byte[] qrCode = Files.readAllBytes(qrCodeFile.toPath());
         File logoFile = new File("src/test/resources/Logo.svg");
         byte[] logo = Files.readAllBytes(logoFile.toPath());
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         Path correctionFolder = Paths.get("src/test/resources/faktury/fa3/korygujaca");
         testForFolder(correctionFolder, ksefNumber, verificationLink, false, qrCode, logo, InvoiceSchema.FA3_1_0_E, generator);

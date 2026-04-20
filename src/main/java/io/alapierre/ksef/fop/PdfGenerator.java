@@ -20,11 +20,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.net.URI;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -176,32 +172,15 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
         TransformerFactory factory = new TransformerFactoryImpl();
-        factory.setURIResolver(new ClasspathUriResolver());
-        StreamSource templateSource = resolveInvoiceTemplateSource(params);
-        try (InputStream xsl = templateSource.getInputStream()) {
-            Transformer transformer = factory.newTransformer(new StreamSource(xsl, templateSource.getSystemId()));
-            applyParameters(params, qrCodes, duplicateDate, transformer);
+        InternalTemplateUriResolver templateResolver = new InternalTemplateUriResolver(getClass().getClassLoader(), params.getTemplateRoots());
+        factory.setURIResolver(templateResolver);
+        String templatePath = resolveTemplateReference(params);
+        Transformer transformer = factory.newTransformer(templateResolver.entryTemplateSource(templatePath));
+        applyParameters(params, qrCodes, duplicateDate, transformer);
 
-            Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
-            Result result = new SAXResult(fop.getDefaultHandler());
-            transformer.transform(xmlSource, result);
-        }
-    }
-
-    private @NotNull StreamSource resolveInvoiceTemplateSource(InvoiceGenerationParams params) throws IOException {
-        String templatePath = params.getTemplatePath();
-
-        if (templatePath == null || templatePath.isEmpty()) {
-            String defaultTemplate = resolveXslTemplate(params);
-            URL xslUrl = getResourceUrl(defaultTemplate);
-            return new StreamSource(loadResource(defaultTemplate), xslUrl.toExternalForm());
-        }
-
-        Path candidatePath = Paths.get(templatePath);
-        if (!Files.isRegularFile(candidatePath)) {
-            throw new IOException("Template path does not point to an existing local file: " + candidatePath);
-        }
-        return new StreamSource(Files.newInputStream(candidatePath), candidatePath.toUri().toString());
+        Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
+        Result result = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(xmlSource, result);
     }
 
     private static @NotNull String getUpoTemplatePathForSchema(UpoGenerationParams params) {
@@ -303,10 +282,9 @@ public class PdfGenerator {
         return res;
     }
 
-    private URL getResourceUrl(String resource) throws IOException {
-        URL url = getClass().getClassLoader().getResource(resource);
-        if (url == null) throw new IOException("Can't resolve classpath resource URL " + resource);
-        return url;
+    private static String resolveTemplateReference(@NotNull InvoiceGenerationParams params) {
+        String configured = params.getTemplatePath();
+        return (configured == null || configured.trim().isEmpty()) ? resolveXslTemplate(params) : configured;
     }
 
     private static String resolveXslTemplate(InvoiceGenerationParams params) {

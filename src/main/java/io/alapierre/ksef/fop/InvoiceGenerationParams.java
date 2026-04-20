@@ -8,8 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -49,12 +52,27 @@ public class InvoiceGenerationParams {
      * <p>
      * <ul>
      *     <li>If this value is {@code null} or blank, the default built-in template is loaded from classpath based on schema.</li>
-     *     <li>If this value is provided, it must point to an existing local file and that file is used as the custom template.</li>
+     *     <li>If this value is provided, lookup is performed in the following order:
+     *         <ol>
+     *             <li>each configured {@link #templateRoots} entry (in order)</li>
+     *             <li>classpath fallback</li>
+     *         </ol>
+     *     </li>
      * </ul>
      * Security note: XSLT is executable content. Make sure untrusted users cannot control this value or the underlying XSLT file.
      */
     @Nullable
     private String templatePath;
+
+    /**
+     * Optional ordered list of filesystem roots used for resolving templates.
+     * <p>
+     * When configured, template lookup tries each root in order before classpath fallback.
+     * This enables partial overrides where only selected templates are stored on disk and the rest
+     * are inherited from built-in classpath templates.
+     */
+    @Builder.Default
+    private List<Path> templateRoots = new ArrayList<>();
 
     /**
      * Optional template-specific XSLT parameters forwarded to the transformer.
@@ -68,4 +86,12 @@ public class InvoiceGenerationParams {
 
     @Builder.Default
     private Language language = Language.PL;
+
+    public InvoiceGenerationParams addTemplateRoot(@NotNull Path templateRoot) {
+        if (templateRoots == null) {
+            templateRoots = new ArrayList<>();
+        }
+        templateRoots.add(templateRoot);
+        return this;
+    }
 }

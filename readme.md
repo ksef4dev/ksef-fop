@@ -111,22 +111,27 @@ By default the library picks a built-in XSL-FO template based on the `InvoiceSch
 (`FA2_1_0_E` → `templates/fa2/ksef_invoice.xsl`, `FA3_1_0_E` → `templates/fa3/ksef_invoice.xsl`).
 If you need full control over the PDF layout you can provide your own XSL-FO stylesheet instead.
 
-Set `templatePath` on `InvoiceGenerationParams` to a local file path pointing to
-your custom XSL file:
+Set `templatePath` on `InvoiceGenerationParams` to a template name/path and
+optionally configure one or more template roots:
 
 ````java
 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
         .schema(InvoiceSchema.FA3_1_0_E)
         .ksefNumber("1234567890-20231221-XXXXXXXX-XX")
-        .templatePath("/opt/my-app/templates/my_invoice.xsl")
+        .templatePath("templates/fa3/ksef_invoice.xsl")
         .build();
+params.addTemplateRoot(Path.of("/opt/my-app/templates-overrides"));
 ````
 
-When `templatePath` is set and points to an existing local file, that file is used directly.
-When it is `null` (the default), the template is resolved automatically from the schema and
-loaded from classpath.
+Lookup order is:
+1. each configured `templateRoot` (in order),
+2. classpath fallback.
 
-When `templatePath` is set, it must point to an existing local file.
+When `templatePath` is `null` (the default), the built-in classpath template is selected
+from `InvoiceSchema`.
+
+This allows partial overrides: you can provide only selected templates in your root
+directory and keep the rest inherited from classpath.
 
 > **Security note:** XSLT is executable content. Make sure untrusted users cannot control
 > `templatePath` or the underlying XSL file/resource.

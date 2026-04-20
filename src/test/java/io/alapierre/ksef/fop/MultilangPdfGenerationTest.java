@@ -5,7 +5,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -60,7 +59,7 @@ class MultilangPdfGenerationTest {
     private void generatePdf(Language lang,
                              String invoicePath,
                              String outputPath) throws Exception {
-        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+        PdfGenerator generator = new PdfGenerator(Files.newInputStream(Paths.get("src/test/resources/fop.xconf")));
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream(outputPath))) {
 

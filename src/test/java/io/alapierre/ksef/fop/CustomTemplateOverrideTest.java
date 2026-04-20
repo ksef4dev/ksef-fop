@@ -39,12 +39,13 @@ class CustomTemplateOverrideTest {
             try (InputStream invoiceIs = getResourceAsStream("faktury/fa3/podstawowa/FA_3_Przyklad_1.xml")) {
                 assertNotNull(invoiceIs);
                 byte[] invoiceXml = IOUtils.toByteArray(invoiceIs);
-                Path customTemplate = createCustomTemplateFile();
+                Path customTemplateRoot = createCustomTemplateRoot();
 
                 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                         .schema(InvoiceSchema.FA3_1_0_E)
                         .ksefNumber("TEST-KSEF-NUMBER")
-                        .templatePath(customTemplate.toString())
+                        .templatePath("templates/custom/custom_invoice.xsl")
+                        .templateRoots(Collections.singletonList(customTemplateRoot))
                         .customProperties(Collections.singletonMap("customPropertyDemo", "HELLO-CUSTOM-PROPERTY"))
                         .build();
 
@@ -76,19 +77,63 @@ class CustomTemplateOverrideTest {
                         .build();
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                IOException ex = assertThrows(IOException.class, () -> generator.generateInvoice(invoiceXml, params, out));
-                assertTrue(ex.getMessage().contains("existing local file"));
+                Exception ex = assertThrows(Exception.class, () -> generator.generateInvoice(invoiceXml, params, out));
+                assertTrue(ex.getMessage().contains("Cannot resolve template resource"));
             }
         }
     }
 
-    private Path createCustomTemplateFile() throws IOException {
+    @Test
+    void generateInvoice_fallsBackToClasspathForMissingImportedTemplate() throws Exception {
+        try (InputStream fopCfg = getResourceAsStream("fop.xconf")) {
+            assertNotNull(fopCfg);
+            PdfGenerator generator = new PdfGenerator(fopCfg);
+
+            try (InputStream invoiceIs = getResourceAsStream("faktury/fa3/podstawowa/FA_3_Przyklad_1.xml")) {
+                assertNotNull(invoiceIs);
+                byte[] invoiceXml = IOUtils.toByteArray(invoiceIs);
+                Path customRoot = createPartialOverrideTemplateRoot();
+
+                InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+                        .schema(InvoiceSchema.FA3_1_0_E)
+                        .templatePath("templates/fa3/ksef_invoice.xsl")
+                        .templateRoots(Collections.singletonList(customRoot))
+                        .build();
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                generator.generateInvoice(invoiceXml, params, out);
+
+                String text = extractTextFromPdf(out.toByteArray());
+                assertTrue(text.contains("KOD"), "Expected content from classpath imported templates");
+            }
+        }
+    }
+
+    private Path createCustomTemplateRoot() throws IOException {
         try (InputStream customTemplate = getResourceAsStream("templates/custom/custom_invoice.xsl")) {
             assertNotNull(customTemplate);
-            Path tempFile = Files.createTempFile("ksef-custom-template-", ".xsl");
-            Files.copy(customTemplate, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            tempFile.toFile().deleteOnExit();
-            return tempFile;
+            Path root = Files.createTempDirectory("ksef-custom-template-root-");
+            Path templateDir = root.resolve("templates/custom");
+            Files.createDirectories(templateDir);
+            Path templateFile = templateDir.resolve("custom_invoice.xsl");
+            Files.copy(customTemplate, templateFile, StandardCopyOption.REPLACE_EXISTING);
+            root.toFile().deleteOnExit();
+            templateFile.toFile().deleteOnExit();
+            return root;
+        }
+    }
+
+    private Path createPartialOverrideTemplateRoot() throws IOException {
+        try (InputStream builtInTemplate = getResourceAsStream("templates/fa3/ksef_invoice.xsl")) {
+            assertNotNull(builtInTemplate);
+            Path root = Files.createTempDirectory("ksef-partial-template-root-");
+            Path templateDir = root.resolve("templates/fa3");
+            Files.createDirectories(templateDir);
+            Path templateFile = templateDir.resolve("ksef_invoice.xsl");
+            Files.copy(builtInTemplate, templateFile, StandardCopyOption.REPLACE_EXISTING);
+            root.toFile().deleteOnExit();
+            templateFile.toFile().deleteOnExit();
+            return root;
         }
     }
 }
