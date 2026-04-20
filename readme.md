@@ -138,56 +138,60 @@ replaced; everything else falls back to the built-in defaults.
 
 ### 1. Create your properties files
 
-Place them on the classpath using the standard Java `ResourceBundle` naming convention.
-Pick any base name you like, for example `i18n/custom_messages`:
+Each file contains **only the keys you want to change** — unlisted keys fall back to the
+built-in defaults. Pick any bundle base name, e.g. `i18n/custom_messages`:
 
-```
-src/main/resources/
-└── i18n/
-    ├── custom_messages.properties        ← default / Polish overrides
-    └── custom_messages_en.properties     ← English overrides (optional)
-```
-
-Each file should contain **only the keys you want to change**. For example, to rename
-the seller and buyer labels:
-
-`i18n/custom_messages.properties`:
+`custom_messages.properties`:
 
 ````properties
 seller=Dostawca
 buyer=Klient
 ````
 
-`i18n/custom_messages_en.properties`:
+`custom_messages_en.properties`:
 
 ````properties
 seller=Vendor
 buyer=Client
 ````
 
-You don't need to copy the entire default file - unlisted keys will keep their
-built-in values automatically.
+### 2. Create a TranslationService with the bundle base name
 
-### 2. Create a TranslationService with your bundle base name
+The `bundleBaseName` is the `ResourceBundle`-style name (without `.properties` extension
+and without the locale suffix). Optionally pass a list of **filesystem roots** that are
+searched before the classpath — mirroring how `InvoiceGenerationParams.templateRoots`
+works for custom templates.
 
-Pass the classpath-relative base name (without the `.properties` extension and without
-the locale suffix) to the `TranslationService` constructor:
+Classpath only (files under `src/main/resources/i18n/custom_messages*.properties`):
 
 ````java
 TranslationService translationService = new TranslationService("i18n/custom_messages");
 ````
 
+Filesystem roots first, then classpath (files under `/etc/ksef/i18n/custom_messages*.properties`):
+
+````java
+TranslationService translationService = new TranslationService(
+        "i18n/custom_messages",
+        List.of(Path.of("/etc/ksef"))
+);
+````
+
+Lookup order for each key:
+
+1. Filesystem roots, in the order you provided them
+2. Application classpath
+3. Library built-in defaults (`i18n/messages.properties`)
+
 ### 3. Pass the TranslationService to PdfGenerator
 
 ````java
-TranslationService translationService = new TranslationService("i18n/custom_messages");
 PdfGenerator generator = new PdfGenerator("fop.xconf", translationService);
 ````
 
 Or together with `InvoicePdfConfig`:
 
 ````java
-TranslationService translationService = new TranslationService("i18n/custom_messages");
 PdfGenerator generator = new PdfGenerator("fop.xconf", invoicePdfConfig, translationService);
 ````
 

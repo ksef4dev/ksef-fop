@@ -2,11 +2,19 @@ package io.alapierre.ksef.fop.i18n;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class TranslationServiceTest {
 
     private TranslationService translationService;
+    @TempDir
+    Path tempDir;
 
     @BeforeEach
     void setUp() {
@@ -257,6 +267,70 @@ class TranslationServiceTest {
         assertEquals("Seller", withNull.getTranslation("en", "seller"));
     }
 
+    @Test
+    void getTranslation_withFileSystemRoots_shouldReturnOverriddenValue() throws IOException {
+        clearCaches();
+        createFileSystemOverrides();
+        List<Path> translationRoots = Collections.singletonList(tempDir);
+        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
+
+        assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("pl", "seller"));
+        assertEquals("External Seller", withFileOverrides.getTranslation("en", "seller"));
+    }
+
+    @Test
+    void getTranslation_withFileSystemRoots_shouldFallbackToDefaultForMissingLanguageFile() throws IOException {
+        clearCaches();
+        createFileSystemOverrides();
+        List<Path> translationRoots = Collections.singletonList(tempDir);
+        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
+
+        assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("fr", "seller"));
+        assertEquals("Numer faktury", withFileOverrides.getTranslation("fr", "invoice.number"));
+    }
+
+    @Test
+    void getTranslationsAsXml_withFileSystemRoots_shouldContainCustomAndFallbackValues() throws IOException {
+        clearCaches();
+        createFileSystemOverrides();
+        List<Path> translationRoots = Collections.singletonList(tempDir);
+        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
+        Document doc = withFileOverrides.getTranslationsAsXml("en");
+
+        assertEquals("External Seller", findEntryValue(doc, "seller"));
+        assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
+        assertEquals("External custom", findEntryValue(doc, "custom.key"));
+    }
+
+    @Test
+    void getTranslation_withFileSystemRoots_shouldFallBackToClasspathWhenRootsMissBundle() throws IOException {
+        clearCaches();
+        Path unrelatedRoot = tempDir.resolve("empty");
+        Files.createDirectories(unrelatedRoot);
+        List<Path> translationRoots = Collections.singletonList(unrelatedRoot);
+        TranslationService withRoots = new TranslationService("i18n/test_overrides", translationRoots);
+
+        assertEquals("Nadpisany Sprzedawca", withRoots.getTranslation("pl", "seller"));
+        assertEquals("Overridden Seller", withRoots.getTranslation("en", "seller"));
+    }
+
+    @Test
+    void getTranslation_withFileSystemRoots_shouldPreferFirstRoot() throws IOException {
+        clearCaches();
+        Path rootA = tempDir.resolve("a");
+        Path rootB = tempDir.resolve("b");
+        Files.createDirectories(rootA);
+        Files.createDirectories(rootB);
+        Files.write(rootA.resolve("custom_messages.properties"),
+                "seller=Seller-A\n".getBytes(StandardCharsets.UTF_8));
+        Files.write(rootB.resolve("custom_messages.properties"),
+                "seller=Seller-B\n".getBytes(StandardCharsets.UTF_8));
+        List<Path> translationRoots = Arrays.asList(rootA, rootB);
+        TranslationService withRoots = new TranslationService("custom_messages", translationRoots);
+
+        assertEquals("Seller-A", withRoots.getTranslation("pl", "seller"));
+    }
+
     private String findEntryValue(Document doc, String key) {
         NodeList entries = doc.getElementsByTagName("entry");
         for (int i = 0; i < entries.getLength(); i++) {
@@ -289,4 +363,16 @@ class TranslationServiceTest {
             // Ignore if clearing fails
         }
     }
+
+    private void createFileSystemOverrides() throws IOException {
+        Files.write(
+                tempDir.resolve("custom_messages.properties"),
+                "seller=Zewnetrzny Sprzedawca\ncustom.key=External custom\n".getBytes(StandardCharsets.UTF_8)
+        );
+        Files.write(
+                tempDir.resolve("custom_messages_en.properties"),
+                "seller=External Seller\n".getBytes(StandardCharsets.UTF_8)
+        );
+    }
+
 }

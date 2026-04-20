@@ -2,6 +2,7 @@ package io.alapierre.ksef.fop.i18n;
 
 import io.alapierre.ksef.fop.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,10 +12,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -25,34 +30,53 @@ public class TranslationService {
     private static final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
     private static final String DEFAULT_BUNDLE_BASE_NAME = "i18n/messages";
 
-    private final String translationOverridesResourcePath;
+    private final String userBundleBaseName;
+    private final ClassLoader userBundleClassLoader;
+    private final String cacheKeyPrefix;
     private final DocumentBuilder documentBuilder;
 
     public TranslationService() {
-        this(null);
+        this(null, Collections.emptyList());
     }
 
     /**
-     * Creates a TranslationService with user-provided translation overrides
-     * loaded from a {@link ResourceBundle} on the classpath.
-     * Only the keys present in the user's bundle will replace the built-in defaults;
-     * all other keys fall back to the default translations shipped with the library.
-     * <p>
-     * The user should place their properties files on the classpath following the
-     * standard {@link ResourceBundle} naming convention, e.g.:
+     * Creates a TranslationService with user-provided translation overrides loaded from a
+     * classpath {@link ResourceBundle}. Naming follows standard ResourceBundle convention, e.g.:
      * <ul>
-     *   <li>{@code custom/messages.properties} — default / Polish overrides</li>
-     *   <li>{@code custom/messages_en.properties} — English overrides</li>
+     *   <li>{@code i18n/custom_messages.properties} — default / fallback overrides</li>
+     *   <li>{@code i18n/custom_messages_en.properties} — English overrides</li>
      * </ul>
      *
-     * @param translationOverridesResourcePath classpath-relative path including the resource bundle base name
-     *                                         (without the {@code .properties} extension and without the locale suffix),
-     *                                         e.g. {@code "i18n/custom_messages"} which resolves to
-     *                                         {@code i18n/custom_messages.properties}, {@code i18n/custom_messages_en.properties}, etc.;
-     *                                         {@code null} to use only built-in defaults
+     * @param bundleBaseName classpath base name without locale suffix and without
+     *                       {@code .properties} extension; {@code null} to use only built-in defaults
      */
-    public TranslationService(@Nullable String translationOverridesResourcePath) {
-        this.translationOverridesResourcePath = translationOverridesResourcePath;
+    public TranslationService(@Nullable String bundleBaseName) {
+        this(bundleBaseName, Collections.emptyList());
+    }
+
+    /**
+     * Creates a TranslationService with user-provided translation overrides.
+     * <p>
+     * Lookup order for override bundles:
+     * <ol>
+     *   <li>Each path in {@code translationRoots} (in order) — filesystem directories that are searched
+     *       using standard {@link ResourceBundle} semantics, as if each root were added to the classpath.
+     *       For root {@code /etc/ksef} and {@code bundleBaseName = "i18n/custom_messages"} the resolver
+     *       looks for {@code /etc/ksef/i18n/custom_messages.properties} (and locale-specific variants).</li>
+     *   <li>Application classpath (fallback).</li>
+     * </ol>
+     * Built-in library defaults ({@code i18n/messages.properties}) always act as the final fallback
+     * when a key is missing from the override bundle.
+     *
+     * @param bundleBaseName   classpath-relative base name without locale suffix and without
+     *                         {@code .properties} extension; {@code null} to use only built-in defaults
+     * @param translationRoots ordered list of filesystem roots searched before the classpath;
+     *                         may be empty
+     */
+    public TranslationService(@Nullable String bundleBaseName, @NotNull List<Path> translationRoots) {
+        this.userBundleBaseName = bundleBaseName;
+        this.userBundleClassLoader = bundleBaseName == null ? null : createUserBundleClassLoader(translationRoots);
+        this.cacheKeyPrefix = buildCacheKeyPrefix(bundleBaseName, translationRoots);
         try {
             this.documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -63,7 +87,8 @@ public class TranslationService {
 
     public Document getTranslationsAsXml(String lang) {
         String targetLang = Strings.defaultIfEmpty(lang, "pl");
-        return DOCUMENT_CACHE.computeIfAbsent(targetLang, this::loadAndCreateDocument);
+        String cacheKey = cacheKeyPrefix + "|" + targetLang;
+        return DOCUMENT_CACHE.computeIfAbsent(cacheKey, key -> loadAndCreateDocument(targetLang));
     }
 
     /**
@@ -87,9 +112,9 @@ public class TranslationService {
     }
 
     private @Nullable ResourceBundle loadUserBundle(String lang) {
-        if (translationOverridesResourcePath == null) return null;
+        if (userBundleBaseName == null || userBundleClassLoader == null) return null;
         try {
-            return ResourceBundle.getBundle(translationOverridesResourcePath, Locale.forLanguageTag(lang), new Utf8Control());
+            return ResourceBundle.getBundle(userBundleBaseName, Locale.forLanguageTag(lang), userBundleClassLoader, new Utf8Control());
         } catch (MissingResourceException e) {
             return null;
         }
@@ -99,6 +124,35 @@ public class TranslationService {
         ResourceBundle defaultBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_BASE_NAME, Locale.forLanguageTag(lang), new Utf8Control());
         ResourceBundle userBundle = loadUserBundle(lang);
         return createDocumentFromBundles(defaultBundle, userBundle);
+    }
+
+    private static ClassLoader createUserBundleClassLoader(List<Path> translationRoots) {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (translationRoots == null || translationRoots.isEmpty()) {
+            return contextClassLoader;
+        }
+
+        URL[] urls = translationRoots.stream()
+                .map(TranslationService::toClassLoaderUrl)
+                .toArray(URL[]::new);
+        return new URLClassLoader(urls, contextClassLoader);
+    }
+
+    private static URL toClassLoaderUrl(Path root) {
+        try {
+            // ClassLoader URL roots must end with '/' to be treated as directories
+            return root.toAbsolutePath().toUri().toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid translation root: " + root, e);
+        }
+    }
+
+    private static String buildCacheKeyPrefix(@Nullable String bundleBaseName, List<Path> translationRoots) {
+        if (bundleBaseName == null) return "default";
+        String rootsPart = translationRoots.isEmpty()
+                ? "cp"
+                : translationRoots.stream().map(p -> p.toAbsolutePath().toString()).collect(Collectors.joining(":"));
+        return bundleBaseName + "@" + rootsPart;
     }
 
     private Document createDocumentFromBundles(ResourceBundle defaultBundle, @Nullable ResourceBundle userBundle) {
