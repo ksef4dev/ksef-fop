@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop.i18n;
 
+import io.alapierre.ksef.fop.internal.FilesystemRoots;
 import io.alapierre.ksef.fop.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +11,10 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
-public class TranslationService {
+public class TranslationService implements Closeable {
 
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
     private static final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
@@ -32,6 +34,8 @@ public class TranslationService {
 
     private final String userBundleBaseName;
     private final ClassLoader userBundleClassLoader;
+    @Nullable
+    private final URLClassLoader ownedClassLoader;
     private final String cacheKeyPrefix;
     private final DocumentBuilder documentBuilder;
 
@@ -69,14 +73,32 @@ public class TranslationService {
      * when a key is missing from the override bundle.
      *
      * @param bundleBaseName   classpath-relative base name without locale suffix and without
-     *                         {@code .properties} extension; {@code null} to use only built-in defaults
+     *                         {@code .properties} extension; must not contain a URI scheme,
+     *                         absolute path, or {@code ..} path segment; {@code null} to use only
+     *                         built-in defaults
      * @param translationRoots ordered list of filesystem roots searched before the classpath;
      *                         may be empty
+     * @throws IllegalArgumentException if {@code bundleBaseName} contains a scheme, is absolute
+     *                                  or contains a {@code ..} segment, or if a root is not an
+     *                                  accessible directory
      */
     public TranslationService(@Nullable String bundleBaseName, @NotNull List<Path> translationRoots) {
-        this.userBundleBaseName = bundleBaseName;
-        this.userBundleClassLoader = bundleBaseName == null ? null : createUserBundleClassLoader(translationRoots);
-        this.cacheKeyPrefix = buildCacheKeyPrefix(bundleBaseName, translationRoots);
+        String normalizedBundleBaseName = validateAndNormalizeBundleBaseName(bundleBaseName);
+        List<Path> canonicalRoots = canonicalizeRoots(translationRoots);
+
+        this.userBundleBaseName = normalizedBundleBaseName;
+        if (normalizedBundleBaseName == null) {
+            this.ownedClassLoader = null;
+            this.userBundleClassLoader = null;
+        } else if (canonicalRoots.isEmpty()) {
+            this.ownedClassLoader = null;
+            this.userBundleClassLoader = Thread.currentThread().getContextClassLoader();
+        } else {
+            ContainedURLClassLoader loader = createContainedLoader(canonicalRoots);
+            this.ownedClassLoader = loader;
+            this.userBundleClassLoader = loader;
+        }
+        this.cacheKeyPrefix = buildCacheKeyPrefix(normalizedBundleBaseName, canonicalRoots);
         try {
             this.documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -111,6 +133,17 @@ public class TranslationService {
         return defaultBundle.containsKey(key) ? defaultBundle.getString(key) : key;
     }
 
+    /**
+     * Releases resources held by this service. Safe to call multiple times.
+     * After {@code close()}, further lookups may fail for bundles backed by the filesystem roots.
+     */
+    @Override
+    public void close() throws IOException {
+        if (ownedClassLoader != null) {
+            ownedClassLoader.close();
+        }
+    }
+
     private @Nullable ResourceBundle loadUserBundle(String lang) {
         if (userBundleBaseName == null || userBundleClassLoader == null) return null;
         try {
@@ -126,32 +159,81 @@ public class TranslationService {
         return createDocumentFromBundles(defaultBundle, userBundle);
     }
 
-    private static ClassLoader createUserBundleClassLoader(List<Path> translationRoots) {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (translationRoots == null || translationRoots.isEmpty()) {
-            return contextClassLoader;
-        }
+    // -----------------------------------------------------------------------
+    // Validation & canonicalisation
+    // -----------------------------------------------------------------------
 
-        URL[] urls = translationRoots.stream()
-                .map(TranslationService::toClassLoaderUrl)
-                .toArray(URL[]::new);
-        return new URLClassLoader(urls, contextClassLoader);
+    /**
+     * Validates and normalizes the supplied {@code bundleBaseName}.
+     *
+     * <p>Normalisation unifies equivalent spellings so that the derived document-cache key is
+     * stable. Concretely:</p>
+     * <ul>
+     *     <li>leading/trailing whitespace is trimmed;</li>
+     *     <li>Windows-style {@code \} separators are converted to {@code /};</li>
+     *     <li>repeated separators ({@code //}) are collapsed;</li>
+     *     <li>redundant {@code .} segments are dropped.</li>
+     * </ul>
+     * <p>Unsafe inputs are rejected up front: URI schemes, absolute paths, empty names,
+     * trailing separators, {@code ..} segments.</p>
+     *
+     * @return the normalized name, or {@code null} if the input was {@code null}
+     */
+    @Nullable
+    private static String validateAndNormalizeBundleBaseName(@Nullable String name) {
+        if (name == null) return null;
+        String trimmed = sanitizeBundleName(name);
+        List<String> segments = new ArrayList<>();
+        for (String segment : trimmed.split("[/\\\\]")) {
+            if (segment.isEmpty() || ".".equals(segment)) continue;
+            if ("..".equals(segment)) {
+                throw new IllegalArgumentException("bundleBaseName must not contain '..' segments: " + name);
+            }
+            segments.add(segment);
+        }
+        if (segments.isEmpty()) {
+            throw new IllegalArgumentException("bundleBaseName must not be empty after normalisation: " + name);
+        }
+        return String.join("/", segments);
     }
 
-    private static URL toClassLoaderUrl(Path root) {
-        try {
-            // ClassLoader URL roots must end with '/' to be treated as directories
-            return root.toAbsolutePath().toUri().toURL();
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid translation root: " + root, e);
+    private static @NotNull String sanitizeBundleName(@NotNull String name) {
+        String trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            throw new IllegalArgumentException("bundleBaseName must not be empty");
         }
+        if (trimmed.contains(":")) {
+            throw new IllegalArgumentException("bundleBaseName must not contain a URI scheme: " + name);
+        }
+        if (trimmed.startsWith("/") || trimmed.startsWith("\\")) {
+            throw new IllegalArgumentException("bundleBaseName must be relative: " + name);
+        }
+        if (trimmed.endsWith("/") || trimmed.endsWith("\\")) {
+            throw new IllegalArgumentException("bundleBaseName must not end with a separator: " + name);
+        }
+        return trimmed;
+    }
+
+    private static List<Path> canonicalizeRoots(List<Path> roots) {
+        try {
+            return FilesystemRoots.canonicalize(roots);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Translation root is not accessible: " + e.getMessage(), e);
+        }
+    }
+
+    private static ContainedURLClassLoader createContainedLoader(List<Path> canonicalRoots) {
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        // URL[] is unused: ContainedURLClassLoader overrides findResource and ignores its parent URL list.
+        // We still extend URLClassLoader to inherit Closeable semantics.
+        return new ContainedURLClassLoader(new URL[0], parent, canonicalRoots);
     }
 
     private static String buildCacheKeyPrefix(@Nullable String bundleBaseName, List<Path> translationRoots) {
         if (bundleBaseName == null) return "default";
         String rootsPart = translationRoots.isEmpty()
                 ? "cp"
-                : translationRoots.stream().map(p -> p.toAbsolutePath().toString()).collect(Collectors.joining(":"));
+                : translationRoots.stream().map(Path::toString).collect(Collectors.joining(":"));
         return bundleBaseName + "@" + rootsPart;
     }
 
@@ -189,6 +271,56 @@ public class TranslationService {
         }
 
         return doc;
+    }
+
+    private static final class ContainedURLClassLoader extends URLClassLoader {
+
+        private final List<Path> canonicalRoots;
+
+        ContainedURLClassLoader(URL[] urls, ClassLoader parent, List<Path> canonicalRoots) {
+            super(urls, parent);
+            this.canonicalRoots = canonicalRoots;
+        }
+
+        @Override
+        public URL getResource(String name) {
+            URL fromRoots = findResource(name);
+            if (fromRoots != null) return fromRoots;
+            ClassLoader parent = getParent();
+            return parent != null ? parent.getResource(name) : null;
+        }
+
+        @Override
+        public InputStream getResourceAsStream(String name) {
+            URL url = getResource(name);
+            if (url == null) return null;
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public URL findResource(String name) {
+            if (name == null) return null;
+            for (Path root : canonicalRoots) {
+                URL candidate = FilesystemRoots.resolveFileWithin(root, name)
+                        .map(ContainedURLClassLoader::toUrlOrNull)
+                        .orElse(null);
+                if (candidate != null) return candidate;
+            }
+            return null;
+        }
+
+        @Nullable
+        private static URL toUrlOrNull(Path path) {
+            try {
+                return path.toUri().toURL();
+            } catch (java.net.MalformedURLException e) {
+                return null;
+            }
+        }
     }
 
     /**

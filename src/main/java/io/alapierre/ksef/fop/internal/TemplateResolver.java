@@ -16,11 +16,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * URI resolver for XSLT template loading.
@@ -56,9 +55,10 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     private final CatalogManager catalogManager;
 
     public TemplateResolver(List<Path> roots) throws TransformerException {
-        this.roots = new ArrayList<>(roots.size());
-        for (Path root : roots) {
-            this.roots.add(canonicalize(root));
+        try {
+            this.roots = FilesystemRoots.canonicalize(roots);
+        } catch (IOException e) {
+            throw new TransformerException("Template root is not accessible: " + e.getMessage(), e);
         }
         XMLResolverConfiguration config = new XMLResolverConfiguration();
         config.setFeature(ResolverFeature.CATALOG_FILES,
@@ -109,17 +109,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     // -----------------------------------------------------------------------
     // Effective path computation
     // -----------------------------------------------------------------------
-
-    /**
-     * Canonicalises {@code path} via {@code toRealPath()}, resolving symlinks and {@code ..} segments.
-     */
-    private static Path canonicalize(Path path) throws TransformerException {
-        try {
-            return path.toRealPath();
-        } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + path, e);
-        }
-    }
 
     /**
      * Returns {@code uri} unchanged if its scheme is {@code vfs:}, otherwise throws.
@@ -181,28 +170,19 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     /**
      * Tries to load {@code relativePath} from under {@code root}.
      *
-     * <p>Containment check: after resolving symlinks via {@code toRealPath()}, the real path must
-     * remain under {@code root}.</p>
+     * <p>Containment and regular-file check are delegated to
+     * {@link FilesystemRoots#resolveFileWithin(Path, String)}; symlink escapes and
+     * {@code ..} traversal fall through silently to the next lookup step.</p>
      */
     private static Source tryFilesystem(Path root, String relativePath) throws TransformerException {
-        Path candidate = root.resolve(relativePath);
-        if (!Files.exists(candidate)) {
+        Optional<Path> resolved = FilesystemRoots.resolveFileWithin(root, relativePath);
+        if (!resolved.isPresent()) {
             return null;
         }
-
-        // Resolve symlinks to check for symlink escape or path traversal.
         try {
-            Path realCandidate = candidate.toRealPath();
-            if (!realCandidate.startsWith(root)) {
-                throw new TransformerException("Path traversal rejected: " + relativePath);
-            }
-            return new StreamSource(Files.newInputStream(realCandidate), VFS_PREFIX + relativePath);
-        } catch (NoSuchFileException e) {
-            // TOCTOU: the file disappeared after the check
-            // The caller will throw an appropriate error.
-            return null;
+            return new StreamSource(Files.newInputStream(resolved.get()), VFS_PREFIX + relativePath);
         } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + candidate, e);
+            throw new TransformerException("File is not accessible: " + resolved.get(), e);
         }
     }
 

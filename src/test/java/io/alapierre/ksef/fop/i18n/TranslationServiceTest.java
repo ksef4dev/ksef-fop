@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop.i18n;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -170,101 +171,107 @@ class TranslationServiceTest {
     // --- Override tests ---
 
     @Test
-    void getTranslation_withOverrides_shouldReturnOverriddenValue() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
+    void getTranslation_withOverrides_shouldReturnOverriddenValue() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenKey() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
+    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenKey() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_shouldReturnOverriddenValueForEnglish() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Overridden Seller", withOverrides.getTranslation("en", "seller"));
+    void getTranslation_withOverrides_shouldReturnOverriddenValueForEnglish() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Overridden Seller", withOverrides.getTranslation("en", "seller"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenEnglishKey() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+    void getTranslation_withOverrides_shouldFallbackToDefaultForNonOverriddenEnglishKey() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_shouldReturnCustomKey() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Własna wartość", withOverrides.getTranslation("pl", "custom.key"));
+    void getTranslation_withOverrides_shouldReturnCustomKey() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Własna wartość", withOverrides.getTranslation("pl", "custom.key"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_shouldReturnKeyWhenNotFoundAnywhere() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("nonexistent.key", withOverrides.getTranslation("pl", "nonexistent.key"));
+    void getTranslation_withOverrides_shouldReturnKeyWhenNotFoundAnywhere() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("nonexistent.key", withOverrides.getTranslation("pl", "nonexistent.key"));
+        }
     }
 
     @Test
-    void getTranslation_withNonExistentOverridePath_shouldFallbackToDefaults() {
-        TranslationService withOverrides = new TranslationService("i18n/no_such_bundle");
-        assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
-        assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+    void getTranslation_withNonExistentOverridePath_shouldFallbackToDefaults() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/no_such_bundle")) {
+            assertEquals("Numer faktury", withOverrides.getTranslation("pl", "invoice.number"));
+            assertEquals("Invoice Number", withOverrides.getTranslation("en", "invoice.number"));
+        }
     }
 
     @Test
-    void getTranslationsAsXml_withOverrides_shouldContainOverriddenValue() {
+    void getTranslationsAsXml_withOverrides_shouldContainOverriddenValue() throws IOException {
         clearCaches();
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        Document doc = withOverrides.getTranslationsAsXml("pl");
-
-        String sellerValue = findEntryValue(doc, "seller");
-        assertEquals("Nadpisany Sprzedawca", sellerValue);
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            Document doc = withOverrides.getTranslationsAsXml("pl");
+            assertEquals("Nadpisany Sprzedawca", findEntryValue(doc, "seller"));
+        }
     }
 
     @Test
-    void getTranslationsAsXml_withOverrides_shouldKeepDefaultForNonOverriddenKey() {
+    void getTranslationsAsXml_withOverrides_shouldKeepDefaultForNonOverriddenKey() throws IOException {
         clearCaches();
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        Document doc = withOverrides.getTranslationsAsXml("pl");
-
-        String invoiceNumber = findEntryValue(doc, "invoice.number");
-        assertEquals("Numer faktury", invoiceNumber);
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            Document doc = withOverrides.getTranslationsAsXml("pl");
+            assertEquals("Numer faktury", findEntryValue(doc, "invoice.number"));
+        }
     }
 
     @Test
-    void getTranslationsAsXml_withOverrides_shouldContainCustomKey() {
+    void getTranslationsAsXml_withOverrides_shouldContainCustomKey() throws IOException {
         clearCaches();
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        Document doc = withOverrides.getTranslationsAsXml("pl");
-
-        String customValue = findEntryValue(doc, "custom.key");
-        assertEquals("Własna wartość", customValue);
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            Document doc = withOverrides.getTranslationsAsXml("pl");
+            assertEquals("Własna wartość", findEntryValue(doc, "custom.key"));
+        }
     }
 
     @Test
-    void getTranslationsAsXml_withOverrides_shouldWorkForEnglish() {
+    void getTranslationsAsXml_withOverrides_shouldWorkForEnglish() throws IOException {
         clearCaches();
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        Document doc = withOverrides.getTranslationsAsXml("en");
-
-        assertEquals("Overridden Seller", findEntryValue(doc, "seller"));
-        assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
-        assertEquals("Custom value", findEntryValue(doc, "custom.key"));
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            Document doc = withOverrides.getTranslationsAsXml("en");
+            assertEquals("Overridden Seller", findEntryValue(doc, "seller"));
+            assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
+            assertEquals("Custom value", findEntryValue(doc, "custom.key"));
+        }
     }
 
     @Test
-    void getTranslation_withOverrides_multipleOverriddenKeys() {
-        TranslationService withOverrides = new TranslationService("i18n/test_overrides");
-        assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
-        assertEquals("Nadpisany Nabywca", withOverrides.getTranslation("pl", "buyer"));
+    void getTranslation_withOverrides_multipleOverriddenKeys() throws IOException {
+        try (TranslationService withOverrides = new TranslationService("i18n/test_overrides")) {
+            assertEquals("Nadpisany Sprzedawca", withOverrides.getTranslation("pl", "seller"));
+            assertEquals("Nadpisany Nabywca", withOverrides.getTranslation("pl", "buyer"));
+        }
     }
 
     @Test
-    void getTranslation_withNullOverridePath_shouldBehaveAsDefault() {
-        TranslationService withNull = new TranslationService(null);
-        assertEquals("Sprzedawca", withNull.getTranslation("pl", "seller"));
-        assertEquals("Seller", withNull.getTranslation("en", "seller"));
+    void getTranslation_withNullOverridePath_shouldBehaveAsDefault() throws IOException {
+        try (TranslationService withNull = new TranslationService(null)) {
+            assertEquals("Sprzedawca", withNull.getTranslation("pl", "seller"));
+            assertEquals("Seller", withNull.getTranslation("en", "seller"));
+        }
     }
 
     @Test
@@ -272,10 +279,10 @@ class TranslationServiceTest {
         clearCaches();
         createFileSystemOverrides();
         List<Path> translationRoots = Collections.singletonList(tempDir);
-        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
-
-        assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("pl", "seller"));
-        assertEquals("External Seller", withFileOverrides.getTranslation("en", "seller"));
+        try (TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots)) {
+            assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("pl", "seller"));
+            assertEquals("External Seller", withFileOverrides.getTranslation("en", "seller"));
+        }
     }
 
     @Test
@@ -283,10 +290,10 @@ class TranslationServiceTest {
         clearCaches();
         createFileSystemOverrides();
         List<Path> translationRoots = Collections.singletonList(tempDir);
-        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
-
-        assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("fr", "seller"));
-        assertEquals("Numer faktury", withFileOverrides.getTranslation("fr", "invoice.number"));
+        try (TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots)) {
+            assertEquals("Zewnetrzny Sprzedawca", withFileOverrides.getTranslation("fr", "seller"));
+            assertEquals("Numer faktury", withFileOverrides.getTranslation("fr", "invoice.number"));
+        }
     }
 
     @Test
@@ -294,12 +301,12 @@ class TranslationServiceTest {
         clearCaches();
         createFileSystemOverrides();
         List<Path> translationRoots = Collections.singletonList(tempDir);
-        TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots);
-        Document doc = withFileOverrides.getTranslationsAsXml("en");
-
-        assertEquals("External Seller", findEntryValue(doc, "seller"));
-        assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
-        assertEquals("External custom", findEntryValue(doc, "custom.key"));
+        try (TranslationService withFileOverrides = new TranslationService("custom_messages", translationRoots)) {
+            Document doc = withFileOverrides.getTranslationsAsXml("en");
+            assertEquals("External Seller", findEntryValue(doc, "seller"));
+            assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
+            assertEquals("External custom", findEntryValue(doc, "custom.key"));
+        }
     }
 
     @Test
@@ -308,10 +315,10 @@ class TranslationServiceTest {
         Path unrelatedRoot = tempDir.resolve("empty");
         Files.createDirectories(unrelatedRoot);
         List<Path> translationRoots = Collections.singletonList(unrelatedRoot);
-        TranslationService withRoots = new TranslationService("i18n/test_overrides", translationRoots);
-
-        assertEquals("Nadpisany Sprzedawca", withRoots.getTranslation("pl", "seller"));
-        assertEquals("Overridden Seller", withRoots.getTranslation("en", "seller"));
+        try (TranslationService withRoots = new TranslationService("i18n/test_overrides", translationRoots)) {
+            assertEquals("Nadpisany Sprzedawca", withRoots.getTranslation("pl", "seller"));
+            assertEquals("Overridden Seller", withRoots.getTranslation("en", "seller"));
+        }
     }
 
     @Test
@@ -326,9 +333,143 @@ class TranslationServiceTest {
         Files.write(rootB.resolve("custom_messages.properties"),
                 "seller=Seller-B\n".getBytes(StandardCharsets.UTF_8));
         List<Path> translationRoots = Arrays.asList(rootA, rootB);
-        TranslationService withRoots = new TranslationService("custom_messages", translationRoots);
+        try (TranslationService withRoots = new TranslationService("custom_messages", translationRoots)) {
+            assertEquals("Seller-A", withRoots.getTranslation("pl", "seller"));
+        }
+    }
 
-        assertEquals("Seller-A", withRoots.getTranslation("pl", "seller"));
+    // --- Security / lifecycle tests ---
+
+    @Test
+    void constructor_shouldRejectBundleBaseNameWithScheme() {
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("file:secret"));
+    }
+
+    @Test
+    void constructor_shouldRejectAbsoluteBundleBaseName() {
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("/etc/passwd"));
+    }
+
+    @Test
+    void constructor_shouldRejectBundleBaseNameWithTraversalSegment() {
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("../secret"));
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("i18n/../secret"));
+    }
+
+    @Test
+    void constructor_shouldRejectBundleBaseNameWithTrailingSeparator() {
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("i18n/"));
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("i18n\\"));
+    }
+
+    @Test
+    void constructor_shouldRejectBundleBaseNameThatIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService(""));
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("   "));
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("/"));
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService("./"));
+    }
+
+    @Test
+    void constructor_shouldNormalizeEquivalentBundleBaseNamesToSameCacheKey() throws IOException {
+        clearCaches();
+        // All four spellings refer to the same bundle; after normalisation they must share
+        // a single cache entry.
+        String[] equivalentSpellings = {
+                "i18n/test_overrides",
+                "i18n//test_overrides",
+                "i18n\\test_overrides",
+                "i18n/./test_overrides"
+        };
+
+        for (String spelling : equivalentSpellings) {
+            try (TranslationService svc = new TranslationService(spelling)) {
+                // Load via getTranslationsAsXml to populate DOCUMENT_CACHE.
+                assertEquals("Nadpisany Sprzedawca",
+                        findEntryValue(svc.getTranslationsAsXml("pl"), "seller"),
+                        "unexpected value for spelling: " + spelling);
+            }
+        }
+
+        // Each spelling should resolve to the same (lang-prefixed) cache key, so the shared
+        // DOCUMENT_CACHE holds at most one entry per language we have looked up (here: "pl").
+        Map<String, ?> cache = getDocumentCache();
+        assertEquals(1, cache.size(),
+                "Equivalent bundle name spellings produced distinct cache entries: " + cache.keySet());
+    }
+
+    @Test
+    void constructor_shouldRejectNonExistentRoot() {
+        List<Path> roots = Collections.singletonList(tempDir.resolve("does-not-exist"));
+        assertThrows(IllegalArgumentException.class,
+                () -> new TranslationService("custom_messages", roots));
+    }
+
+    @Test
+    void constructor_shouldRejectRootThatIsNotDirectory() throws IOException {
+        Path file = tempDir.resolve("not-a-dir.txt");
+        Files.write(file, new byte[]{1});
+        List<Path> roots = Collections.singletonList(file);
+        assertThrows(IllegalArgumentException.class,
+                () -> new TranslationService("custom_messages", roots));
+    }
+
+    @Test
+    void close_shouldBeNoOpWhenNoResourcesHeld() throws IOException {
+        try (TranslationService svc = new TranslationService()) {
+            assertEquals("Numer faktury", svc.getTranslation("pl", "invoice.number"));
+        }
+    }
+
+    @Test
+    void close_shouldReleaseLoaderAndBeIdempotent() throws IOException {
+        clearCaches();
+        createFileSystemOverrides();
+        TranslationService svc = new TranslationService("custom_messages", Collections.singletonList(tempDir));
+        assertEquals("Zewnetrzny Sprzedawca", svc.getTranslation("pl", "seller"));
+
+        svc.close();
+        svc.close();
+    }
+
+    @Test
+    void getTranslation_withFileSystemRoots_shouldPreferRootsOverClasspath() throws IOException {
+        clearCaches();
+        Path root = tempDir.resolve("roots-win");
+        Files.createDirectories(root.resolve("i18n"));
+        Files.write(
+                root.resolve("i18n/test_overrides.properties"),
+                "seller=From-Root\n".getBytes(StandardCharsets.UTF_8)
+        );
+        try (TranslationService svc = new TranslationService("i18n/test_overrides", Collections.singletonList(root))) {
+            assertEquals("From-Root", svc.getTranslation("pl", "seller"));
+        }
+    }
+
+    @Test
+    void getTranslation_withSymlinkEscape_shouldNotLeakAndFallBackToClasspath() throws IOException {
+        clearCaches();
+        Path outside = tempDir.resolve("outside");
+        Files.createDirectories(outside);
+        Path secret = outside.resolve("test_overrides.properties");
+        Files.write(secret, "seller=Compromised\n".getBytes(StandardCharsets.UTF_8));
+
+        Path root = tempDir.resolve("root");
+        Path i18n = Files.createDirectories(root.resolve("i18n"));
+
+        boolean symlinkCreated = false;
+        try {
+            Files.createSymbolicLink(i18n.resolve("test_overrides.properties"), secret);
+            symlinkCreated = true;
+        } catch (UnsupportedOperationException | IOException e) {
+            // Symlinks may be unsupported (e.g. Windows without privilege); skip the test.
+        }
+        Assumptions.assumeTrue(symlinkCreated, "Symlinks not supported in this environment");
+
+        try (TranslationService svc = new TranslationService("i18n/test_overrides", Collections.singletonList(root))) {
+            // The symlink escape must be rejected; classpath override kicks in instead.
+            assertEquals("Nadpisany Sprzedawca", svc.getTranslation("pl", "seller"));
+        }
     }
 
     private String findEntryValue(Document doc, String key) {
