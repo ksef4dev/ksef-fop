@@ -68,6 +68,24 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
+        Optional<Source> resolved = tryResolve(href, base);
+        if (resolved.isPresent()) {
+            return resolved.get();
+        }
+        throw new TransformerException("Template not found: " + href
+                + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
+    }
+
+    /**
+     * Same as {@link #resolve(String, String)} but returns {@link Optional#empty()} when the
+     * resource is not available, instead of throwing.
+     *
+     * <p>Genuine programmer errors (null {@code href}, malformed URIs, unsupported URI
+     * schemes, or http/https URIs missing from the XML catalog) still propagate as
+     * {@link TransformerException}. "Not found" for filesystem+classpath is the only
+     * condition that collapses to an empty result.</p>
+     */
+    public Optional<Source> tryResolve(String href, String base) throws TransformerException {
         if (href == null) {
             throw new TransformerException("Cannot resolve null href");
         }
@@ -89,21 +107,26 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException("Unsupported URI scheme in href: " + href);
         }
 
-        // 2 + 3. Derive the effective relative path, then try filesystem roots and classpath
-        URI baseUri = parseBase(base);
-        URI virtualUri = resolveUri(baseUri, href);
-        // Remove leading slash
-        String relativePath = virtualUri.getPath().substring(1);
+        // 2 + 3. Derive the effective relative path, then try filesystem roots and classpath.
+        // Root-relative hrefs bypass the base URI: this keeps them portable across whatever
+        // base URI the XSLT engine feeds us (file:, vfs:, jar:, …) and avoids the need to
+        // validate the base scheme when the caller has already said "this path is absolute".
+        String relativePath;
+        if (href.startsWith("/")) {
+            relativePath = href.substring(1);
+        } else {
+            URI baseUri = parseBase(base);
+            URI virtualUri = resolveUri(baseUri, href);
+            relativePath = virtualUri.getPath().substring(1);
+        }
 
         for (Path root : roots) {
             Source s = tryFilesystem(root, relativePath);
-            if (s != null) return s;
+            if (s != null) return Optional.of(s);
         }
 
         Source s = tryClasspath(relativePath);
-        if (s != null) return s;
-
-        throw new TransformerException("Template not found: " + href + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
+        return Optional.ofNullable(s);
     }
 
     // -----------------------------------------------------------------------

@@ -98,7 +98,23 @@
     <xsl:param name="issuerUser"/>
     <xsl:param name="showCorrectionDifferences"/>
 
-    <xsl:param name="labels"/>
+    <!-- Label file paths (resolved by the shared URIResolver). `labelsLocale` falls back
+         to `labelsBase` when no locale-specific file is available. Paths are intentionally
+         root-relative so document() doesn't resolve them against the stylesheet's own URI. -->
+    <xsl:param name="labelsBase" select="'/i18n/labels.xml'"/>
+    <xsl:param name="labelsLocale" select="'/i18n/labels.xml'"/>
+
+    <!-- Merge locale-specific labels over the base file. Keys present in the locale file
+         win; missing keys fall through to the base. The merged tree is bound to $labels
+         so existing `key('kLabels', ..., $labels)` lookups keep working unchanged. -->
+    <xsl:variable name="labels">
+        <labels>
+            <xsl:variable name="localeDoc" select="document($labelsLocale)"/>
+            <xsl:variable name="baseDoc" select="document($labelsBase)"/>
+            <xsl:copy-of select="$localeDoc/labels/entry"/>
+            <xsl:copy-of select="$baseDoc/labels/entry[not(@key = $localeDoc/labels/entry/@key)]"/>
+        </labels>
+    </xsl:variable>
     <xsl:key name="kLabels" match="entry" use="@key"/>
 
     <!-- New parameters for multiple QR codes -->

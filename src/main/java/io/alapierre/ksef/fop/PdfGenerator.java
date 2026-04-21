@@ -15,7 +15,6 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.*;
@@ -23,7 +22,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -40,53 +38,36 @@ public class PdfGenerator {
     private static final String MIME_PDF = "application/pdf";
 
     private final InvoicePdfConfig invoicePdfConfig;
-    private final TranslationService translationService;
-    private final QrCodeBuilder qrCodeBuilder;
     private final Configuration fopConfiguration;
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig), invoicePdfConfig, new TranslationService());
+        this(loadResource(fopConfig), invoicePdfConfig);
     }
 
     public PdfGenerator(String fopConfig) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig), new InvoicePdfConfig(), new TranslationService());
-    }
-
-    public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig) throws ConfigurationException {
-        this(fopConfig, invoicePdfConfig, new TranslationService());
+        this(loadResource(fopConfig), new InvoicePdfConfig());
     }
 
     public PdfGenerator(InputStream fopConfig) throws ConfigurationException {
-        this(fopConfig, new InvoicePdfConfig(), new TranslationService());
+        this(fopConfig, new InvoicePdfConfig());
     }
 
-    public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig, TranslationService translationService) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig), invoicePdfConfig, translationService);
-    }
-
-    public PdfGenerator(String fopConfig, TranslationService translationService) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig), new InvoicePdfConfig(), translationService);
-    }
-
-    public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig, TranslationService translationService) throws ConfigurationException {
+    public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig) throws ConfigurationException {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         this.fopConfiguration = cfgBuilder.build(fopConfig);
         this.invoicePdfConfig = invoicePdfConfig;
-        this.translationService = translationService;
-        this.qrCodeBuilder = new QrCodeBuilder(translationService);
     }
 
     /**
      * Generates UPO PDF from given XML and OutputStream (defaults to v3 for backward compatibility)
      * @param upoXML UPO XML
      * @param out    destination OutputStream
-     * @throws IOException          throws when IO error occurs
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException         throws when FOP error occurs
      * @deprecated Use generateUpo(Source, UpoGenerationParams, OutputStream) instead for version control
      */
     @Deprecated
-    public void generateUpo(Source upoXML, OutputStream out) throws IOException, TransformerException, FOPException {
+    public void generateUpo(Source upoXML, OutputStream out) throws TransformerException, FOPException {
         UpoGenerationParams params = UpoGenerationParams.builder()
                 .schema(UpoSchema.UPO_V3)
                 .build();
@@ -98,23 +79,18 @@ public class PdfGenerator {
      * @param upoXML UPO XML
      * @param params UPO generation parameters including schema version
      * @param out    destination OutputStream
-     * @throws IOException          throws when IO error occurs
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException         throws when FOP error occurs
      */
-    public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws IOException, TransformerException, FOPException {
+    public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws TransformerException, FOPException {
         FopFactory fopFactory = createFopFactory();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Transformer transformer = createTransformer(params.getTemplateRoots(), resolveUpoTemplatePath(params));
-
-        try {
-            Document labels = translationService.getTranslationsAsXml(params.getLanguage().getCode());
-            transformer.setParameter("labels", labels);
-        } catch (Exception e) {
-            log.error("Failed to load translations", e);
-        }
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TranslationService translationService = new TranslationService(resolver);
+        Transformer transformer = createTransformer(resolver, resolveUpoTemplatePath(params));
+        applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(upoXML, res);
@@ -128,16 +104,18 @@ public class PdfGenerator {
      * @param params An instance of InvoiceGenerationParams, containing settings like KSeF number, verification link,
      *               QR code, and logo.
      * @param out The OutputStream where the generated PDF will be written.
-     * @throws IOException throws when IO error occurs
      * @throws TransformerException throws when XSLT transformer error occurs
      * @throws FOPException throws when FOP error occurs
      */
     public void generateInvoice(byte[] invoiceXml,
                                 InvoiceGenerationParams params,
-                                OutputStream out) throws IOException, TransformerException, FOPException {
-        String langCode = params.getLanguage().getCode();
+                                OutputStream out) throws TransformerException, FOPException {
+        String langCode = params.resolveLanguageTag();
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TranslationService translationService = new TranslationService(resolver);
+        QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
-        generatePdfInvoice(invoiceXml, params, qrCodes, null, out);
+        generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, out);
     }
 
     /**
@@ -149,7 +127,6 @@ public class PdfGenerator {
      *               QR code, logo, and duplicate date.
      * @param duplicateDate The date when the duplicate invoice was issued.
      * @param out The OutputStream where the generated PDF will be written.
-     * @throws IOException If an I/O error occurs during the generation process.
      * @throws TransformerException If an error occurs during the XSLT transformation.
      * @throws FOPException If an error occurs during the PDF rendering process.
      */
@@ -157,8 +134,10 @@ public class PdfGenerator {
     public void generateDuplicateInvoice(byte[] invoiceXml,
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
-                                         OutputStream out) throws IOException, TransformerException, FOPException {
-        generatePdfInvoice(invoiceXml, params, null, duplicateDate, out);
+                                         OutputStream out) throws TransformerException, FOPException {
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TranslationService translationService = new TranslationService(resolver);
+        generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
     }
 
     /**
@@ -170,31 +149,31 @@ public class PdfGenerator {
      * @param duplicateDate The date the duplicate invoice was issued (can be null for regular invoices).
      * @param out The OutputStream where the generated PDF will be written.
      * @throws FOPException If an error occurs during the FOP processing.
-     * @throws IOException If an I/O error occurs.
      * @throws TransformerException If an error occurs during the XSLT transformation.
      */
     private void generatePdfInvoice(byte @NotNull [] invoiceXml,
                                     InvoiceGenerationParams params,
                                     @Nullable List<QrCodeData> qrCodes,
                                     @Nullable LocalDate duplicateDate,
+                                    TemplateResolver resolver,
+                                    TranslationService translationService,
                                     OutputStream out)
-            throws FOPException, IOException, TransformerException {
+            throws FOPException, TransformerException {
 
         FopFactory fopFactory = createFopFactory();
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Transformer transformer = createTransformer(params.getTemplateRoots(), resolveTemplatePath(params));
+        Transformer transformer = createTransformer(resolver, resolveTemplatePath(params));
 
-        applyParameters(params, qrCodes, duplicateDate, transformer);
+        applyParameters(params, qrCodes, duplicateDate, translationService, transformer);
 
         Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
         Result result = new SAXResult(fop.getDefaultHandler());
         transformer.transform(xmlSource, result);
     }
 
-    private static Transformer createTransformer(List<Path> roots, String systemId) throws TransformerException {
-        TemplateResolver resolver = new TemplateResolver(roots);
+    private static Transformer createTransformer(TemplateResolver resolver, String systemId) throws TransformerException {
         return createTransformerFactory(resolver).newTransformer(resolver.resolve(systemId, null));
     }
 
@@ -236,14 +215,10 @@ public class PdfGenerator {
     private void applyParameters(InvoiceGenerationParams params,
                                  @Nullable List<QrCodeData> qrCodes,
                                  @Nullable LocalDate duplicateDate,
+                                 @NotNull TranslationService translationService,
                                  @NotNull Transformer transformer) {
 
-        try {
-            Document labels = translationService.getTranslationsAsXml(params.getLanguage().getCode());
-            setParam(transformer, "labels", labels);
-        } catch (Exception e) {
-            log.error("Failed to load translations", e);
-        }
+        applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
         setQrParameters(qrCodes, transformer);
 
@@ -272,6 +247,18 @@ public class PdfGenerator {
         if (customProperties != null) {
             customProperties.forEach((key, value) -> setParam(transformer, key, value));
         }
+    }
+
+    /**
+     * Wires the XSLT stylesheet up with the label file paths it should load via
+     * {@code document()}. Both paths are relative URIs that the shared
+     * {@link TemplateResolver} knows how to serve from filesystem roots or the classpath.
+     */
+    private static void applyLabelParameters(@NotNull TranslationService translationService,
+                                             @NotNull String lang,
+                                             @NotNull Transformer transformer) {
+        transformer.setParameter("labelsBase", TranslationService.LABELS_BASE_PATH);
+        transformer.setParameter("labelsLocale", translationService.resolveLocaleLabelPath(lang));
     }
 
     private void setQrParameters(@Nullable List<QrCodeData> qrCodes, @NotNull Transformer transformer) {
