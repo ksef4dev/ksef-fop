@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -127,6 +128,44 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
         Source s = tryClasspath(relativePath);
         return Optional.ofNullable(s);
+    }
+
+    /**
+     * Collects every resolvable source for {@code href} — one per configured filesystem root
+     * that contains a match, followed by the classpath entry if present. Unlike
+     * {@link #tryResolve(String, String)}, which stops at the first hit, this is used by
+     * layered resources such as i18n labels that must be overlaid on top of the classpath
+     * defaults rather than replacing them.
+     *
+     * <p>The order returned is <em>priority order</em> (highest priority first): user roots
+     * in insertion order, then classpath. Callers typically iterate and copy missing entries
+     * from later sources into the accumulator built from earlier sources.</p>
+     *
+     * <p>Only bare or root-relative hrefs are accepted here. {@code http:} / {@code https:}
+     * and any other URI scheme are rejected with {@link TransformerException} — layering
+     * across the XML catalog has no well-defined meaning.</p>
+     */
+    public List<Source> resolveAll(String href) throws TransformerException {
+        if (href == null) {
+            throw new TransformerException("Cannot resolve null href");
+        }
+        if (href.startsWith(HTTP_PREFIX) || href.startsWith(HTTPS_PREFIX)) {
+            throw new TransformerException("resolveAll does not support catalog URIs: " + href);
+        }
+        if (href.contains(":")) {
+            throw new TransformerException("Unsupported URI scheme in href: " + href);
+        }
+
+        String relativePath = href.startsWith("/") ? href.substring(1) : href;
+
+        List<Source> sources = new ArrayList<>(roots.size() + 1);
+        for (Path root : roots) {
+            Source s = tryFilesystem(root, relativePath);
+            if (s != null) sources.add(s);
+        }
+        Source cp = tryClasspath(relativePath);
+        if (cp != null) sources.add(cp);
+        return sources;
     }
 
     // -----------------------------------------------------------------------

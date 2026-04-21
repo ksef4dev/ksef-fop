@@ -15,6 +15,7 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.*;
@@ -250,15 +251,20 @@ public class PdfGenerator {
     }
 
     /**
-     * Wires the XSLT stylesheet up with the label file paths it should load via
-     * {@code document()}. Both paths are relative URIs that the shared
-     * {@link TemplateResolver} knows how to serve from filesystem roots or the classpath.
+     * Injects the fully-merged label document as the XSLT {@code labels} parameter.
+     *
+     * <p>The merge is performed Java-side ({@link TranslationService#getTranslationsAsXml})
+     * because it needs to overlay partial filesystem overrides on top of the classpath
+     * defaults — a URIResolver called from XSLT via {@code document()} only returns the
+     * first hit and would shadow missing keys with empty text. The XSLT uses
+     * {@code <xsl:key name="kLabels" match="entry" use="@key"/>} against this parameter to
+     * look up individual entries.</p>
      */
     private static void applyLabelParameters(@NotNull TranslationService translationService,
                                              @NotNull String lang,
                                              @NotNull Transformer transformer) {
-        transformer.setParameter("labelsBase", TranslationService.LABELS_BASE_PATH);
-        transformer.setParameter("labelsLocale", translationService.resolveLocaleLabelPath(lang));
+        Document labels = translationService.getTranslationsAsXml(lang);
+        transformer.setParameter("labels", labels);
     }
 
     private void setQrParameters(@Nullable List<QrCodeData> qrCodes, @NotNull Transformer transformer) {

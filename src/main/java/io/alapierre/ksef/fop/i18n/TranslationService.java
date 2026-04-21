@@ -91,39 +91,40 @@ public class TranslationService {
         return key;
     }
 
-    /**
-     * Path that the XSLT should load for locale-specific labels, or the base path when
-     * there is no locale-specific file available for {@code lang}. The returned value is
-     * always resolvable by the same {@link URIResolver} passed to this service.
-     */
-    public String resolveLocaleLabelPath(String lang) {
-        String targetLang = Strings.defaultIfEmpty(lang, DEFAULT_LANGUAGE);
-        for (String candidate : candidateResourceNames(targetLang)) {
-            if (candidate.equals(LABELS_BASE_PATH)) {
-                continue; // Base file is reported separately via LABELS_BASE_PATH.
-            }
-            if (canResolve(candidate)) {
-                return candidate;
-            }
-        }
-        return LABELS_BASE_PATH;
-    }
-
     // -----------------------------------------------------------------------
     // Loading & merging
     // -----------------------------------------------------------------------
 
+    /**
+     * Builds the merged label document for {@code lang} by overlaying every resolvable
+     * variant in priority order.
+     *
+     * <p>For each candidate file name (most-specific locale first, falling back to the
+     * base file) we consult <em>all</em> filesystem roots <em>and</em> the classpath —
+     * each individual root's partial override is copied on top of the classpath default
+     * for the same file name. Priority (earlier wins) is:</p>
+     * <ol>
+     *   <li>Locale-specific file in each user root (in insertion order)</li>
+     *   <li>Locale-specific file on the classpath</li>
+     *   <li>Base file in each user root (in insertion order)</li>
+     *   <li>Base file on the classpath</li>
+     * </ol>
+     *
+     * <p>This is the critical difference from a plain {@code URIResolver.resolve} that
+     * stops at the first hit: a partial filesystem override must <em>never</em> shadow
+     * the full classpath defaults, otherwise missing keys render as empty text.</p>
+     */
     private Document loadMergedDocument(String lang) {
         List<String> candidates = candidateResourceNames(lang);
 
         Document merged = null;
         for (String name : candidates) {
-            Document doc = loadDocument(name);
-            if (doc == null) continue;
-            if (merged == null) {
-                merged = cloneAsMergeTarget(doc);
-            } else {
-                mergeMissingEntries(merged, doc);
+            for (Document doc : loadAllVariants(name)) {
+                if (merged == null) {
+                    merged = cloneAsMergeTarget(doc);
+                } else {
+                    mergeMissingEntries(merged, doc);
+                }
             }
         }
         if (merged == null) {
@@ -133,64 +134,78 @@ public class TranslationService {
         return merged;
     }
 
-    @Nullable
-    private Document loadDocument(String relativePath) {
+    /**
+     * Loads every parse-able XML document behind {@code relativePath} (user roots first,
+     * then classpath). Missing or unreadable sources are skipped silently — callers treat
+     * the result as "best-effort" and a language with zero hits falls back to an empty doc.
+     */
+    private List<Document> loadAllVariants(String relativePath) {
+        List<Source> sources;
         try {
-            Optional<InputStream> stream = openResource(relativePath);
-            if (!stream.isPresent()) return null;
-            try (InputStream in = stream.get()) {
-                InputSource sax = new InputSource(in);
-                sax.setSystemId(relativePath);
-                documentBuilder.reset();
-                return documentBuilder.parse(sax);
+            if (resolver instanceof TemplateResolver) {
+                sources = ((TemplateResolver) resolver).resolveAll(relativePath);
+            } else {
+                // Custom resolver: can only give us a single source, so there's no
+                // layering across roots / classpath available from here.
+                Source single = resolveSingle(relativePath);
+                sources = (single == null) ? Collections.emptyList() : Collections.singletonList(single);
             }
-        } catch (IOException | SAXException | TransformerException e) {
+        } catch (TransformerException e) {
+            log.debug("Resolver error for {}: {}", relativePath, e.getMessage());
+            return Collections.emptyList();
+        }
+
+        List<Document> docs = new ArrayList<>(sources.size());
+        for (Source source : sources) {
+            Document doc = parseSource(source, relativePath);
+            if (doc != null) docs.add(doc);
+        }
+        return docs;
+    }
+
+    @Nullable
+    private Document parseSource(Source source, String relativePath) {
+        try (InputStream in = openSourceStream(source, relativePath)) {
+            if (in == null) return null;
+            InputSource sax = new InputSource(in);
+            sax.setSystemId(relativePath);
+            documentBuilder.reset();
+            return documentBuilder.parse(sax);
+        } catch (IOException | SAXException e) {
             log.error("Failed to load labels resource {}", relativePath, e);
             return null;
         }
     }
 
-    private Optional<InputStream> openResource(String href) throws IOException, TransformerException {
-        Source source = resolve(href);
-        if (source == null) return Optional.empty();
+    @Nullable
+    private InputStream openSourceStream(Source source, String href) throws IOException {
         if (source instanceof StreamSource) {
             StreamSource ss = (StreamSource) source;
-            if (ss.getInputStream() != null) return Optional.of(ss.getInputStream());
-            if (ss.getSystemId() != null) return Optional.of(new java.net.URL(ss.getSystemId()).openStream());
+            if (ss.getInputStream() != null) return ss.getInputStream();
+            if (ss.getSystemId() != null) return new java.net.URL(ss.getSystemId()).openStream();
         }
         if (source instanceof SAXSource) {
             SAXSource ss = (SAXSource) source;
             if (ss.getInputSource() != null && ss.getInputSource().getByteStream() != null) {
-                return Optional.of(ss.getInputSource().getByteStream());
+                return ss.getInputSource().getByteStream();
             }
         }
         if (source instanceof DOMSource) {
             log.warn("DOMSource returned for labels resource {}; ignoring", href);
-            return Optional.empty();
+            return null;
         }
         String systemId = source.getSystemId();
-        if (systemId != null) return Optional.of(new java.net.URL(systemId).openStream());
-        return Optional.empty();
+        if (systemId != null) return new java.net.URL(systemId).openStream();
+        return null;
     }
 
     @Nullable
-    private Source resolve(String href) throws TransformerException {
-        if (resolver instanceof TemplateResolver) {
-            return ((TemplateResolver) resolver).tryResolve(href, null).orElse(null);
-        }
+    private Source resolveSingle(String href) {
         try {
             return resolver.resolve(href, null);
         } catch (TransformerException e) {
             log.debug("Resolver miss for {}: {}", href, e.getMessage());
             return null;
-        }
-    }
-
-    private boolean canResolve(String href) {
-        try {
-            return resolve(href) != null;
-        } catch (TransformerException e) {
-            return false;
         }
     }
 

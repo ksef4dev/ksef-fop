@@ -129,13 +129,15 @@ class TranslationServiceTest {
     }
 
     @Test
-    void getTranslation_withRoot_shouldFallBackToBaseForMissingKey() throws IOException, TransformerException {
-        // Partial English override — missing keys must fall back to the base (Polish) file.
+    void getTranslation_withRoot_shouldFallBackThroughClasspathLocaleBeforeBase() throws IOException, TransformerException {
+        // Partial English override. Missing keys must FIRST try the classpath English file
+        // (built-in English defaults) and only then fall back to the base Polish file — so a
+        // partial filesystem override never shadows the shipped translations for that locale.
         Path root = writeLabels(tempDir, "labels_en.xml", "seller", "From-Root");
         TranslationService svc = serviceWithRoots(root);
         assertEquals("From-Root", svc.getTranslation("en", "seller"));
-        // Not overridden and English file didn't supply it, so it falls through to labels.xml (Polish).
-        assertEquals("Numer faktury", svc.getTranslation("en", "invoice.number"));
+        // Not in the user override → classpath labels_en.xml supplies the English value.
+        assertEquals("Invoice Number", svc.getTranslation("en", "invoice.number"));
     }
 
     @Test
@@ -162,8 +164,8 @@ class TranslationServiceTest {
 
         Document doc = svc.getTranslationsAsXml("en");
         assertEquals("From-Root", findEntryValue(doc, "seller"));
-        // invoice.number not in English override → falls through to base (Polish) file.
-        assertEquals("Numer faktury", findEntryValue(doc, "invoice.number"));
+        // invoice.number not in user override → classpath English built-in wins over base Polish.
+        assertEquals("Invoice Number", findEntryValue(doc, "invoice.number"));
         assertEquals("Custom value", findEntryValue(doc, "custom.key"));
     }
 
@@ -213,33 +215,54 @@ class TranslationServiceTest {
     }
 
     // -----------------------------------------------------------------------
-    // resolveLocaleLabelPath — used by PdfGenerator to wire XSLT params
+    // Regression: partial filesystem overrides must not shadow classpath defaults
     // -----------------------------------------------------------------------
 
     @Test
-    void resolveLocaleLabelPath_shouldReturnLocaleFileWhenAvailable() {
-        assertEquals("/i18n/labels_en.xml", new TranslationService().resolveLocaleLabelPath("en"));
-    }
-
-    @Test
-    void resolveLocaleLabelPath_shouldReturnBasePathWhenLocaleMissing() {
-        assertEquals(TranslationService.LABELS_BASE_PATH,
-                new TranslationService().resolveLocaleLabelPath("fr"));
-    }
-
-    @Test
-    void resolveLocaleLabelPath_shouldHonourRootOverrides() throws IOException, TransformerException {
-        Path root = writeLabels(tempDir, "labels_fr.xml", "seller", "Vendeur");
+    void getTranslation_withPartialBaseOverride_shouldFallThroughToClasspathForMissingKeys() throws IOException, TransformerException {
+        // Sample-project scenario: /config/i18n/labels.xml supplies overrides for two keys only.
+        // Missing keys (like invoice.number) must still resolve to the built-in Polish defaults
+        // shipped on the classpath — the filesystem hit must not shadow the classpath file.
+        Path root = writeLabels(tempDir, "labels.xml",
+                "seller", "Dostawca",
+                "buyer", "Klient");
         TranslationService svc = serviceWithRoots(root);
-        // French file now exists in the override root, so it wins over the base fallback.
-        assertEquals("/i18n/labels_fr.xml", svc.resolveLocaleLabelPath("fr"));
+
+        assertEquals("Dostawca", svc.getTranslation("pl", "seller"));
+        assertEquals("Klient", svc.getTranslation("pl", "buyer"));
+        assertEquals("Numer faktury", svc.getTranslation("pl", "invoice.number"));
+        assertEquals("Data wystawienia", svc.getTranslation("pl", "invoice.date"));
     }
 
     @Test
-    void resolveLocaleLabelPath_shouldDefaultToBasePathForBlankLanguage() {
-        TranslationService svc = new TranslationService();
-        assertEquals(TranslationService.LABELS_BASE_PATH, svc.resolveLocaleLabelPath(""));
-        assertEquals(TranslationService.LABELS_BASE_PATH, svc.resolveLocaleLabelPath(null));
+    void getTranslation_withPartialLocaleOverride_shouldLayerLocaleRootOverClasspathLocaleOverClasspathBase() throws IOException, TransformerException {
+        // English request with a partial labels_en.xml filesystem override.
+        // The overlay order must be: user labels_en.xml → classpath labels_en.xml
+        //   → user labels.xml (absent here) → classpath labels.xml.
+        Path root = writeLabels(tempDir, "labels_en.xml",
+                "seller", "Vendor",
+                "buyer", "Client");
+        TranslationService svc = serviceWithRoots(root);
+
+        // From user root override.
+        assertEquals("Vendor", svc.getTranslation("en", "seller"));
+        assertEquals("Client", svc.getTranslation("en", "buyer"));
+        // Not in override → classpath English built-in kicks in.
+        assertEquals("Invoice Number", svc.getTranslation("en", "invoice.number"));
+    }
+
+    @Test
+    void getTranslationsAsXml_withPartialBaseOverride_shouldContainFullClasspathKeysetWithOverridesApplied() throws IOException, TransformerException {
+        Path root = writeLabels(tempDir, "labels.xml", "seller", "Dostawca");
+        TranslationService svc = serviceWithRoots(root);
+
+        Document doc = svc.getTranslationsAsXml("pl");
+        NodeList entries = doc.getElementsByTagName("entry");
+        // Sanity: much more than just the single override key — proves classpath merged in.
+        assertTrue(entries.getLength() > 10,
+                "expected classpath labels to be merged in; got only " + entries.getLength() + " entries");
+        assertEquals("Dostawca", findEntryValue(doc, "seller"));
+        assertEquals("Numer faktury", findEntryValue(doc, "invoice.number"));
     }
 
     // -----------------------------------------------------------------------

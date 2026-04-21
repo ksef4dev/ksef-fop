@@ -149,11 +149,10 @@ public abstract class AbstractStyleSheetTest {
     }
 
     protected static void setLabelsParam(Transformer transformer) {
-        // The stylesheet loads label XMLs at runtime via document(); route those calls through
-        // the same TemplateResolver used by the production PdfGenerator.
+        // Route any xsl:import / xsl:include / document() calls through the same TemplateResolver
+        // used by the production PdfGenerator, then inject the pre-merged labels tree.
         transformer.setURIResolver(TEMPLATE_RESOLVER);
-        transformer.setParameter("labelsBase", TranslationService.LABELS_BASE_PATH);
-        transformer.setParameter("labelsLocale", translationService.resolveLocaleLabelPath(null));
+        transformer.setParameter("labels", translationService.getTranslationsAsXml(null));
     }
 
     /**
