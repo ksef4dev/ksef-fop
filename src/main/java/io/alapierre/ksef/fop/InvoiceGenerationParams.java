@@ -145,7 +145,7 @@ public class InvoiceGenerationParams {
      * Resolves the effective language tag used for label lookups, in order of precedence:
      * <ol>
      *   <li>{@link #languageLocale} (BCP&nbsp;47 tag, trimmed; blank values are ignored),</li>
-     *   <li>{@link #language} ({@code Language} enum, using {@link Language#getCode()}),</li>
+     *   <li>{@link #language} ({@code Language} enum, using  Language.getCode()),</li>
      *   <li>{@link Language#DEFAULT_LANGUAGE_TAG}.</li>
      * </ol>
      *
