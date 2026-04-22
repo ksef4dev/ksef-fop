@@ -16,11 +16,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * URI resolver for XSLT template loading.
@@ -56,9 +56,10 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     private final CatalogManager catalogManager;
 
     public TemplateResolver(List<Path> roots) throws TransformerException {
-        this.roots = new ArrayList<>(roots.size());
-        for (Path root : roots) {
-            this.roots.add(canonicalize(root));
+        try {
+            this.roots = FilesystemRoots.canonicalize(roots);
+        } catch (IOException e) {
+            throw new TransformerException("Template root is not accessible: " + e.getMessage(), e);
         }
         XMLResolverConfiguration config = new XMLResolverConfiguration();
         config.setFeature(ResolverFeature.CATALOG_FILES,
@@ -68,6 +69,24 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
+        Optional<Source> resolved = tryResolve(href, base);
+        if (resolved.isPresent()) {
+            return resolved.get();
+        }
+        throw new TransformerException("Template not found: " + href
+                + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
+    }
+
+    /**
+     * Same as {@link #resolve(String, String)} but returns {@link Optional#empty()} when the
+     * resource is not available, instead of throwing.
+     *
+     * <p>Genuine programmer errors (null {@code href}, malformed URIs, unsupported URI
+     * schemes, or http/https URIs missing from the XML catalog) still propagate as
+     * {@link TransformerException}. "Not found" for filesystem+classpath is the only
+     * condition that collapses to an empty result.</p>
+     */
+    public Optional<Source> tryResolve(String href, String base) throws TransformerException {
         if (href == null) {
             throw new TransformerException("Cannot resolve null href");
         }
@@ -89,37 +108,69 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException("Unsupported URI scheme in href: " + href);
         }
 
-        // 2 + 3. Derive the effective relative path, then try filesystem roots and classpath
-        URI baseUri = parseBase(base);
-        URI virtualUri = resolveUri(baseUri, href);
-        // Remove leading slash
-        String relativePath = virtualUri.getPath().substring(1);
+        // 2 + 3. Derive the effective relative path, then try filesystem roots and classpath.
+        // Root-relative hrefs bypass the base URI: this keeps them portable across whatever
+        // base URI the XSLT engine feeds us (file:, vfs:, jar:, …) and avoids the need to
+        // validate the base scheme when the caller has already said "this path is absolute".
+        String relativePath;
+        if (href.startsWith("/")) {
+            relativePath = href.substring(1);
+        } else {
+            URI baseUri = parseBase(base);
+            URI virtualUri = resolveUri(baseUri, href);
+            relativePath = virtualUri.getPath().substring(1);
+        }
 
         for (Path root : roots) {
             Source s = tryFilesystem(root, relativePath);
-            if (s != null) return s;
+            if (s != null) return Optional.of(s);
         }
 
         Source s = tryClasspath(relativePath);
-        if (s != null) return s;
+        return Optional.ofNullable(s);
+    }
 
-        throw new TransformerException("Template not found: " + href + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
+    /**
+     * Collects every resolvable source for {@code href} — one per configured filesystem root
+     * that contains a match, followed by the classpath entry if present. Unlike
+     * {@link #tryResolve(String, String)}, which stops at the first hit, this is used by
+     * layered resources such as i18n labels that must be overlaid on top of the classpath
+     * defaults rather than replacing them.
+     *
+     * <p>The order returned is <em>priority order</em> (highest priority first): user roots
+     * in insertion order, then classpath. Callers typically iterate and copy missing entries
+     * from later sources into the accumulator built from earlier sources.</p>
+     *
+     * <p>Only bare or root-relative hrefs are accepted here. {@code http:} / {@code https:}
+     * and any other URI scheme are rejected with {@link TransformerException} — layering
+     * across the XML catalog has no well-defined meaning.</p>
+     */
+    public List<Source> resolveAll(String href) throws TransformerException {
+        if (href == null) {
+            throw new TransformerException("Cannot resolve null href");
+        }
+        if (href.startsWith(HTTP_PREFIX) || href.startsWith(HTTPS_PREFIX)) {
+            throw new TransformerException("resolveAll does not support catalog URIs: " + href);
+        }
+        if (href.contains(":")) {
+            throw new TransformerException("Unsupported URI scheme in href: " + href);
+        }
+
+        String relativePath = href.startsWith("/") ? href.substring(1) : href;
+
+        List<Source> sources = new ArrayList<>(roots.size() + 1);
+        for (Path root : roots) {
+            Source s = tryFilesystem(root, relativePath);
+            if (s != null) sources.add(s);
+        }
+        Source cp = tryClasspath(relativePath);
+        if (cp != null) sources.add(cp);
+        return sources;
     }
 
     // -----------------------------------------------------------------------
     // Effective path computation
     // -----------------------------------------------------------------------
-
-    /**
-     * Canonicalises {@code path} via {@code toRealPath()}, resolving symlinks and {@code ..} segments.
-     */
-    private static Path canonicalize(Path path) throws TransformerException {
-        try {
-            return path.toRealPath();
-        } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + path, e);
-        }
-    }
 
     /**
      * Returns {@code uri} unchanged if its scheme is {@code vfs:}, otherwise throws.
@@ -181,28 +232,19 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     /**
      * Tries to load {@code relativePath} from under {@code root}.
      *
-     * <p>Containment check: after resolving symlinks via {@code toRealPath()}, the real path must
-     * remain under {@code root}.</p>
+     * <p>Containment and regular-file check are delegated to
+     * {@link FilesystemRoots#resolveFileWithin(Path, String)}; symlink escapes and
+     * {@code ..} traversal fall through silently to the next lookup step.</p>
      */
     private static Source tryFilesystem(Path root, String relativePath) throws TransformerException {
-        Path candidate = root.resolve(relativePath);
-        if (!Files.exists(candidate)) {
+        Optional<Path> resolved = FilesystemRoots.resolveFileWithin(root, relativePath);
+        if (!resolved.isPresent()) {
             return null;
         }
-
-        // Resolve symlinks to check for symlink escape or path traversal.
         try {
-            Path realCandidate = candidate.toRealPath();
-            if (!realCandidate.startsWith(root)) {
-                throw new TransformerException("Path traversal rejected: " + relativePath);
-            }
-            return new StreamSource(Files.newInputStream(realCandidate), VFS_PREFIX + relativePath);
-        } catch (NoSuchFileException e) {
-            // TOCTOU: the file disappeared after the check
-            // The caller will throw an appropriate error.
-            return null;
+            return new StreamSource(Files.newInputStream(resolved.get()), VFS_PREFIX + relativePath);
         } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + candidate, e);
+            throw new TransformerException("File is not accessible: " + resolved.get(), e);
         }
     }
 

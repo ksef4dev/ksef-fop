@@ -132,82 +132,105 @@ template is resolved automatically from the schema.
 ## Custom translations
 
 The library ships with built-in Polish and English translations for all PDF labels
-(invoice headers, column names, annotations, QR code captions, etc.).
-You can **override any subset** of these labels - only the keys you provide will be
-replaced; everything else falls back to the built-in defaults.
+(invoice headers, column names, annotations, QR code captions, etc.). Labels live as
+XML documents at `i18n/labels.xml` (base / Polish) and `i18n/labels_<lang>.xml` per
+locale. The XSLT stylesheets load these files at runtime via `document()`, routed
+through the **same URIResolver** that resolves custom templates. This means label
+overrides use exactly the same mechanism as template overrides — there is no separate
+"translation root" concept: overrides live under `InvoiceGenerationParams.templateRoots`.
 
-### 1. Create your properties files
+### 1. Create your labels XML file(s)
 
-Place them on the classpath using the standard Java `ResourceBundle` naming convention.
-Pick any base name you like, for example `i18n/custom_messages`:
+Drop them next to any templates you might be overriding, under an `i18n/` directory
+inside one of your `templateRoots`:
 
-```
-src/main/resources/
-└── i18n/
-    ├── custom_messages.properties        ← default / Polish overrides
-    └── custom_messages_en.properties     ← English overrides (optional)
-```
+`/etc/ksef/i18n/labels.xml` (Polish / base):
 
-Each file should contain **only the keys you want to change**. For example, to rename
-the seller and buyer labels:
-
-`i18n/custom_messages.properties`:
-
-````properties
-seller=Dostawca
-buyer=Klient
+````xml
+<?xml version="1.0" encoding="UTF-8"?>
+<labels>
+  <entry key="seller">Dostawca</entry>
+  <entry key="buyer">Klient</entry>
+</labels>
 ````
 
-`i18n/custom_messages_en.properties`:
+`/etc/ksef/i18n/labels_en.xml` (English):
 
-````properties
-seller=Vendor
-buyer=Client
+````xml
+<?xml version="1.0" encoding="UTF-8"?>
+<labels>
+  <entry key="seller">Vendor</entry>
+  <entry key="buyer">Client</entry>
+</labels>
 ````
 
-You don't need to copy the entire default file - unlisted keys will keep their
-built-in values automatically.
-
-### 2. Create a TranslationService with your bundle base name
-
-Pass the classpath-relative base name (without the `.properties` extension and without
-the locale suffix) to the `TranslationService` constructor:
+### 2. Point `templateRoots` at the directory containing `i18n/`
 
 ````java
-TranslationService translationService = new TranslationService("i18n/custom_messages");
+InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+        .schema(InvoiceSchema.FA3_1_0_E)
+        .ksefNumber("1234567890-20231221-XXXXXXXX-XX")
+        .language(InvoiceLanguage.EN)
+        .templateRoot(Path.of("/etc/ksef"))
+        .build();
+
+PdfGenerator generator = new PdfGenerator("fop.xconf");
+generator.generateInvoice(invoiceXml, params, out);
 ````
 
-### 3. Pass the TranslationService to PdfGenerator
+That's it. Anywhere the XSLT looks up a key (`key('kLabels', …, $labels)`), it will see
+the merged view. No extra plumbing — the same resolver is shared between the stylesheet
+and the QR-code label lookups.
+
+### Lookup order
+
+Per language, candidates are tried most-specific first (`labels_en_US.xml` →
+`labels_en.xml` → `labels.xml`). For each candidate the resolver walks:
+
+1. Each configured filesystem root, in insertion order
+2. The library classpath (built-in defaults)
+
+Within the XSLT the locale-specific file wins **key-by-key** over the base file:
+
+| Source | Keys contributed |
+|--------|------------------|
+| `labels_<lang>.xml` (override or classpath) | All keys it contains |
+| `labels.xml` (override or classpath) | Any keys not in the locale file |
+
+So a partial locale override merges cleanly with the base file; keys missing from the
+locale file fall through to Polish defaults (or your overridden Polish base, if you
+supplied one).
+
+> **Note:** an override replaces the library's file at the same path. If your
+> `labels_en.xml` has only `seller`, other English keys come from the base file (Polish
+> built-ins or your `labels.xml` override). Copy the library file in full if you want
+> to keep English defaults while changing a single key.
+
+### Security
+
+- Each root is canonicalised via `Path.toRealPath()`; non-existing or non-directory
+  roots are rejected up front.
+- Every resource loaded from a root must remain under it (`..` escapes and symlink
+  escapes are rejected — the lookup silently falls through to the classpath).
+- The XML parser used for labels runs with `FEATURE_SECURE_PROCESSING`, DTDs disabled,
+  and external entity resolution disabled — overrides cannot perform XXE attacks.
+
+### Using `TranslationService` directly
+
+You rarely need to touch this class: `PdfGenerator` creates a per-invocation instance
+from your `templateRoots`. If you need to look up labels from Java (e.g. for tooling or
+tests), pass your own `URIResolver` (most likely a `TemplateResolver`):
 
 ````java
-TranslationService translationService = new TranslationService("i18n/custom_messages");
-PdfGenerator generator = new PdfGenerator("fop.xconf", translationService);
+URIResolver resolver = new TemplateResolver(List.of(Path.of("/etc/ksef")));
+TranslationService ts = new TranslationService(resolver);
+
+String label = ts.getTranslation("en", "seller"); // "Vendor"
+Document merged = ts.getTranslationsAsXml("en");  // full merged document
 ````
 
-Or together with `InvoicePdfConfig`:
-
-````java
-TranslationService translationService = new TranslationService("i18n/custom_messages");
-PdfGenerator generator = new PdfGenerator("fop.xconf", invoicePdfConfig, translationService);
-````
-
-That's it - the generator will now use your values for the overridden keys and the
-library defaults for everything else, for both invoice and UPO PDFs.
-
-### How it works
-
-| Priority | Source | Description |
-|----------|--------|-------------|
-| 1 (highest) | Your `.properties` file | Only the keys you defined |
-| 2 (fallback) | Built-in `i18n/messages.properties` / `i18n/messages_en.properties` | All remaining keys |
-
-The resolution happens **per language**: if you provide `custom_messages_en.properties`,
-it only affects English output. Polish output will use `custom_messages.properties`
-(or fall back to the built-in Polish bundle if that file doesn't exist).
-
-> **Tip:** To see the full list of available translation keys, look at the built-in
-> `i18n/messages.properties` (Polish) and `i18n/messages_en.properties` (English)
-> inside the library JAR or in the source repository under `src/main/resources/i18n/`.
+> **Tip:** the full list of available translation keys lives in the library's
+> `i18n/labels.xml` and `i18n/labels_en.xml` (under `src/main/resources/i18n/`).
 
 ## Custom properties
 

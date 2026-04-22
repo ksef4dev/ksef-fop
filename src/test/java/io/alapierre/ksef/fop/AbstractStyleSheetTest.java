@@ -1,9 +1,11 @@
 package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.i18n.TranslationService;
+import io.alapierre.ksef.fop.internal.TemplateResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,7 +39,16 @@ public abstract class AbstractStyleSheetTest {
     private static final String FA3_TEMPLATE_RESOURCE = "templates/fa3/ksef_invoice.xsl";
     private static final URL FA3_TEMPLATE_URL = AbstractStyleSheetTest.resource(FA3_TEMPLATE_RESOURCE);
 
-    private static final TranslationService translationService = new TranslationService();
+    private static final TemplateResolver TEMPLATE_RESOLVER = newClasspathResolver();
+    private static final TranslationService translationService = new TranslationService(TEMPLATE_RESOLVER);
+
+    private static TemplateResolver newClasspathResolver() {
+        try {
+            return new TemplateResolver(Collections.emptyList());
+        } catch (TransformerException e) {
+            throw new IllegalStateException("Failed to build TemplateResolver for tests", e);
+        }
+    }
 
     static {
         DOCUMENT_BUILDER_FACTORY.setNamespaceAware(true);
@@ -138,6 +149,9 @@ public abstract class AbstractStyleSheetTest {
     }
 
     protected static void setLabelsParam(Transformer transformer) {
+        // Route any xsl:import / xsl:include / document() calls through the same TemplateResolver
+        // used by the production PdfGenerator, then inject the pre-merged labels tree.
+        transformer.setURIResolver(TEMPLATE_RESOLVER);
         transformer.setParameter("labels", translationService.getTranslationsAsXml(null));
     }
 
