@@ -27,12 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 
 @Slf4j
 public class TranslationService {
 
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = createSecureDocumentBuilderFactory();
     private final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
 
     public static final String LABELS_BASE_NAME = "i18n/labels";
@@ -46,7 +46,7 @@ public class TranslationService {
 
     /** No-override service: labels come from the library classpath only. */
     public TranslationService() {
-        this(newClasspathOnlyResolver());
+        this(newClasspathOnlyResolver(), null);
     }
 
     /**
@@ -57,9 +57,26 @@ public class TranslationService {
      * and translations.</p>
      */
     public TranslationService(@NotNull URIResolver resolver) {
+        this(resolver, null);
+    }
+
+    /**
+     * Creates a translation service that loads labels through the supplied resolver and,
+     * optionally, customizes the default translation XML parser factory.
+     *
+     * <p>The service always starts from the library's hardened default factory and then
+     * invokes {@code documentBuilderFactoryCustomizer} (if provided), allowing callers to
+     * tweak existing settings and add parser-specific features/attributes.</p>
+     */
+    public TranslationService(@NotNull URIResolver resolver,
+                              @Nullable Consumer<DocumentBuilderFactory> documentBuilderFactoryCustomizer) {
         this.resolver = Objects.requireNonNull(resolver, "resolver");
+        DocumentBuilderFactory factory = createSecureDocumentBuilderFactory();
+        if (documentBuilderFactoryCustomizer != null) {
+            documentBuilderFactoryCustomizer.accept(factory);
+        }
         try {
-            this.documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+            this.documentBuilder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("Failed to initialize TranslationService", e);
         }
