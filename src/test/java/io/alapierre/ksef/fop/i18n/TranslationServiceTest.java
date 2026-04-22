@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -272,6 +273,30 @@ class TranslationServiceTest {
     @Test
     void constructor_shouldRejectNullResolver() {
         assertThrows(NullPointerException.class, () -> new TranslationService(null));
+    }
+
+    @Test
+    void constructor_shouldUseCustomDocumentBuilderFactoryCustomizer() throws TransformerException {
+        AtomicBoolean customizerCalled = new AtomicBoolean(false);
+        TemplateResolver resolver = new TemplateResolver(Collections.emptyList());
+
+        TranslationService service = new TranslationService(
+                resolver,
+                factory -> {
+                    customizerCalled.set(true);
+                    factory.setNamespaceAware(true);
+                });
+
+        assertTrue(customizerCalled.get());
+        assertEquals("Numer faktury", service.getTranslation("pl", "invoice.number"));
+    }
+
+    @Test
+    void constructor_shouldPropagateCustomizerFailure() throws TransformerException {
+        TemplateResolver resolver = new TemplateResolver(Collections.emptyList());
+        assertThrows(IllegalArgumentException.class, () -> new TranslationService(resolver, factory -> {
+            throw new IllegalArgumentException("boom");
+        }));
     }
 
     // -----------------------------------------------------------------------

@@ -11,9 +11,11 @@ import lombok.Singular;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Data
 @Builder
@@ -46,6 +48,17 @@ public class UpoGenerationParams {
     private String languageLocale;
 
     /**
+     * Optional customizer invoked on top of the library's default translation XML
+     * {@link DocumentBuilderFactory} settings.
+     *
+     * <p>The library always creates a default hardened factory first and then invokes this
+     * customizer (if provided), so callers can adjust existing properties and add parser-
+     * specific options in one place.</p>
+     */
+    @Nullable
+    private Consumer<DocumentBuilderFactory> translationDocumentBuilderFactoryCustomizer;
+
+    /**
      * Optional classpath-relative path to a custom XSLT UPO template.
      * When set, overrides the schema-derived default template path.
      */
@@ -68,6 +81,7 @@ public class UpoGenerationParams {
         this.schema = schema;
         this.language = language != null ? language : Language.PL;
         this.languageLocale = null;
+        this.translationDocumentBuilderFactoryCustomizer = null;
         this.templatePath = null;
         this.templateRoots = Collections.emptyList();
     }

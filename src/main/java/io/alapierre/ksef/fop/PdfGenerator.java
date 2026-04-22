@@ -89,7 +89,9 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
         TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
+        TranslationService translationService = new TranslationService(
+                resolver,
+                params.getTranslationDocumentBuilderFactoryCustomizer());
         Transformer transformer = createTransformer(resolver, resolveUpoTemplatePath(params));
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
@@ -113,7 +115,9 @@ public class PdfGenerator {
                                 OutputStream out) throws TransformerException, FOPException {
         String langCode = params.resolveLanguageTag();
         TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
+        TranslationService translationService = new TranslationService(
+                resolver,
+                params.getTranslationDocumentBuilderFactoryCustomizer());
         QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, out);
@@ -137,7 +141,9 @@ public class PdfGenerator {
                                          LocalDate duplicateDate,
                                          OutputStream out) throws TransformerException, FOPException {
         TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
+        TranslationService translationService = new TranslationService(
+                resolver,
+                params.getTranslationDocumentBuilderFactoryCustomizer());
         generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
     }
 

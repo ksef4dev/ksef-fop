@@ -212,8 +212,66 @@ supplied one).
   roots are rejected up front.
 - Every resource loaded from a root must remain under it (`..` escapes and symlink
   escapes are rejected — the lookup silently falls through to the classpath).
-- The XML parser used for labels runs with `FEATURE_SECURE_PROCESSING`, DTDs disabled,
-  and external entity resolution disabled — overrides cannot perform XXE attacks.
+- By default, the XML parser used for labels runs with `FEATURE_SECURE_PROCESSING`,
+  DTDs disabled, and external entity resolution disabled.
+
+### Customizing translation XML parser factory
+
+If needed, you can customize the default `DocumentBuilderFactory` used for translation
+XML parsing. The library creates its default secure factory first, then invokes your
+customizer.
+
+Default factory configuration applied by the library:
+
+- `setNamespaceAware(false)`
+- `setValidating(false)`
+- `setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)`
+- `setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)`
+- `setFeature("http://xml.org/sax/features/external-general-entities", false)`
+- `setFeature("http://xml.org/sax/features/external-parameter-entities", false)`
+- `setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)`
+- `setXIncludeAware(false)`
+- `setExpandEntityReferences(false)`
+- `setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "")`
+- `setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")`
+
+Invoice example:
+
+````java
+InvoiceGenerationParams params = InvoiceGenerationParams.builder()
+        .schema(InvoiceSchema.FA3_1_0_E)
+        .languageLocale("en")
+        .translationDocumentBuilderFactoryCustomizer(factory -> {
+            try {
+                // Example: keep secure processing, but tweak parser-specific settings.
+                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Invalid XML parser feature", e);
+            }
+        })
+        .build();
+````
+
+UPO example:
+
+````java
+UpoGenerationParams params = UpoGenerationParams.builder()
+        .schema(UpoSchema.UPO_V4_3)
+        .languageLocale("pl")
+        .translationDocumentBuilderFactoryCustomizer(factory -> {
+            try {
+                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException(e);
+            }
+        })
+        .build();
+````
+
+> **Important:** customizer runs on your responsibility. If you weaken XML parser
+> settings, you can re-enable XXE-style risks.
 
 ### Using `TranslationService` directly
 

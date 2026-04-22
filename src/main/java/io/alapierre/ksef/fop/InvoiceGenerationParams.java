@@ -11,6 +11,7 @@ import lombok.Singular;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Data
 @Builder
@@ -93,6 +95,17 @@ public class InvoiceGenerationParams {
     private String languageLocale;
 
     /**
+     * Optional customizer invoked on top of the library's default translation XML
+     * {@link DocumentBuilderFactory} settings.
+     *
+     * <p>The library always creates a default hardened factory first and then invokes this
+     * customizer (if provided), so callers can adjust existing properties and add parser-
+     * specific options in one place.</p>
+     */
+    @Nullable
+    private Consumer<DocumentBuilderFactory> translationDocumentBuilderFactoryCustomizer;
+
+    /**
      * Ordered list of filesystem directories searched before the classpath when resolving templates.
      */
     @Singular("templateRoot")
@@ -130,6 +143,7 @@ public class InvoiceGenerationParams {
         this.customProperties = customProperties != null ? customProperties : new HashMap<>();
         this.language = language != null ? language : Language.PL;
         this.languageLocale = null;
+        this.translationDocumentBuilderFactoryCustomizer = null;
         this.templateRoots = Collections.emptyList();
     }
 
