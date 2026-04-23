@@ -65,7 +65,7 @@
         <assertj.version>3.27.7</assertj.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <zxing.version>3.5.2</zxing.version>
+        <zxing.version>3.5.4</zxing.version>
         <xmlunit.version>2.11.0</xmlunit.version>
 
         <!-- Maven plugin versions -->
