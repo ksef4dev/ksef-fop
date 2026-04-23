@@ -3,10 +3,10 @@ package io.alapierre.ksef.fop;
 import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.internal.TemplateResolver;
+import io.alapierre.ksef.fop.internal.XmlFactories;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
@@ -90,7 +89,8 @@ public class PdfGenerator {
 
         TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
         TranslationService translationService = new TranslationService(resolver);
-        Transformer transformer = createTransformer(resolver, resolveUpoTemplatePath(params));
+        Templates template = XmlFactories.getTemplate(resolver, resolveUpoTemplatePath(params));
+        Transformer transformer = template.newTransformer();
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
         Result res = new SAXResult(fop.getDefaultHandler());
@@ -165,24 +165,14 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Transformer transformer = createTransformer(resolver, resolveTemplatePath(params));
+        Templates template = XmlFactories.getTemplate(resolver, resolveTemplatePath(params));
+        Transformer transformer = template.newTransformer();
 
         applyParameters(params, qrCodes, duplicateDate, translationService, transformer);
 
         Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
         Result result = new SAXResult(fop.getDefaultHandler());
         transformer.transform(xmlSource, result);
-    }
-
-    private static Transformer createTransformer(TemplateResolver resolver, String systemId) throws TransformerException {
-        return createTransformerFactory(resolver).newTransformer(resolver.resolve(systemId, null));
-    }
-
-    private static TransformerFactory createTransformerFactory(TemplateResolver resolver) throws TransformerException {
-        TransformerFactory factory = new TransformerFactoryImpl();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setURIResolver(resolver);
-        return factory;
     }
 
     private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {

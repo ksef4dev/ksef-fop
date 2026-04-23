@@ -3,6 +3,7 @@ package io.alapierre.ksef.fop.i18n;
 import io.alapierre.ksef.fop.Language;
 import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.internal.TemplateResolver;
+import io.alapierre.ksef.fop.internal.XmlFactories;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class TranslationService {
 
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = createSecureDocumentBuilderFactory();
     private final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
 
     public static final String LABELS_BASE_NAME = "i18n/labels";
@@ -59,7 +59,7 @@ public class TranslationService {
     public TranslationService(@NotNull URIResolver resolver) {
         this.resolver = Objects.requireNonNull(resolver, "resolver");
         try {
-            this.documentBuilder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+            this.documentBuilder = XmlFactories.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("Failed to initialize TranslationService", e);
         }

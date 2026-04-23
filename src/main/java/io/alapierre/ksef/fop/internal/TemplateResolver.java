@@ -67,6 +67,10 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         this.catalogManager = config.getFeature(ResolverFeature.CATALOG_MANAGER);
     }
 
+    List<Path> getRoots() {
+        return roots;
+    }
+
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         Optional<Source> resolved = tryResolve(href, base);
