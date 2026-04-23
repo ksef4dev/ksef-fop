@@ -30,6 +30,14 @@
             <name>Karol Niewiadomski</name>
             <email>karol.niewiadomski@itrust.dev</email>
         </developer>
+        <developer>
+            <name>Piotr P. Karwasz</name>
+            <email>piotr@github.copernik.eu</email>
+        </developer>
+        <developer>
+            <name>Adam Silski</name>
+            <email>adam.silski@itrust.dev</email>
+        </developer>
 
     </developers>
 

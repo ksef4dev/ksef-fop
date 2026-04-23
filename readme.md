@@ -31,6 +31,23 @@ What do you need to use it in your application:
 - Java 21
 - Apache FOP
 
+# Security considerations
+
+The library processes two types of XML input:
+
+- XSLT stylesheets (trusted, bundled with the library or provided by the developer)
+- E-invoices / UPO documents (untrusted, provided by the caller)
+
+Starting from version 1.2.20, the XML parser is configured in a secure mode:
+
+- external entity resolution is disabled
+- DOCTYPE declarations are rejected
+
+This mitigates common XML-based attacks such as XXE and entity expansion DoS.
+
+> [!IMPORTANT]
+> Applications should still treat input XML as untrusted data and apply validation as appropriate to their context.
+
 # Configuration
 
 ##### Example FOP config
