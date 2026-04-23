@@ -44,8 +44,8 @@ Starting from version 1.2.18, the XML parser is configured in a secure mode:
 
 This mitigates common XML-based attacks such as XXE and entity expansion DoS.
 
-⚠️ Important:
-Applications should still treat input XML as untrusted data and apply validation as appropriate to their context.
+> [!IMPORTANT]
+> Applications should still treat input XML as untrusted data and apply validation as appropriate to their context.
 
 # Configuration
 
