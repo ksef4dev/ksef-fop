@@ -312,7 +312,12 @@
             </xsl:if>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" padding-left="3pt">
                 <fo:block>
-                    <xsl:value-of select="crd:P_7"/> <!-- Nazwa -->
+                    <xsl:for-each select="tokenize(crd:P_7, '\n')">
+                        <xsl:value-of select="."/>
+                        <xsl:if test="position() != last()">
+                            <fo:block/>
+                        </xsl:if>
+                    </xsl:for-each> <!-- Nazwa -->
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
@@ -760,7 +765,14 @@
                                 </fo:table-cell>
                             </xsl:if>
                             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding">
-                                <fo:block><xsl:value-of select="$after/crd:P_7"/></fo:block>
+                                <fo:block>
+									<xsl:for-each select="tokenize($after/crd:P_7, '\n')">
+                                        <xsl:value-of select="."/>
+                                        <xsl:if test="position() != last()">
+                                            <fo:block/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+								</fo:block>
                             </fo:table-cell>
 
                             <!-- Quantity - for new rows, show exact "after" value, otherwise show difference -->
