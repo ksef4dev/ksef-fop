@@ -248,7 +248,7 @@ class GeneratePdfTest {
 
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa_rr.pdf"))) {
 
-            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa_rr/podstawowa/FA_RR_Przyklad_1.xml"));
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa_rr/podstawowa/FA_RR_1_Przyklad_1.xml"));
 
             String verificationLink = "https://qr-test.ksef.mf.gov.pl/invoice/5451824119/31-01-2026/KxwNsNKtYSXLfcVsRnXAANUXT6NepXk42xOXUXaF8xE";
             InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(verificationLink);
