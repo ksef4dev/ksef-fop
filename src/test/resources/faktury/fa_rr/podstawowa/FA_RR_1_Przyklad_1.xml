@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2026/03/06/14189/">
+    <Naglowek>
+        <KodFormularza kodSystemowy="FA_RR (1)" wersjaSchemy="1-1E">FA_RR</KodFormularza>
+        <WariantFormularza>1</WariantFormularza>
+        <DataWytworzeniaFa>2026-04-28T16:51:56Z</DataWytworzeniaFa>
+        <SystemInfo>ABC</SystemInfo>
+    </Naglowek>
+    <Podmiot1>
+        <DaneIdentyfikacyjne>
+            <NIP>5451824119</NIP>
+            <Nazwa>Rolnik ryczałtowy</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>Adres L1</AdresL1>
+            <AdresL2>Adres L2</AdresL2>
+        </Adres>
+        <AdresKoresp>
+            <KodKraju>DE</KodKraju>
+            <AdresL1>Adres L1</AdresL1>
+            <AdresL2>Adres L2</AdresL2>
+            <GLN>00123</GLN>
+        </AdresKoresp>
+        <DaneKontaktowe>
+            <Email>rolnik@mail.com</Email>
+        </DaneKontaktowe>
+    </Podmiot1>
+    <Podmiot2>
+        <DaneIdentyfikacyjne>
+            <NIP>7583893420</NIP>
+            <Nazwa>ABC DEF Pełna nazwa test SP. zoo</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>Pastelowa1,badam ilosc znaków w nazwie 1234567890,2234567890. 323456789,4234567890.5234567890
+                chyba
+            </AdresL1>
+            <AdresL2>adres linia 2- tekst stały. 123456789.druga linia adresu</AdresL2>
+        </Adres>
+        <AdresKoresp>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>badam ilosc znaków w nazwie 1234567890,2234567890. 323456789,4234567890.5234567890
+                KORESPONDENCYJNE
+            </AdresL1>
+            <AdresL2>druga liia korespondencji</AdresL2>
+        </AdresKoresp>
+        <DaneKontaktowe>
+            <Telefon>+48 571230430</Telefon>
+        </DaneKontaktowe>
+        <DaneKontaktowe>
+            <Email>podmiot2@mail.com</Email>
+            <Telefon>527-90-90-90</Telefon>
+        </DaneKontaktowe>
+    </Podmiot2>
+    <Podmiot3>
+        <DaneIdentyfikacyjne>
+            <NIP>1111111111</NIP>
+            <Nazwa>Plant for KSeF Buying</Nazwa>
+        </DaneIdentyfikacyjne>
+        <Adres>
+            <KodKraju>PL</KodKraju>
+            <AdresL1>Zakupowa 3</AdresL1>
+        </Adres>
+        <Rola>2</Rola>
+    </Podmiot3>
+    <FakturaRR>
+        <KodWaluty>PLN</KodWaluty>
+        <P_1M>ABC DEF</P_1M>
+        <P_4A>2026-04-27</P_4A>
+        <P_4B>2026-04-27</P_4B>
+        <P_4C>5105600952</P_4C>
+        <P_11_1>0.00</P_11_1>
+        <P_11_2>20000.00</P_11_2>
+        <P_12_1>24600.00</P_12_1>
+        <P_12_2>DWADZIEŚCIA CZTERY TYSIĄCE SZEŚĆSET PLN 00/100</P_12_2>
+        <RodzajFaktury>VAT_RR</RodzajFaktury>
+        <DodatkowyOpis>
+            <NrWiersza>01</NrWiersza>
+            <Klucz>klucz</Klucz>
+            <Wartosc>to jest dodatkwy opis</Wartosc>
+        </DodatkowyOpis>
+        <DodatkowyOpis>
+            <Klucz>PO</Klucz>
+            <Wartosc>4500000342</Wartosc>
+        </DodatkowyOpis>
+        <FakturaRRWiersz>
+            <NrWierszaFa>000010</NrWierszaFa>
+            <P_5>Rower szosowy koła 28 cali Profesjonalny</P_5>
+            <P_6A>PCE</P_6A>
+            <P_6B>2.000</P_6B>
+            <P_6C>0.00</P_6C>
+            <P_7>10000.00</P_7>
+            <P_8>20000.00</P_8>
+            <P_9>6.5</P_9>
+            <P_10>4600.00</P_10>
+            <P_11>24600.00</P_11>
+            <KursWaluty>1.00000</KursWaluty>
+        </FakturaRRWiersz>
+        <Platnosc>
+            <FormaPlatnosci>1</FormaPlatnosci>
+            <RachunekBankowy1>
+                <NrRB>PL1234567890</NrRB>
+                <NazwaBanku>Santander</NazwaBanku>
+                <OpisRachunku>Rachunek rolnika</OpisRachunku>
+            </RachunekBankowy1>
+            <RachunekBankowy2>
+                <NrRB>PL0987654321</NrRB>
+                <NazwaBanku>MBANK</NazwaBanku>
+                <OpisRachunku>Rachunek nabywcy</OpisRachunku>
+            </RachunekBankowy2>
+        </Platnosc>
+    </FakturaRR>
+    <Stopka>
+        <Informacje>
+            <StopkaFaktury>to jest stopka, dane o RODO, Rejestry sądowe i inne rzeczy do stopki SĄD REJONOWY POZNAŃ -
+                NOWE MIASTO I WILDA W POZNANIU, VIII WYDZIAŁ GOSPO DARCZY KRAJOWEGO REJESTRU SĄDOWEGO Sygnatura PO.VIII
+                NS-REJ.KRS/33015/22/568 Kapitał zakładowy 1500000,00 ZŁ PL ver
+            </StopkaFaktury>
+        </Informacje>
+        <Informacje>
+            <StopkaFaktury>Fundusz promocji mleka</StopkaFaktury>
+        </Informacje>
+        <Informacje>
+            <StopkaFaktury>W okresie wakacyjnym skup pracuje w godzinach od 6 rano do 22.</StopkaFaktury>
+        </Informacje>
+        <Rejestry>
+            <PelnaNazwa>ABC DEF Pełna nazwa test SP. zoo</PelnaNazwa>
+            <KRS>0010413111</KRS>
+            <REGON>000042111</REGON>
+            <BDO>000111111</BDO>
+        </Rejestry>
+    </Stopka>
+</Faktura>
