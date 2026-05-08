@@ -106,6 +106,7 @@
     <entry key="payment">Płatność</entry>
     <entry key="paymentInfo">Informacja o płatności</entry>
     <entry key="payment.paid">Zapłacono</entry>
+    <entry key="payment.none">Brak zapłaty</entry>
     <entry key="payment.partial">Zapłata częściowa</entry>
     <entry key="paymentDate">Data zapłaty</entry>
     <entry key="paymentMethod">Forma płatności</entry>
