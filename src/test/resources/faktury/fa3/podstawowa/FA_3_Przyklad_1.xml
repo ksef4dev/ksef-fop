@@ -193,9 +193,7 @@
             <KwotaAkcyzy>1393.41</KwotaAkcyzy>
         </FaWiersz>
         <Platnosc>
-            <Zaplacono>1</Zaplacono>
-            <DataZaplaty>2025-11-13</DataZaplaty>
-            <FormaPlatnosci>6</FormaPlatnosci>
+            <FormaPlatnosci>1</FormaPlatnosci>
         </Platnosc>
     </Fa>
 </Faktura>

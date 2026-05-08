@@ -1853,6 +1853,17 @@
                             </fo:block>
                         </xsl:if>
 
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:FormaPlatnosci
+                                and not(crd:Fa/crd:Platnosc/crd:Zaplacono)
+                                and not(crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1)
+                                and not(crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
+                            <fo:block font-size="7pt" text-align="left" space-after="1mm">
+                                <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
+                                <xsl:text> </xsl:text>
+                                <xsl:value-of select="key('kLabels', 'payment.none', $labels)"/>
+                            </fo:block>
+                        </xsl:if>
+
                         <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
                             <fo:block font-size="7pt" text-align="left" space-after="1mm">
                                 <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>

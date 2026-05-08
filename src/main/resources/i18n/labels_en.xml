@@ -106,6 +106,7 @@
     <entry key="payment">Payment</entry>
     <entry key="paymentInfo">Payment information</entry>
     <entry key="payment.paid">Paid</entry>
+    <entry key="payment.none">No payment</entry>
     <entry key="payment.partial">Partial payment</entry>
     <entry key="paymentDate">Payment date</entry>
     <entry key="paymentMethod">Payment method</entry>
