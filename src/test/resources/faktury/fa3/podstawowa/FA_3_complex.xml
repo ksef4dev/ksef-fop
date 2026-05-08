@@ -254,6 +254,46 @@
             <WarunkiDostawy>DDP - Delivered Duty Paid</WarunkiDostawy>
             <KursUmowny>4.56789</KursUmowny>
             <WalutaUmowna>EUR</WalutaUmowna>
+            <Transport>
+                <RodzajTransportu>3</RodzajTransportu>
+                <Przewoznik>
+                    <DaneIdentyfikacyjne>
+                        <NIP>1122334455</NIP>
+                        <Nazwa>Firma Transportowa Sp. z o.o.</Nazwa>
+                    </DaneIdentyfikacyjne>
+                    <AdresPrzewoznika>
+                        <KodKraju>PL</KodKraju>
+                        <AdresL1>ul. Magazynowa 5</AdresL1>
+                        <AdresL2>00-002 Warszawa</AdresL2>
+                    </AdresPrzewoznika>
+                </Przewoznik>
+                <NrZleceniaTransportu>ZL/2026/001</NrZleceniaTransportu>
+                <OpisLadunku>13</OpisLadunku>
+                <JednostkaOpakowania>PAL</JednostkaOpakowania>
+                <DataGodzRozpTransportu>2026-04-28T06:00:00Z</DataGodzRozpTransportu>
+                <DataGodzZakTransportu>2026-04-28T18:00:00Z</DataGodzZakTransportu>
+                <WysylkaZ>
+                    <KodKraju>PL</KodKraju>
+                    <AdresL1>Magazyn A, ul. Nadawcza 1</AdresL1>
+                    <AdresL2>00-100 Warszawa</AdresL2>
+                </WysylkaZ>
+                <WysylkaPrzez>
+                    <KodKraju>PL</KodKraju>
+                    <AdresL1>Terminal, ul. Pośrednia 2</AdresL1>
+                    <AdresL2>95-001 Łódź</AdresL2>
+                </WysylkaPrzez>
+                <WysylkaDo>
+                    <KodKraju>PL</KodKraju>
+                    <AdresL1>Hala odbiorcza, ul. Docelowa 9</AdresL1>
+                    <AdresL2>30-002 Kraków</AdresL2>
+                </WysylkaDo>
+            </Transport>
+            <Transport>
+                <TransportInny>1</TransportInny>
+                <OpisInnegoTransportu>Transport kombajnem</OpisInnegoTransportu>
+                <LadunekInny>1</LadunekInny>
+                <OpisInnegoLadunku>Mieszany ładunek</OpisInnegoLadunku>
+            </Transport>
         </WarunkiTransakcji>
     </Fa>
     <Stopka>
