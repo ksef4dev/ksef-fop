@@ -243,6 +243,25 @@ class GeneratePdfTest {
     }
 
     @Test
+    void generateFaRRInvoicePdf() throws Exception {
+        PdfGenerator generator = new PdfGenerator(new FileInputStream("src/test/resources/fop.xconf"));
+
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream("src/test/resources/invoice_fa_rr.pdf"))) {
+
+            byte[] invoiceXml = Files.readAllBytes(Paths.get("src/test/resources/faktury/fa_rr/podstawowa/FA_RR_1_Przyklad_1.xml"));
+
+            String verificationLink = "https://qr-test.ksef.mf.gov.pl/invoice/5451824119/31-01-2026/KxwNsNKtYSXLfcVsRnXAANUXT6NepXk42xOXUXaF8xE";
+            InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest = InvoiceQRCodeGeneratorRequest.onlineQrBuilder(verificationLink);
+            InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
+                    .schema(InvoiceSchema.FA_RR_1_1_E)
+                    .ksefNumber("5451824119-20260131-0200206A4F2C-92")
+                    .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
+                    .build();
+            generator.generateInvoice(invoiceXml, invoiceGenerationParams, out);
+        }
+    }
+
+    @Test
     void testInvoicePdfGenerateFromExampleInvoices() throws Exception {
         String ksefNumber = "6891152920-20231221-B3242FB4B54B-DF";
         String verificationLink = "https://ksef-test.mf.gov.pl/web/verify/6891152920-20231221-B3242FB4B54B-DF/ssTckvmMFEeA3vp589ExHzTRVhbDksjcFzKoXi4K%2F%2F0%3D";

@@ -301,6 +301,8 @@ public class PdfGenerator {
                 return "templates/fa2/ksef_invoice.xsl";
             case FA3_1_0_E:
                 return "templates/fa3/ksef_invoice.xsl";
+            case FA_RR_1_1_E:
+                return "templates/fa_rr/ksef_invoice.xsl";
             default:
                 log.warn("UPO Schema {} in InvoiceGenerationParams is not supported, using default {}", params.getSchema(), InvoiceSchema.FA3_1_0_E);
                 return "templates/fa3/ksef_invoice.xsl";
