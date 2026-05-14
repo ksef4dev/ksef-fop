@@ -3597,67 +3597,81 @@
                             <fo:table-row>
                                 <fo:table-cell xsl:use-attribute-sets="table.cell.transport">
                                     <xsl:variable name="di" select="crd:Przewoznik/crd:DaneIdentyfikacyjne"/>
-                                    <xsl:if test="$di/crd:NIP">
-                                        <fo:block font-size="7pt" space-after="1mm">
-                                            <fo:inline font-weight="600">
-                                                <xsl:value-of select="key('kLabels', 'nip', $labels)"/>
-                                                <xsl:text>: </xsl:text>
-                                            </fo:inline>
-                                            <xsl:value-of select="$di/crd:NIP"/>
-                                        </fo:block>
-                                    </xsl:if>
-                                    <xsl:if test="$di/crd:NrVatUE">
-                                        <fo:block font-size="7pt" space-after="1mm">
-                                            <fo:inline font-weight="600">
-                                                <xsl:value-of select="key('kLabels', 'vatUe.number', $labels)"/>
-                                                <xsl:text>: </xsl:text>
-                                            </fo:inline>
-                                            <xsl:if test="$di/crd:KodUE">
-                                                <xsl:value-of select="$di/crd:KodUE"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$di/crd:NIP | $di/crd:NrVatUE | $di/crd:NrID | $di/crd:BrakID | $di/crd:Nazwa">
+                                            <xsl:if test="$di/crd:NIP">
+                                                <fo:block font-size="7pt" space-after="1mm">
+                                                    <fo:inline font-weight="600">
+                                                        <xsl:value-of select="key('kLabels', 'nip', $labels)"/>
+                                                        <xsl:text>: </xsl:text>
+                                                    </fo:inline>
+                                                    <xsl:value-of select="$di/crd:NIP"/>
+                                                </fo:block>
                                             </xsl:if>
-                                            <xsl:value-of select="$di/crd:NrVatUE"/>
-                                        </fo:block>
-                                    </xsl:if>
-                                    <xsl:if test="$di/crd:NrID">
-                                        <fo:block font-size="7pt" space-after="1mm">
-                                            <fo:inline font-weight="600">
-                                                <xsl:value-of select="key('kLabels', 'taxId', $labels)"/>
-                                                <xsl:text>: </xsl:text>
-                                            </fo:inline>
-                                            <xsl:if test="$di/crd:KodKraju">
-                                                <xsl:value-of select="$di/crd:KodKraju"/>
-                                                <xsl:text> </xsl:text>
+                                            <xsl:if test="$di/crd:NrVatUE">
+                                                <fo:block font-size="7pt" space-after="1mm">
+                                                    <fo:inline font-weight="600">
+                                                        <xsl:value-of select="key('kLabels', 'vatUe.number', $labels)"/>
+                                                        <xsl:text>: </xsl:text>
+                                                    </fo:inline>
+                                                    <xsl:if test="$di/crd:KodUE">
+                                                        <xsl:value-of select="$di/crd:KodUE"/>
+                                                    </xsl:if>
+                                                    <xsl:value-of select="$di/crd:NrVatUE"/>
+                                                </fo:block>
                                             </xsl:if>
-                                            <xsl:value-of select="$di/crd:NrID"/>
-                                        </fo:block>
-                                    </xsl:if>
-                                    <xsl:if test="$di/crd:BrakID">
-                                        <fo:block font-size="7pt" space-after="1mm">
-                                            <fo:inline font-weight="600">
-                                                <xsl:value-of select="key('kLabels', 'podmiot3.brakIdentyfikatora', $labels)"/>
-                                            </fo:inline>
-                                        </fo:block>
-                                    </xsl:if>
-                                    <xsl:if test="$di/crd:Nazwa">
-                                        <fo:block font-size="7pt" space-after="1mm">
-                                            <fo:inline font-weight="600">
-                                                <xsl:value-of select="key('kLabels', 'name', $labels)"/>
-                                                <xsl:text>: </xsl:text>
-                                            </fo:inline>
-                                            <xsl:value-of select="$di/crd:Nazwa"/>
-                                        </fo:block>
-                                    </xsl:if>
+                                            <xsl:if test="$di/crd:NrID">
+                                                <fo:block font-size="7pt" space-after="1mm">
+                                                    <fo:inline font-weight="600">
+                                                        <xsl:value-of select="key('kLabels', 'taxId', $labels)"/>
+                                                        <xsl:text>: </xsl:text>
+                                                    </fo:inline>
+                                                    <xsl:if test="$di/crd:KodKraju">
+                                                        <xsl:value-of select="$di/crd:KodKraju"/>
+                                                        <xsl:text> </xsl:text>
+                                                    </xsl:if>
+                                                    <xsl:value-of select="$di/crd:NrID"/>
+                                                </fo:block>
+                                            </xsl:if>
+                                            <xsl:if test="$di/crd:BrakID">
+                                                <fo:block font-size="7pt" space-after="1mm">
+                                                    <fo:inline font-weight="600">
+                                                        <xsl:value-of select="key('kLabels', 'podmiot3.brakIdentyfikatora', $labels)"/>
+                                                    </fo:inline>
+                                                </fo:block>
+                                            </xsl:if>
+                                            <xsl:if test="$di/crd:Nazwa">
+                                                <fo:block font-size="7pt" space-after="1mm">
+                                                    <fo:inline font-weight="600">
+                                                        <xsl:value-of select="key('kLabels', 'name', $labels)"/>
+                                                        <xsl:text>: </xsl:text>
+                                                    </fo:inline>
+                                                    <xsl:value-of select="$di/crd:Nazwa"/>
+                                                </fo:block>
+                                            </xsl:if>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block font-size="7pt"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                                 <fo:table-cell xsl:use-attribute-sets="table.cell.transport">
-                                    <xsl:for-each select="crd:Przewoznik/crd:AdresPrzewoznika">
-                                        <fo:block font-size="7pt">
-                                            <xsl:call-template name="renderAddressAsBlocks">
-                                                <xsl:with-param name="label"
-                                                                select="key('kLabels', 'carrierAddress', $labels)"/>
-                                                <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
-                                            </xsl:call-template>
-                                        </fo:block>
-                                    </xsl:for-each>
+                                    <xsl:choose>
+                                        <xsl:when test="crd:Przewoznik/crd:AdresPrzewoznika">
+                                            <xsl:for-each select="crd:Przewoznik/crd:AdresPrzewoznika">
+                                                <fo:block font-size="7pt">
+                                                    <xsl:call-template name="renderAddressAsBlocks">
+                                                        <xsl:with-param name="label"
+                                                                        select="key('kLabels', 'carrierAddress', $labels)"/>
+                                                        <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
+                                                    </xsl:call-template>
+                                                </fo:block>
+                                            </xsl:for-each>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block font-size="7pt"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
@@ -3673,35 +3687,49 @@
                         <fo:table-body>
                             <fo:table-row>
                                 <fo:table-cell xsl:use-attribute-sets="table.cell.transport">
-                                    <xsl:for-each select="crd:WysylkaZ">
-                                        <fo:block font-size="7pt">
-                                            <xsl:call-template name="renderAddressAsBlocks">
-                                                <xsl:with-param name="label"
-                                                                select="key('kLabels', 'transport.shippingFrom', $labels)"/>
-                                                <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
-                                            </xsl:call-template>
-                                        </fo:block>
-                                    </xsl:for-each>
-                                    <xsl:for-each select="crd:WysylkaPrzez">
-                                        <fo:block font-size="7pt" padding-top="2mm">
-                                            <xsl:call-template name="renderAddressAsBlocks">
-                                                <xsl:with-param name="label"
-                                                                select="key('kLabels', 'transport.shippingVia', $labels)"/>
-                                                <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
-                                            </xsl:call-template>
-                                        </fo:block>
-                                    </xsl:for-each>
+                                    <xsl:choose>
+                                        <xsl:when test="crd:WysylkaZ | crd:WysylkaPrzez">
+                                            <xsl:for-each select="crd:WysylkaZ">
+                                                <fo:block font-size="7pt">
+                                                    <xsl:call-template name="renderAddressAsBlocks">
+                                                        <xsl:with-param name="label"
+                                                                        select="key('kLabels', 'transport.shippingFrom', $labels)"/>
+                                                        <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
+                                                    </xsl:call-template>
+                                                </fo:block>
+                                            </xsl:for-each>
+                                            <xsl:for-each select="crd:WysylkaPrzez">
+                                                <fo:block font-size="7pt" padding-top="2mm">
+                                                    <xsl:call-template name="renderAddressAsBlocks">
+                                                        <xsl:with-param name="label"
+                                                                        select="key('kLabels', 'transport.shippingVia', $labels)"/>
+                                                        <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
+                                                    </xsl:call-template>
+                                                </fo:block>
+                                            </xsl:for-each>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block font-size="7pt"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                                 <fo:table-cell xsl:use-attribute-sets="table.cell.transport">
-                                    <xsl:for-each select="crd:WysylkaDo">
-                                        <fo:block font-size="7pt">
-                                            <xsl:call-template name="renderAddressAsBlocks">
-                                                <xsl:with-param name="label"
-                                                                select="key('kLabels', 'transport.shippingTo', $labels)"/>
-                                                <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
-                                            </xsl:call-template>
-                                        </fo:block>
-                                    </xsl:for-each>
+                                    <xsl:choose>
+                                        <xsl:when test="crd:WysylkaDo">
+                                            <xsl:for-each select="crd:WysylkaDo">
+                                                <fo:block font-size="7pt">
+                                                    <xsl:call-template name="renderAddressAsBlocks">
+                                                        <xsl:with-param name="label"
+                                                                        select="key('kLabels', 'transport.shippingTo', $labels)"/>
+                                                        <xsl:with-param name="labelPaddingTop" select="'0mm'"/>
+                                                    </xsl:call-template>
+                                                </fo:block>
+                                            </xsl:for-each>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <fo:block font-size="7pt"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-body>
