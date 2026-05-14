@@ -4,7 +4,7 @@
 
     <groupId>io.alapierre.ksef</groupId>
     <artifactId>ksef-fop</artifactId>
-    <version>1.2.24-SNAPSHOT</version>
+    <version>1.2.24</version>
 
     <name>KSeF PDF Generator</name>
     <description>Krajowy System eFaktur Generator PDF</description>
@@ -45,7 +45,7 @@
         <connection>scm:git:git@github.com:ksef4dev/ksef-fop.git</connection>
         <developerConnection>scm:git:git@github.com:ksef4dev/ksef-fop.git</developerConnection>
         <url>https://github.com/ksef4dev/ksef-fop</url>
-        <tag>HEAD</tag>
+        <tag>1.2.24</tag>
     </scm>
 
     <properties>
@@ -64,7 +64,7 @@
 
             date -u -d "$(git show -s -\-format=%cI HEAD)" +"%Y-%m-%dT%H:%M:%SZ"
         -->
-        <project.build.outputTimestamp>2026-05-14T07:22:04Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-05-14T07:39:02Z</project.build.outputTimestamp>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
