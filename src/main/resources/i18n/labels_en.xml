@@ -86,6 +86,8 @@
     <entry key="positionsBeforeCorrection">Invoice items before correction</entry>
     <entry key="difference">Difference</entry>
     <entry key="positionsAfterCorrection">Invoice items after correction</entry>
+    <entry key="orderBeforeCorrection">Order items before correction</entry>
+    <entry key="orderAfterCorrection">Order items after correction</entry>
     <entry key="grossAmountBeforeCorrection">Gross amount before correction</entry>
     <entry key="grossAmountAfterCorrection">Gross amount after correction</entry>
     <entry key="advancePaymentReceived">Advance payment received</entry>

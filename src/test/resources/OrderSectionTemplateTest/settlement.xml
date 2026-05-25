@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Settlement invoice (ROZ): not ZAL/KOR_ZAL, yet it carries an order.
+     Before the fix the <Zamowienie> section was dropped on this path (issue #136). -->
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+  <Naglowek>
+    <KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+    <WariantFormularza>3</WariantFormularza>
+    <DataWytworzeniaFa>2026-02-01T00:00:00Z</DataWytworzeniaFa>
+  </Naglowek>
+  <Podmiot1>
+    <DaneIdentyfikacyjne>
+      <NIP>1111111111</NIP>
+      <Nazwa>Sprzedawca Sp. z o.o.</Nazwa>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Przykładowa 1, 00-001 Warszawa</AdresL1>
+    </Adres>
+  </Podmiot1>
+  <Podmiot2>
+    <DaneIdentyfikacyjne>
+      <NIP>2222222222</NIP>
+    </DaneIdentyfikacyjne>
+    <Adres>
+      <KodKraju>PL</KodKraju>
+      <AdresL1>ul. Nabywcy 2, 00-002 Warszawa</AdresL1>
+    </Adres>
+    <JST>2</JST>
+    <GV>2</GV>
+  </Podmiot2>
+  <Fa>
+    <KodWaluty>PLN</KodWaluty>
+    <P_1>2026-02-01</P_1>
+    <P_2>ROZ/1/02/2026</P_2>
+    <P_15>123.00</P_15>
+    <Adnotacje>
+      <P_16>2</P_16>
+      <P_17>2</P_17>
+      <P_18>2</P_18>
+      <P_18A>2</P_18A>
+      <Zwolnienie>
+        <P_19N>1</P_19N>
+      </Zwolnienie>
+      <NoweSrodkiTransportu>
+        <P_22N>1</P_22N>
+      </NoweSrodkiTransportu>
+      <P_23>2</P_23>
+      <PMarzy>
+        <P_PMarzyN>1</P_PMarzyN>
+      </PMarzy>
+    </Adnotacje>
+    <RodzajFaktury>ROZ</RodzajFaktury>
+    <FakturaZaliczkowa>
+      <NrKSeFZN>1</NrKSeFZN>
+      <NrFaZaliczkowej>FA/2019/TEST</NrFaZaliczkowej>
+    </FakturaZaliczkowa>
+    <Zamowienie>
+      <WartoscZamowienia>123</WartoscZamowienia>
+      <ZamowienieWiersz>
+        <NrWierszaZam>1</NrWierszaZam>
+        <P_7Z>Settlement-Item</P_7Z>
+        <P_8AZ>szt</P_8AZ>
+        <P_8BZ>1</P_8BZ>
+        <P_9AZ>100</P_9AZ>
+        <P_11NettoZ>100</P_11NettoZ>
+        <P_11VatZ>23</P_11VatZ>
+        <P_12Z>23</P_12Z>
+      </ZamowienieWiersz>
+    </Zamowienie>
+  </Fa>
+</Faktura>

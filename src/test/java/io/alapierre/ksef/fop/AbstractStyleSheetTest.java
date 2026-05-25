@@ -163,11 +163,31 @@ public abstract class AbstractStyleSheetTest {
      * @param inputUrl    the URL of the input XML document
      * @param inputXpath  an XPath expression used to select the node to transform
      * @param outputXpath an XPath expression used to select the node in the result returned or {@code null}
+     * @param showCorrectionDifferences if {@code true}, shows a diff table of the corrections
+     * @return a new {@link Document} containing the transformation result
+     * @throws Exception on parsing, XPath evaluation or transformation errors
+     */
+    protected static Node transformFa3Invoice(URL inputUrl, String inputXpath, String outputXpath,
+                                              boolean showCorrectionDifferences) throws Exception {
+        return transformXml(inputUrl, FA3_TEMPLATE_URL, inputXpath, outputXpath, transformer -> {
+            setLabelsParam(transformer);
+            transformer.setParameter("showCorrectionDifferences", showCorrectionDifferences);
+        });
+    }
+
+    /**
+     * Transforms an XML document using the FA(3) stylesheet
+     *
+     * <p>This method also provides all the parameters required by the stylesheet.</p>
+     *
+     * @param inputUrl    the URL of the input XML document
+     * @param inputXpath  an XPath expression used to select the node to transform
+     * @param outputXpath an XPath expression used to select the node in the result returned or {@code null}
      * @return a new {@link Document} containing the transformation result
      * @throws Exception on parsing, XPath evaluation or transformation errors
      */
     protected static Node transformFa3Invoice(URL inputUrl, String inputXpath, String outputXpath) throws Exception {
-        return transformXml(inputUrl, FA3_TEMPLATE_URL, inputXpath, outputXpath, AbstractStyleSheetTest::setLabelsParam);
+        return transformFa3Invoice(inputUrl, inputXpath, outputXpath, false);
     }
 }
 

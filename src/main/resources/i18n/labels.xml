@@ -86,6 +86,8 @@
     <entry key="positionsBeforeCorrection">Pozycje na fakturze przed korektą</entry>
     <entry key="difference">Różnica</entry>
     <entry key="positionsAfterCorrection">Pozycje na fakturze po korekcie</entry>
+    <entry key="orderBeforeCorrection">Pozycje zamówienia przed korektą</entry>
+    <entry key="orderAfterCorrection">Pozycje zamówienia po korekcie</entry>
     <entry key="grossAmountBeforeCorrection">Kwota brutto przed korektą</entry>
     <entry key="grossAmountAfterCorrection">Kwota brutto po korekcie</entry>
     <entry key="advancePaymentReceived">Otrzymana kwota zapłaty (zaliczki)</entry>
