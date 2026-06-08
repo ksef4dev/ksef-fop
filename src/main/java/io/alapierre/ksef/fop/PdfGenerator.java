@@ -87,9 +87,10 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
         TranslationService translationService = new TranslationService(resolver);
-        Templates template = XmlFactories.getTemplate(resolver, resolveUpoTemplatePath(params));
+        String upoTemplatePath = resolveUpoTemplatePath(params);
+        Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
         Transformer transformer = template.newTransformer();
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
@@ -112,7 +113,7 @@ public class PdfGenerator {
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws TransformerException, FOPException {
         String langCode = params.resolveLanguageTag();
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
         TranslationService translationService = new TranslationService(resolver);
         QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
@@ -136,7 +137,7 @@ public class PdfGenerator {
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
                                          OutputStream out) throws TransformerException, FOPException {
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
+        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
         TranslationService translationService = new TranslationService(resolver);
         generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
     }
@@ -165,7 +166,8 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Templates template = XmlFactories.getTemplate(resolver, resolveTemplatePath(params));
+        String stylesheetPath = resolveTemplatePath(params);
+        Templates template = XmlFactories.getTemplate(resolver, stylesheetPath);
         Transformer transformer = template.newTransformer();
 
         applyParameters(params, qrCodes, duplicateDate, translationService, transformer);

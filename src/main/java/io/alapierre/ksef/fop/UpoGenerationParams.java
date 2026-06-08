@@ -53,6 +53,14 @@ public class UpoGenerationParams {
     private String templatePath;
 
     /**
+     * Optional base URL of a remote template server (e.g. {@code "http://localhost:8077/xslt"}).
+     * When set, template hrefs that start with this URL are fetched live over HTTP.
+     * See {@link InvoiceGenerationParams#getRemoteTemplateBaseUrl()} for full documentation.
+     */
+    @Nullable
+    private String remoteTemplateBaseUrl;
+
+    /**
      * Ordered list of filesystem directories searched before the classpath when resolving templates.
      */
     @Singular("templateRoot")

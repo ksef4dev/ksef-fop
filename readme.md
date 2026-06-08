@@ -143,8 +143,10 @@ InvoiceGenerationParams params = InvoiceGenerationParams.builder()
 When `templatePath` is set the library uses it directly; when it is `null` (the default) the
 template is resolved automatically from the schema.
 
-> **Security note:** `templatePath` is used as-is to load a classpath resource. Make sure
-> untrusted users cannot control this value or the underlying XSL content.
+**HTTP(S) URL as `templatePath` (catalog):** you may pass a URL such as `http://localhost:8077/xslt/ksef_invoice` so it lines up with a **template-server** route. `TemplateResolver` does **not** download templates from arbitrary hosts: every allowed `http(s):` stylesheet URI must appear in **`classpath:catalog.xml`**, mapped to a trusted classpath resource (typically your packaged XSLT). Nested `xsl:import` / `xsl:include` that use URLs must be catalogued the same way. See `HttpTemplatePathInvoiceTest` and `src/test/resources/catalog.xml`.
+
+> **Security note:** `templatePath` is resolved through `TemplateResolver` (classpath / template roots /
+> catalog-mapped HTTPS). Make sure untrusted users cannot control this value or inject catalog entries.
 
 ## Custom translations
 

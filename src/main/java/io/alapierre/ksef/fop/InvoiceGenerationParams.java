@@ -93,6 +93,17 @@ public class InvoiceGenerationParams {
     private String languageLocale;
 
     /**
+     * Optional base URL of a remote template server (e.g. {@code "http://localhost:8077/xslt"}).
+     * <p>
+     * When set, templates/includes resolving under this base are fetched over HTTP (only URLs
+     * within the base; redirects are not followed) instead of from classpath/catalog. Each
+     * stylesheet is fetched once and cached, not on every call. Point this only at a trusted
+     * server (prefer {@code https://} off-loopback); fetched content is not validated.
+     */
+    @Nullable
+    private String remoteTemplateBaseUrl;
+
+    /**
      * Ordered list of filesystem directories searched before the classpath when resolving templates.
      */
     @Singular("templateRoot")

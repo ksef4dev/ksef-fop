@@ -4,6 +4,9 @@
 package io.alapierre.ksef.fop.internal;
 
 import net.sf.saxon.trans.NonDelegatingURIResolver;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlresolver.CatalogManager;
 import org.xmlresolver.ResolverFeature;
 import org.xmlresolver.XMLResolverConfiguration;
@@ -11,10 +14,14 @@ import org.xmlresolver.XMLResolverConfiguration;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -25,14 +32,14 @@ import java.util.Optional;
 /**
  * URI resolver for XSLT template loading.
  *
- * <p>Every resource is looked up in the following order:</p>
+ * <p>Resolution order for each {@code href}:</p>
  * <ol>
- *   <li>If the resource name starts with {@code http:} or {@code https:}, it is resolved
- *       using an XML catalog.</li>
- *   <li>Each configured filesystem root, in insertion order.</li>
- *   <li>Classpath.</li>
+ *   <li>When {@code remoteBaseUrl} is set: absolute or relatively-resolved URLs under that base
+ *       are fetched over HTTP from the template server.</li>
+ *   <li>Remaining {@code http:} / {@code https:} URIs are rewritten via the XML catalog to a
+ *       {@code classpath:} resource (no network I/O to the original URL).</li>
+ *   <li>Filesystem template roots, then classpath, for non-URL paths.</li>
  * </ol>
- * <p>Anything unresolved throws {@link TransformerException}.</p>
  *
  * <p><strong>Containment guarantee.</strong> For each filesystem root, the resolved path is
  * verified to remain within the root. Both {@code ..} traversal and symlinks pointing outside
@@ -42,9 +49,20 @@ import java.util.Optional;
  * (e.g. {@code vfs:///templates/fa3/ksef_invoice.xsl}) so that Saxon treats them as
  * absolute and does not attempt to resolve them against the JVM working directory.</p>
  *
+ * <p>Remote fetching is contained: a URL resolving outside {@code remoteBaseUrl} ({@code ../}
+ * escapes, authority changes) is rejected and HTTP redirects are not followed.</p>
+ *
  * <p>This class is <strong>internal</strong> and may change between releases.</p>
  */
 public class TemplateResolver implements NonDelegatingURIResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(TemplateResolver.class);
+
+    /** Connect + read timeout used for every HTTP fetch from the remote template server. */
+    private static final int REMOTE_TIMEOUT_MS = 10_000;
+
+    /** Hard cap on the body size of a single remotely fetched stylesheet, to avoid OOM. */
+    private static final int MAX_REMOTE_TEMPLATE_BYTES = 16 * 1024 * 1024;
 
     public static final String HTTP_PREFIX = "http://";
     public static final String HTTPS_PREFIX = "https://";
@@ -55,7 +73,28 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     private final List<Path> roots;
     private final CatalogManager catalogManager;
 
+    /**
+     * When non-null, hrefs that start with this prefix are fetched over HTTP instead of
+     * being looked up in the XML catalog.  All other {@code http(s):} hrefs still use the
+     * catalog (e.g. external XSD files like KodyKrajow).
+     */
+    @Nullable
+    private final String remoteBaseUrl;
+
+    /** Constructs a resolver without remote HTTP support (catalog / classpath only). */
     public TemplateResolver(List<Path> roots) throws TransformerException {
+        this(roots, null);
+    }
+
+    /**
+     * Constructs a resolver with optional remote HTTP support.
+     *
+     * @param roots         ordered filesystem roots searched before the classpath
+     * @param remoteBaseUrl base URL of the remote template server
+     *                      (e.g. {@code "http://localhost:8077/xslt"}).
+     *                      Pass {@code null} to disable remote fetching.
+     */
+    public TemplateResolver(List<Path> roots, @Nullable String remoteBaseUrl) throws TransformerException {
         try {
             this.roots = FilesystemRoots.canonicalize(roots);
         } catch (IOException e) {
@@ -65,17 +104,27 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         config.setFeature(ResolverFeature.CATALOG_FILES,
                 Collections.singletonList("classpath:catalog.xml"));
         this.catalogManager = config.getFeature(ResolverFeature.CATALOG_MANAGER);
+        this.remoteBaseUrl = remoteBaseUrl != null ? remoteBaseUrl.replaceAll("/+$", "") : null;
     }
 
     List<Path> getRoots() {
         return roots;
     }
 
+    @Nullable
+    String getRemoteBaseUrl() {
+        return remoteBaseUrl;
+    }
+
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         Optional<Source> resolved = tryResolve(href, base);
         if (resolved.isPresent()) {
-            return resolved.get();
+            Source source = resolved.get();
+            String systemId = source.getSystemId();
+            log.debug("XSLT: resolved href='{}' base='{}' -> systemId={}",
+                    href, Strings.isEmpty(base) ? "(none)" : base, systemId);
+            return source;
         }
         throw new TransformerException("Template not found: " + href
                 + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
@@ -95,8 +144,25 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException("Cannot resolve null href");
         }
 
+        // 0. Remote HTTP/HTTPS fetch from the configured template server.
+        //    This takes priority over the catalog so that stylesheets are loaded from
+        //    the server rather than from the bundled classpath copies.
+        if (remoteBaseUrl != null) {
+            // a) Absolute href that belongs to the remote server.
+            if (isUnderRemoteBase(href)) {
+                return Optional.of(fetchFromRemote(requireUnderRemoteBase(normalizeUrl(href), href, base)));
+            }
+            // b) Relative href whose parent stylesheet was fetched from the remote server.
+            //    base will be the HTTP URL of the parent (set as systemId when it was loaded).
+            if (base != null && isUnderRemoteBase(base) && !href.contains(":")) {
+                String resolved = URI.create(base).resolve(href).normalize().toString();
+                return Optional.of(fetchFromRemote(requireUnderRemoteBase(resolved, href, base)));
+            }
+        }
+
         // 1. http: / https: URIs → XML catalog (allowlist); anything not listed throws
         if (href.startsWith(HTTP_PREFIX) || href.startsWith(HTTPS_PREFIX)) {
+            String requestedUri = href;
             URI mapped = catalogManager.lookupURI(href);
             if (mapped == null) {
                 throw new TransformerException("External URI not in catalog: " + href);
@@ -104,6 +170,12 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             if (!"classpath".equals(mapped.getScheme())) {
                 throw new TransformerException("Catalog must map to a classpath: URI, got: " + mapped);
             }
+            log.info(
+                    "XSLT: stylesheet URL '{}' rewritten by classpath catalog to 'classpath:{}' — "
+                            + "bytes are loaded from the classpath/JAR only, never via HTTP from that URL "
+                            + "(having template-server up or down does not change this; remove the catalog rewrite if you want a real HTTP fetch).",
+                    requestedUri,
+                    mapped.getSchemeSpecificPart());
             href = "/" + mapped.getSchemeSpecificPart();
         }
 
@@ -170,6 +242,84 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         Source cp = tryClasspath(relativePath);
         if (cp != null) sources.add(cp);
         return sources;
+    }
+
+    // -----------------------------------------------------------------------
+    // Remote HTTP fetch
+    // -----------------------------------------------------------------------
+
+    /** True if {@code url} equals the base or sits under it as a path segment ({@code base + "/"}). */
+    private boolean isUnderRemoteBase(String url) {
+        return url.equals(remoteBaseUrl) || url.startsWith(remoteBaseUrl + "/");
+    }
+
+    /**
+     * Rejects a resolved URL that escapes the base (e.g. {@code ../} path escape or a
+     * protocol-relative authority change), which raw href/base checks can miss.
+     */
+    private String requireUnderRemoteBase(String resolvedUrl, String href, String base) throws TransformerException {
+        if (!isUnderRemoteBase(resolvedUrl)) {
+            throw new TransformerException("Remote template href escapes the configured base '"
+                    + remoteBaseUrl + "': " + href
+                    + (Strings.isEmpty(base) ? "" : " (base: " + base + ")")
+                    + " resolved to " + resolvedUrl);
+        }
+        return resolvedUrl;
+    }
+
+    private static String normalizeUrl(String url) {
+        return URI.create(url).normalize().toString();
+    }
+
+    /**
+     * Fetches a stylesheet over HTTP. The URL is used as the source systemId so Saxon resolves
+     * relative {@code xsl:import}/{@code include} hrefs against it (re-entering as case 0b).
+     */
+    private Source fetchFromRemote(String url) throws TransformerException {
+        log.debug("XSLT: fetching stylesheet from remote template server: {}", url);
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(REMOTE_TIMEOUT_MS);
+            connection.setReadTimeout(REMOTE_TIMEOUT_MS);
+            // Do not follow redirects: a 3xx could send the fetch to an arbitrary host outside
+            // the configured base, defeating the containment check. Treat any non-200 as an error.
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestProperty("Accept", "application/xslt+xml, text/xml, application/xml, */*");
+            connection.setRequestMethod("GET");
+
+            int status = connection.getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                throw new TransformerException(
+                        "Remote template server returned HTTP " + status + " for URL: " + url);
+            }
+
+            // Copy the response body into memory so the connection can be closed cleanly
+            // while Saxon still has an InputStream to read from.
+            byte[] body = readFully(connection.getInputStream());
+            log.debug("XSLT: fetched {} bytes from {}", body.length, url);
+            return new StreamSource(new ByteArrayInputStream(body), url);
+
+        } catch (IOException e) {
+            throw new TransformerException(
+                    "Failed to fetch remote template (server may be down): " + url + " — " + e.getMessage(), e);
+        } finally {
+            if (connection != null) connection.disconnect();
+        }
+    }
+
+    private static byte[] readFully(InputStream in) throws IOException, TransformerException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        int n;
+        while ((n = in.read(chunk)) != -1) {
+            buf.write(chunk, 0, n);
+            if (buf.size() > MAX_REMOTE_TEMPLATE_BYTES) {
+                throw new TransformerException("Remote template exceeds maximum allowed size of "
+                        + MAX_REMOTE_TEMPLATE_BYTES + " bytes");
+            }
+        }
+        return buf.toByteArray();
     }
 
     // -----------------------------------------------------------------------
