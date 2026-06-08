@@ -1,0 +1,340 @@
+<fo:block xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/"
+          xmlns:fo="http://www.w3.org/1999/XSL/Format"
+          xmlns:local="urn:local"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          id="Zamowienie">
+   <fo:block space-after="2mm" space-before="2mm" text-align="left">
+      <fo:inline font-size="12pt" font-weight="bold">Zamówienie</fo:inline>
+   </fo:block>
+   <fo:block font-size="8pt"
+             font-weight="bold"
+             space-after="3mm"
+             space-before="1mm"
+             text-align="left">
+      <fo:inline>Wartość zamówienia lub umowy z uwzględnieniem kwoty podatku: </fo:inline>
+      <fo:inline>246,00 PLN</fo:inline>
+   </fo:block>
+   <fo:block space-after="1mm" text-align="left">
+      <fo:inline font-size="10pt" font-weight="bold">Pozycje zamówienia przed korektą</fo:inline>
+   </fo:block>
+   <fo:table border-collapse="separate"
+             space-after="5mm"
+             table-layout="fixed"
+             width="100%">
+      <fo:table-column column-width="4%"/>
+      <fo:table-column column-width="36%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="6%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="8%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="10%"/>
+      <fo:table-header>
+         <fo:table-row background-color="#f5f5f5" font-weight="bold">
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Lp.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Nazwa towaru lub usługi</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Ilość</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Jedn.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Cena jedn. netto</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Stawka podatku</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Wartość netto</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Kwota VAT</fo:block>
+            </fo:table-cell>
+         </fo:table-row>
+      </fo:table-header>
+      <fo:table-body>
+         <fo:table-row>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="left">
+               <fo:block>1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="left">
+               <fo:block>Order-Item</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>szt</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>100</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>23%
+                                    </fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>100,00</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>23,00</fo:block>
+            </fo:table-cell>
+         </fo:table-row>
+      </fo:table-body>
+   </fo:table>
+   <fo:block space-after="1mm" text-align="left">
+      <fo:inline font-size="10pt" font-weight="bold">Pozycje zamówienia po korekcie</fo:inline>
+   </fo:block>
+   <fo:table border-collapse="separate"
+             space-after="5mm"
+             table-layout="fixed"
+             width="100%">
+      <fo:table-column column-width="4%"/>
+      <fo:table-column column-width="36%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="6%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="8%"/>
+      <fo:table-column column-width="12%"/>
+      <fo:table-column column-width="10%"/>
+      <fo:table-header>
+         <fo:table-row background-color="#f5f5f5" font-weight="bold">
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Lp.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Nazwa towaru lub usługi</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Ilość</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Jedn.</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Cena jedn. netto</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Stawka podatku</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Wartość netto</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt">
+               <fo:block>Kwota VAT</fo:block>
+            </fo:table-cell>
+         </fo:table-row>
+      </fo:table-header>
+      <fo:table-body>
+         <fo:table-row>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="left">
+               <fo:block>1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="left">
+               <fo:block>Order-Item</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>szt</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>100</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>23%
+                                    </fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>200,00</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 0.2mm black"
+                           font-size="7"
+                           padding-bottom="4pt"
+                           padding-left="4pt"
+                           padding-right="4pt"
+                           padding-top="4pt"
+                           text-align="right">
+               <fo:block>46,00</fo:block>
+            </fo:table-cell>
+         </fo:table-row>
+      </fo:table-body>
+   </fo:table>
+</fo:block>
