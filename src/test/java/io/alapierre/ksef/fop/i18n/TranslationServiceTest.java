@@ -272,6 +272,29 @@ class TranslationServiceTest {
     @Test
     void constructor_shouldRejectNullResolver() {
         assertThrows(NullPointerException.class, () -> new TranslationService(null));
+        assertThrows(NullPointerException.class, () -> new TranslationService(null, "http://host/t.xsl"));
+    }
+
+    @Test
+    void toServeFilename_stripsI18nPrefix() {
+        assertEquals("labels.xml", TranslationService.toServeFilename("i18n/labels.xml"));
+        assertEquals("labels_en.xml", TranslationService.toServeFilename("i18n/labels_en.xml"));
+    }
+
+    @Test
+    void getTranslation_withNonHttpRemoteEntryUrl_shouldUseClasspath() throws TransformerException {
+        TranslationService svc = new TranslationService(
+                new TemplateResolver(Collections.emptyList()),
+                "templates/fa3/ksef_invoice.xsl");
+        assertEquals("Numer faktury", svc.getTranslation("pl", "invoice.number"));
+    }
+
+    @Test
+    void getTranslation_withHttpEntryUrlButNoRemoteBase_shouldUseClasspath() throws TransformerException {
+        TranslationService svc = new TranslationService(
+                new TemplateResolver(Collections.emptyList()),
+                "http://localhost:8077/xslt/ksef_invoice");
+        assertEquals("Numer faktury", svc.getTranslation("pl", "invoice.number"));
     }
 
     // -----------------------------------------------------------------------

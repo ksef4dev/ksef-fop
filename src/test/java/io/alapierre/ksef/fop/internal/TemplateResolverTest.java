@@ -140,6 +140,45 @@ class TemplateResolverTest {
     }
 
     // -----------------------------------------------------------------------
+    // Remote template base URL validation
+    // -----------------------------------------------------------------------
+
+    @Test
+    void blankRemoteBaseUrlDisablesRemoteFetching(@TempDir Path root) throws Exception {
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root), "   ");
+        assertThat(resolver.getRemoteBaseUrl()).isNull();
+    }
+
+    @Test
+    void remoteBaseUrlTrailingSlashesAreStripped(@TempDir Path root) throws Exception {
+        TemplateResolver resolver = new TemplateResolver(
+                Collections.singletonList(root), "http://localhost:8077/xslt///");
+        assertThat(resolver.getRemoteBaseUrl()).isEqualTo("http://localhost:8077/xslt");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ftp://localhost/xslt",
+            "not-a-url",
+            "http:///xslt",
+            "https:///only-path"
+    })
+    void invalidRemoteBaseUrlThrowsOnConstruction(String remoteBaseUrl, @TempDir Path root) {
+        assertThatThrownBy(() ->
+                new TemplateResolver(Collections.singletonList(root), remoteBaseUrl))
+                .isInstanceOf(TransformerException.class);
+    }
+
+    @Test
+    void isUnderRemoteBaseDetectsPrefixAndExactMatch() {
+        String base = "http://localhost:8077/xslt";
+        assertThat(TemplateResolver.isUnderRemoteBase(base, base)).isTrue();
+        assertThat(TemplateResolver.isUnderRemoteBase(base + "/ksef_invoice", base)).isTrue();
+        assertThat(TemplateResolver.isUnderRemoteBase("http://evil.example/xslt/ksef_invoice", base)).isFalse();
+        assertThat(TemplateResolver.isUnderRemoteBase("http://localhost:8077/xsltx", base)).isFalse();
+    }
+
+    // -----------------------------------------------------------------------
     // Catalog / HTTP URIs
     // -----------------------------------------------------------------------
 

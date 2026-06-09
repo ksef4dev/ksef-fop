@@ -22,6 +22,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -87,9 +88,10 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
-        TranslationService translationService = new TranslationService(resolver);
         String upoTemplatePath = resolveUpoTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(
+                params.getTemplateRoots(), params.getRemoteTemplateBaseUrl(), upoTemplatePath);
+        TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
         Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
         Transformer transformer = template.newTransformer();
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
@@ -113,8 +115,10 @@ public class PdfGenerator {
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws TransformerException, FOPException {
         String langCode = params.resolveLanguageTag();
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
-        TranslationService translationService = new TranslationService(resolver);
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(
+                params.getTemplateRoots(), params.getRemoteTemplateBaseUrl(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
         QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, out);
@@ -137,8 +141,10 @@ public class PdfGenerator {
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
                                          OutputStream out) throws TransformerException, FOPException {
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots(), params.getRemoteTemplateBaseUrl());
-        TranslationService translationService = new TranslationService(resolver);
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(
+                params.getTemplateRoots(), params.getRemoteTemplateBaseUrl(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
         generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
     }
 
@@ -175,6 +181,37 @@ public class PdfGenerator {
         Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
         Result result = new SAXResult(fop.getDefaultHandler());
         transformer.transform(xmlSource, result);
+    }
+
+    private static TemplateResolver createTemplateResolver(List<Path> roots,
+                                                           @Nullable String remoteTemplateBaseUrl,
+                                                           String templatePath) throws TransformerException {
+        TemplateResolver resolver = new TemplateResolver(roots, remoteTemplateBaseUrl);
+        requireHttpTemplatePathUnderRemoteBase(resolver.getRemoteBaseUrl(), templatePath);
+        return resolver;
+    }
+
+    /**
+     * When remote fetching is enabled, an HTTP(S) {@code templatePath} must sit under
+     * {@code remoteTemplateBaseUrl} so misconfiguration fails at setup time.
+     */
+    private static void requireHttpTemplatePathUnderRemoteBase(@Nullable String remoteBaseUrl,
+                                                               @NotNull String templatePath)
+            throws TransformerException {
+        if (remoteBaseUrl == null || Strings.isEmpty(templatePath)) {
+            return;
+        }
+        String trimmed = templatePath.trim();
+        if (!trimmed.startsWith(TemplateResolver.HTTP_PREFIX)
+                && !trimmed.startsWith(TemplateResolver.HTTPS_PREFIX)) {
+            return;
+        }
+        String normalized = URI.create(trimmed).normalize().toString();
+        if (!TemplateResolver.isUnderRemoteBase(normalized, remoteBaseUrl)) {
+            throw new TransformerException(
+                    "HTTP templatePath is not under remoteTemplateBaseUrl: templatePath="
+                            + templatePath + ", remoteTemplateBaseUrl=" + remoteBaseUrl);
+        }
     }
 
     private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {

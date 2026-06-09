@@ -4,6 +4,7 @@
 package io.alapierre.ksef.fop.internal;
 
 import net.sf.saxon.trans.NonDelegatingURIResolver;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -104,7 +106,49 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         config.setFeature(ResolverFeature.CATALOG_FILES,
                 Collections.singletonList("classpath:catalog.xml"));
         this.catalogManager = config.getFeature(ResolverFeature.CATALOG_MANAGER);
-        this.remoteBaseUrl = remoteBaseUrl != null ? remoteBaseUrl.replaceAll("/+$", "") : null;
+        this.remoteBaseUrl = canonicalizeRemoteBaseUrl(remoteBaseUrl);
+    }
+
+    /**
+     * Validates and normalizes a remote template-server base URL.
+     *
+     * <p>{@code null} or blank (after trim) disables remote fetching. Otherwise the value must
+     * be a syntactically valid {@code http:} / {@code https:} URI with a host; trailing slashes
+     * are stripped.</p>
+     */
+    @Nullable
+    static String canonicalizeRemoteBaseUrl(@Nullable String remoteBaseUrl) throws TransformerException {
+        if (remoteBaseUrl == null) {
+            return null;
+        }
+        String trimmed = remoteBaseUrl.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        URI uri = parseUri(trimmed);
+        String scheme = uri.getScheme();
+        if (scheme == null) {
+            throw new TransformerException(
+                    "Remote template base URL must use http or https scheme: " + remoteBaseUrl);
+        }
+        String schemeLower = scheme.toLowerCase(Locale.ROOT);
+        if (!"http".equals(schemeLower) && !"https".equals(schemeLower)) {
+            throw new TransformerException(
+                    "Remote template base URL must use http or https scheme: " + remoteBaseUrl);
+        }
+        String host = uri.getHost();
+        if (host == null || host.isEmpty()) {
+            throw new TransformerException(
+                    "Remote template base URL must have a host: " + remoteBaseUrl);
+        }
+        return uri.normalize().toString().replaceAll("/+$", "");
+    }
+
+    /**
+     * True if {@code url} equals {@code remoteBaseUrl} or sits under it as a path segment.
+     */
+    public static boolean isUnderRemoteBase(@NotNull String url, @NotNull String remoteBaseUrl) {
+        return url.equals(remoteBaseUrl) || url.startsWith(remoteBaseUrl + "/");
     }
 
     List<Path> getRoots() {
@@ -112,7 +156,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     }
 
     @Nullable
-    String getRemoteBaseUrl() {
+    public String getRemoteBaseUrl() {
         return remoteBaseUrl;
     }
 
@@ -170,7 +214,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             if (!"classpath".equals(mapped.getScheme())) {
                 throw new TransformerException("Catalog must map to a classpath: URI, got: " + mapped);
             }
-            log.info(
+            log.debug(
                     "XSLT: stylesheet URL '{}' rewritten by classpath catalog to 'classpath:{}' — "
                             + "bytes are loaded from the classpath/JAR only, never via HTTP from that URL "
                             + "(having template-server up or down does not change this; remove the catalog rewrite if you want a real HTTP fetch).",
@@ -248,9 +292,8 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     // Remote HTTP fetch
     // -----------------------------------------------------------------------
 
-    /** True if {@code url} equals the base or sits under it as a path segment ({@code base + "/"}). */
     private boolean isUnderRemoteBase(String url) {
-        return url.equals(remoteBaseUrl) || url.startsWith(remoteBaseUrl + "/");
+        return isUnderRemoteBase(url, remoteBaseUrl);
     }
 
     /**
