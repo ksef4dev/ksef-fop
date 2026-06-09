@@ -4,9 +4,10 @@ import io.alapierre.ksef.fop.Language;
 import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.internal.TemplateResolver;
 import io.alapierre.ksef.fop.internal.XmlFactories;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,8 +29,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@Slf4j
 public class TranslationService {
+
+    private static final Logger log = LoggerFactory.getLogger(TranslationService.class);
 
     private final Map<String, Document> DOCUMENT_CACHE = new ConcurrentHashMap<>();
 

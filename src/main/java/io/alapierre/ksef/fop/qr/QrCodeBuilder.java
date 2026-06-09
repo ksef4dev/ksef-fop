@@ -3,7 +3,6 @@ package io.alapierre.ksef.fop.qr;
 import io.alapierre.ksef.fop.InvoiceQRCodeGeneratorRequest;
 import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.qr.exceptions.QrCodeGenerationException;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,11 +21,14 @@ import java.util.List;
  * - Direct URL (if provided in InvoiceQRCodeGeneratorRequest)
  * - Parameters (environmentUrl, identifier, issueDate, etc.) - URL will be generated
  */
-@RequiredArgsConstructor
 public class QrCodeBuilder {
 
     private static final int QR_SIZE = 200;
     private final TranslationService translationService;
+
+    public QrCodeBuilder(TranslationService translationService) {
+        this.translationService = translationService;
+    }
 
     /**
      * Builds QR codes based on the request. Returns null if request is null.

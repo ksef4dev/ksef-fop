@@ -1,8 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * Built-in language codes recognised by the library.
  *
@@ -12,8 +9,6 @@ import lombok.RequiredArgsConstructor;
  * as {@code "uk"} or {@code "ar-SA"}) — the resolution logic accepts arbitrary
  * tags and falls back to this default when no label file is available.</p>
  */
-@Getter
-@RequiredArgsConstructor
 public enum Language {
     PL("pl"),
     EN("en");
@@ -25,4 +20,12 @@ public enum Language {
     public static final String DEFAULT_LANGUAGE_TAG = "pl";
 
     private final String code;
+
+    Language(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }

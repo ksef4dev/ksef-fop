@@ -81,7 +81,7 @@
         <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
         <maven.release-plugin.version>3.3.1</maven.release-plugin.version>
-        <japicmp.plugin.version>0.23.1</japicmp.plugin.version>
+        <japicmp.plugin.version>0.26.1</japicmp.plugin.version>
     </properties>
 
     <build>
@@ -161,6 +161,23 @@
                         <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
                         <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                         <ignoreMissingClasses>true</ignoreMissingClasses>
+                        <!--
+                          Accepts the builder classes being made `final` in this release.
+
+                          Making a class `final` only breaks consumers that could actually subclass it,
+                          i.e. classes that expose a public or protected constructor.
+                          Our builders only have a package-private constructor, so they don't fall into this category.
+
+                          Remove this rule after 1.2.25 is released.
+                        -->
+                        <overrideCompatibilityChangeParameters>
+                            <overrideCompatibilityChangeParameter>
+                                <compatibilityChange>CLASS_NOW_NOT_EXTENDABLE</compatibilityChange>
+                                <binaryCompatible>true</binaryCompatible>
+                                <sourceCompatible>true</sourceCompatible>
+                                <semanticVersionLevel>PATCH</semanticVersionLevel>
+                            </overrideCompatibilityChangeParameter>
+                        </overrideCompatibilityChangeParameters>
                     </parameter>
                 </configuration>
                 <executions>
@@ -299,12 +316,6 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop-core</artifactId>
             <version>2.11</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.42</version>
         </dependency>
 
         <dependency>

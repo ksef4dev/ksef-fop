@@ -1,6 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -28,7 +27,6 @@ import java.security.Security;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
-@Slf4j
 class GeneratePdfTest {
 
     static {

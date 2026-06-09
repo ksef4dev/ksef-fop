@@ -1,12 +1,12 @@
 package io.alapierre.ksef.fop;
 
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.security.PrivateKey;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Request for generating QR codes for KSeF invoices.
@@ -20,7 +20,6 @@ import java.time.LocalDate;
  * 
  * @see <a href="https://github.com/CIRFMF/ksef-docs/blob/main/kody-qr.md">KSeF QR Codes Documentation</a>
  */
-@Data
 public class InvoiceQRCodeGeneratorRequest {
 
     @Nullable
@@ -175,4 +174,136 @@ public class InvoiceQRCodeGeneratorRequest {
 
     private InvoiceQRCodeGeneratorRequest() {}
 
+    @Nullable
+    public String getEnvironmentUrl() {
+        return environmentUrl;
+    }
+
+    public void setEnvironmentUrl(@Nullable String environmentUrl) {
+        this.environmentUrl = environmentUrl;
+    }
+
+    @Nullable
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(@Nullable String identifier) {
+        this.identifier = identifier;
+    }
+
+    @Nullable
+    public LocalDate getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(@Nullable LocalDate issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    @Nullable
+    public ContextIdentifierType getCtxType() {
+        return ctxType;
+    }
+
+    public void setCtxType(@Nullable ContextIdentifierType ctxType) {
+        this.ctxType = ctxType;
+    }
+
+    @Nullable
+    public String getCtxValue() {
+        return ctxValue;
+    }
+
+    public void setCtxValue(@Nullable String ctxValue) {
+        this.ctxValue = ctxValue;
+    }
+
+    @Nullable
+    public String getCertSerial() {
+        return certSerial;
+    }
+
+    public void setCertSerial(@Nullable String certSerial) {
+        this.certSerial = certSerial;
+    }
+
+    @Nullable
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(@Nullable PrivateKey privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    @Nullable
+    public String getOnlineQrCodeUrl() {
+        return onlineQrCodeUrl;
+    }
+
+    public void setOnlineQrCodeUrl(@Nullable String onlineQrCodeUrl) {
+        this.onlineQrCodeUrl = onlineQrCodeUrl;
+    }
+
+    @Nullable
+    public String getCertificateQrCodeUrl() {
+        return certificateQrCodeUrl;
+    }
+
+    public void setCertificateQrCodeUrl(@Nullable String certificateQrCodeUrl) {
+        this.certificateQrCodeUrl = certificateQrCodeUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o instanceof InvoiceQRCodeGeneratorRequest) {
+            InvoiceQRCodeGeneratorRequest other = (InvoiceQRCodeGeneratorRequest) o;
+            return other.canEqual(this)
+                    && online == other.online
+                    && Objects.equals(environmentUrl, other.environmentUrl)
+                    && Objects.equals(identifier, other.identifier)
+                    && Objects.equals(issueDate, other.issueDate)
+                    && Objects.equals(ctxType, other.ctxType)
+                    && Objects.equals(ctxValue, other.ctxValue)
+                    && Objects.equals(certSerial, other.certSerial)
+                    && Objects.equals(privateKey, other.privateKey)
+                    && Objects.equals(onlineQrCodeUrl, other.onlineQrCodeUrl)
+                    && Objects.equals(certificateQrCodeUrl, other.certificateQrCodeUrl);
+        }
+        return false;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof InvoiceQRCodeGeneratorRequest;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(environmentUrl, identifier, issueDate, ctxType, ctxValue,
+                certSerial, privateKey, online, onlineQrCodeUrl, certificateQrCodeUrl);
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceQRCodeGeneratorRequest(environmentUrl=" + environmentUrl
+                + ", identifier=" + identifier
+                + ", issueDate=" + issueDate
+                + ", ctxType=" + ctxType
+                + ", ctxValue=" + ctxValue
+                + ", certSerial=" + certSerial
+                + ", privateKey=" + privateKey
+                + ", online=" + online
+                + ", onlineQrCodeUrl=" + onlineQrCodeUrl
+                + ", certificateQrCodeUrl=" + certificateQrCodeUrl + ")";
+    }
 }

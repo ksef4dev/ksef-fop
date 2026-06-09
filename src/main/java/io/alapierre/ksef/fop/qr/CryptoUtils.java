@@ -1,7 +1,6 @@
 package io.alapierre.ksef.fop.qr;
 
 import io.alapierre.ksef.fop.qr.exceptions.VerificationLinkGenerationException;
-import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -11,7 +10,6 @@ import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 
-@Slf4j
 public final class CryptoUtils {
 
     private static final String SHA_256 = "SHA-256";

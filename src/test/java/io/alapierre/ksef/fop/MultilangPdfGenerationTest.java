@@ -1,6 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Security;
 
-@Slf4j
 class MultilangPdfGenerationTest {
 
     static {

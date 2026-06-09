@@ -1,7 +1,5 @@
 package io.alapierre.ksef.fop.qr.helpers;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -79,10 +77,16 @@ public class CertificateBuilders {
         return build();
     }
 
-    @RequiredArgsConstructor
-    @Getter
     public class X500NameHolder {
 
         private final X500Name x500Name;
+
+        public X500NameHolder(X500Name x500Name) {
+            this.x500Name = x500Name;
+        }
+
+        public X500Name getX500Name() {
+            return x500Name;
+        }
     }
 }
