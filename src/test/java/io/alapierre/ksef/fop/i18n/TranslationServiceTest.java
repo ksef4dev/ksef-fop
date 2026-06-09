@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -284,7 +285,7 @@ class TranslationServiceTest {
     }
 
     @Test
-    void getTranslation_withHttpEntryUrlButNoRemoteBase_shouldUseClasspath() throws TransformerException {
+    void getTranslation_withHttpEntryUrlButNoHttpResourceRoot_shouldUseClasspath() throws TransformerException {
         TranslationService svc = new TranslationService(
                 new TemplateResolver(Collections.emptyList()),
                 "http://localhost:8077/xslt/ksef_invoice");
@@ -296,7 +297,11 @@ class TranslationServiceTest {
     // -----------------------------------------------------------------------
 
     private static TranslationService serviceWithRoots(Path... roots) throws TransformerException {
-        return new TranslationService(new TemplateResolver(Arrays.asList(roots)));
+        URI[] uris = new URI[roots.length];
+        for (int i = 0; i < roots.length; i++) {
+            uris[i] = roots[i].toUri();
+        }
+        return new TranslationService(new TemplateResolver(Arrays.asList(uris)));
     }
 
     /**

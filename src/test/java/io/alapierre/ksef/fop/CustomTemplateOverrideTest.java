@@ -91,7 +91,7 @@ class CustomTemplateOverrideTest {
                 .ksefNumber("FS-KSEF-NUMBER")
                 .templatePath("templates/custom/custom_invoice.xsl")
                 .customProperties(Collections.singletonMap("customPropertyDemo", "HELLO-FS-PROPERTY"))
-                .templateRoot(tempDir)
+                .resourceRoot(tempDir.toUri())
                 .build();
 
         String text = generateAndExtractText(params);
@@ -112,7 +112,7 @@ class CustomTemplateOverrideTest {
                 .schema(InvoiceSchema.FA3_1_0_E)
                 .ksefNumber("SHADOW-TEST")
                 .templatePath("templates/custom/custom_invoice.xsl")
-                .templateRoot(tempDir)
+                .resourceRoot(tempDir.toUri())
                 .build();
 
         String text = generateAndExtractText(params);

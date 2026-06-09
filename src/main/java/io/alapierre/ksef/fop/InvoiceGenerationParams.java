@@ -1,18 +1,10 @@
 package io.alapierre.ksef.fop;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Singular;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -93,23 +85,18 @@ public class InvoiceGenerationParams {
     private String languageLocale;
 
     /**
-     * Optional base URL of a remote template server (e.g. {@code "http://localhost:8077/xslt"}).
-     * <p>
-     * When set, templates/includes resolving under this base are fetched over HTTP (only URLs
-     * within the base; redirects are not followed) instead of from classpath/catalog. Each
-     * stylesheet is fetched once and cached, not on every call. Point this only at a trusted
-     * server (prefer {@code https://} off-loopback); fetched content is not validated.
+     * Ordered list of resource roots searched before the classpath when resolving templates,
+     * translations and relative logo paths.
+     *
+     * <p>Each entry is a {@link URI}: a {@code file:} directory (e.g.
+     * {@code Paths.get("/etc/ksef").toUri()}) or an HTTP(S) base URL
+     * (e.g. {@code URI.create("http://localhost:8077/xslt")}). Templates, {@code i18n/}
+     * label files and logos are resolved relative to these roots.</p>
      */
-    @Nullable
-    private String remoteTemplateBaseUrl;
-
-    /**
-     * Ordered list of filesystem directories searched before the classpath when resolving templates.
-     */
-    @Singular("templateRoot")
+    @Singular("resourceRoot")
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private List<Path> templateRoots;
+    private List<URI> resourceRoots;
 
     /**
      * @deprecated use the builder instead.
@@ -141,15 +128,15 @@ public class InvoiceGenerationParams {
         this.customProperties = customProperties != null ? customProperties : new HashMap<>();
         this.language = language != null ? language : Language.PL;
         this.languageLocale = null;
-        this.templateRoots = Collections.emptyList();
+        this.resourceRoots = Collections.emptyList();
     }
 
     /**
-     * Returns an unmodifiable view of the configured filesystem template roots.
+     * Returns an unmodifiable view of the configured resource roots.
      */
-    public List<Path> getTemplateRoots() {
-        if (templateRoots == null) return Collections.emptyList();
-        return Collections.unmodifiableList(templateRoots);
+    public List<URI> getResourceRoots() {
+        if (resourceRoots == null) return Collections.emptyList();
+        return Collections.unmodifiableList(resourceRoots);
     }
 
     /**

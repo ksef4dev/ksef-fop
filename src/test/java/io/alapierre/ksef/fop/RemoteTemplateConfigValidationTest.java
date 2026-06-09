@@ -5,40 +5,41 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Early-fail checks for {@code remoteTemplateBaseUrl} / HTTP {@code templatePath} consistency.
+ * Early-fail checks for HTTP {@code resourceRoot} / {@code templatePath} consistency.
  */
 class RemoteTemplateConfigValidationTest {
 
     private static final String TEMPLATE_SERVER_BASE = "http://localhost:8077/xslt";
 
     @Test
-    void invalidRemoteBaseUrlFailsBeforeNetworkFetch() {
+    void invalidHttpResourceRootFailsBeforeNetworkFetch() {
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
                 .templatePath(TEMPLATE_SERVER_BASE + "/ksef_invoice")
-                .remoteTemplateBaseUrl("not-a-valid-url")
+                .resourceRoot(URI.create("ftp://localhost/xslt"))
                 .build();
 
         assertThatThrownBy(() -> generate(params))
                 .isInstanceOf(javax.xml.transform.TransformerException.class)
-                .hasMessageContaining("http or https");
+                .hasMessageContaining("http(s) URL");
     }
 
     @Test
-    void httpTemplatePathOutsideRemoteBaseFailsBeforeNetworkFetch() {
+    void httpTemplatePathOutsideResourceRootFailsBeforeNetworkFetch() {
         InvoiceGenerationParams params = InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
                 .templatePath("http://other-host:8077/xslt/ksef_invoice")
-                .remoteTemplateBaseUrl(TEMPLATE_SERVER_BASE)
+                .resourceRoot(URI.create(TEMPLATE_SERVER_BASE))
                 .build();
 
         assertThatThrownBy(() -> generate(params))
                 .isInstanceOf(javax.xml.transform.TransformerException.class)
-                .hasMessageContaining("not under remoteTemplateBaseUrl");
+                .hasMessageContaining("not under any configured HTTP resource root");
     }
 
     private static void generate(InvoiceGenerationParams params) throws Exception {

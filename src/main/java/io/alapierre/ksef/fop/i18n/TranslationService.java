@@ -44,7 +44,7 @@ public class TranslationService {
 
     /**
      * HTTP(S) entry template URL ({@code templatePath}). When set together with
-     * {@link TemplateResolver#getRemoteBaseUrl()}, label files are fetched relative to it.
+     * a configured HTTP resource root, label files are fetched relative to it.
      */
     @Nullable
     private final String remoteEntryUrl;
@@ -67,7 +67,7 @@ public class TranslationService {
 
     /**
      * @param remoteEntryUrl resolved entry template URL; remote label fetch is enabled only when
-     *                       this is HTTP(S) and the resolver has {@code remoteTemplateBaseUrl} set
+     *                       this is HTTP(S) and under a configured HTTP resource root
      */
     public TranslationService(@NotNull URIResolver resolver, @Nullable String remoteEntryUrl) {
         this.resolver = Objects.requireNonNull(resolver, "resolver");
@@ -209,8 +209,8 @@ public class TranslationService {
     }
 
     /**
-     * Remote labels use the same gate as live template fetch: HTTP {@code templatePath} plus
-     * {@code remoteTemplateBaseUrl} on the resolver. Catalog-mapped HTTP paths skip remote labels.
+     * Remote labels use the same gate as live template fetch: HTTP {@code templatePath} under
+     * a configured HTTP resource root. Catalog-mapped HTTP paths skip remote labels.
      */
     @Nullable
     private static String resolveRemoteEntryUrl(@NotNull URIResolver resolver, @Nullable String remoteEntryUrl) {
@@ -219,8 +219,9 @@ public class TranslationService {
         }
         if (resolver instanceof TemplateResolver) {
             TemplateResolver templateResolver = (TemplateResolver) resolver;
-            if (templateResolver.getRemoteBaseUrl() != null) {
-                return remoteEntryUrl.trim();
+            String trimmed = remoteEntryUrl.trim();
+            if (templateResolver.isUnderAnyHttpRoot(trimmed)) {
+                return trimmed;
             }
         }
         return null;

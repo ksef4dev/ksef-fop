@@ -163,14 +163,13 @@ public final class XmlFactories {
         public boolean equals(Object o) {
             if (!(o instanceof TemplateKey)) return false;
             TemplateKey that = (TemplateKey) o;
-            return Objects.equals(resolver.getRoots(), that.resolver.getRoots())
-                    && Objects.equals(resolver.getRemoteBaseUrl(), that.resolver.getRemoteBaseUrl())
+            return Objects.equals(resolver.getResourceRoots(), that.resolver.getResourceRoots())
                     && Objects.equals(templatePath, that.templatePath);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(resolver.getRoots(), resolver.getRemoteBaseUrl(), templatePath);
+            return Objects.hash(resolver.getResourceRoots(), templatePath);
         }
     }
 }

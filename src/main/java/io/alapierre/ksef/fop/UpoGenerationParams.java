@@ -1,17 +1,10 @@
 package io.alapierre.ksef.fop;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.Singular;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,20 +46,13 @@ public class UpoGenerationParams {
     private String templatePath;
 
     /**
-     * Optional base URL of a remote template server (e.g. {@code "http://localhost:8077/xslt"}).
-     * When set, template hrefs that start with this URL are fetched live over HTTP.
-     * See {@link InvoiceGenerationParams#getRemoteTemplateBaseUrl()} for full documentation.
+     * Ordered list of resource roots (filesystem {@code file:} URIs or HTTP(S) base URLs).
+     * See {@link InvoiceGenerationParams#getResourceRoots()} for full documentation.
      */
-    @Nullable
-    private String remoteTemplateBaseUrl;
-
-    /**
-     * Ordered list of filesystem directories searched before the classpath when resolving templates.
-     */
-    @Singular("templateRoot")
+    @Singular("resourceRoot")
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private List<Path> templateRoots;
+    private List<URI> resourceRoots;
 
     /**
      * @deprecated use the builder instead.
@@ -77,15 +63,15 @@ public class UpoGenerationParams {
         this.language = language != null ? language : Language.PL;
         this.languageLocale = null;
         this.templatePath = null;
-        this.templateRoots = Collections.emptyList();
+        this.resourceRoots = Collections.emptyList();
     }
 
     /**
-     * Returns an unmodifiable view of the configured filesystem template roots.
+     * Returns an unmodifiable view of the configured resource roots.
      */
-    public List<Path> getTemplateRoots() {
-        if (templateRoots == null) return Collections.emptyList();
-        return Collections.unmodifiableList(templateRoots);
+    public List<URI> getResourceRoots() {
+        if (resourceRoots == null) return Collections.emptyList();
+        return Collections.unmodifiableList(resourceRoots);
     }
 
     /**
