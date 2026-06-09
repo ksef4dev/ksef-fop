@@ -141,7 +141,15 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException(
                     "Remote template base URL must have a host: " + remoteBaseUrl);
         }
-        return uri.normalize().toString().replaceAll("/+$", "");
+        return stripTrailingSlashes(uri.normalize().toString());
+    }
+
+    private static String stripTrailingSlashes(String value) {
+        int end = value.length();
+        while (end > 0 && value.charAt(end - 1) == '/') {
+            end--;
+        }
+        return end == value.length() ? value : value.substring(0, end);
     }
 
     /**

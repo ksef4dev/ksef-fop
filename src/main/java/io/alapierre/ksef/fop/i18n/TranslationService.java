@@ -188,26 +188,15 @@ public class TranslationService {
 
     @Nullable
     private Document loadRemoteDocument(TemplateResolver templateResolver, String relativePath) {
-        String normalized = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-        String href = toServeFilename(normalized);
+        String href = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
         try {
             return templateResolver.tryResolve(href, remoteEntryUrl)
-                    .map(source -> parseSource(source, normalized))
+                    .map(source -> parseSource(source, href))
                     .orElse(null);
         } catch (TransformerException e) {
             log.debug("Remote label miss for {} (base {}): {}", href, remoteEntryUrl, e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Maps classpath paths ({@code i18n/labels_pl.xml}) to flat serve filenames ({@code labels_pl.xml}).
-     */
-    static String toServeFilename(String relativePath) {
-        if (relativePath.startsWith("i18n/")) {
-            return relativePath.substring("i18n/".length());
-        }
-        return relativePath;
     }
 
     private static boolean isRemoteEntryUrl(@Nullable String url) {

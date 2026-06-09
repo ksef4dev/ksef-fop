@@ -276,12 +276,6 @@ class TranslationServiceTest {
     }
 
     @Test
-    void toServeFilename_stripsI18nPrefix() {
-        assertEquals("labels.xml", TranslationService.toServeFilename("i18n/labels.xml"));
-        assertEquals("labels_en.xml", TranslationService.toServeFilename("i18n/labels_en.xml"));
-    }
-
-    @Test
     void getTranslation_withNonHttpRemoteEntryUrl_shouldUseClasspath() throws TransformerException {
         TranslationService svc = new TranslationService(
                 new TemplateResolver(Collections.emptyList()),
