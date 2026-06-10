@@ -24,7 +24,10 @@ public class QrCodeData {
 
     /**
      * Creates an empty instance; populate it through the setters.
+     *
+     * @deprecated use the builder instead.
      */
+    @Deprecated
     public QrCodeData() {
     }
 
