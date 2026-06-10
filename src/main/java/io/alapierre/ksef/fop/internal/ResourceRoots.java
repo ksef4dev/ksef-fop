@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Canonicalises {@link URI} resource roots (filesystem directories and HTTP(S) base URLs).
@@ -20,7 +19,6 @@ public final class ResourceRoots {
 
     private ResourceRoots() {
     }
-
 
     public static boolean isHttp(@NotNull URI root) {
         String scheme = root.getScheme();
@@ -44,11 +42,11 @@ public final class ResourceRoots {
                 throw new IllegalArgumentException("Resource root must not be null");
             }
             if (isHttp(root)) {
-                result.add(ResourceRoot.http(TemplateResolver.canonicalizeHttpBaseUrl(root.toString())));
+                result.add(UrlResourceRoot.canonicalize(root));
             } else if (isFilesystem(root)) {
                 Path canonical = FilesystemRoots.canonicalize(
                         Collections.singletonList(toFilesystemPath(root))).get(0);
-                result.add(ResourceRoot.filesystem(canonical));
+                result.add(new PathResourceRoot(canonical));
             } else {
                 throw new TransformerException(
                         "Resource root must be a file: directory or http(s) URL: " + root);

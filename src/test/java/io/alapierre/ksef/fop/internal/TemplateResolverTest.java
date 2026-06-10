@@ -171,12 +171,12 @@ class TemplateResolverTest {
     }
 
     @Test
-    void isUnderRemoteBaseDetectsPrefixAndExactMatch() {
-        String base = "http://localhost:8077/xslt";
-        assertThat(TemplateResolver.isUnderRemoteBase(base, base)).isTrue();
-        assertThat(TemplateResolver.isUnderRemoteBase(base + "/ksef_invoice", base)).isTrue();
-        assertThat(TemplateResolver.isUnderRemoteBase("http://evil.example/xslt/ksef_invoice", base)).isFalse();
-        assertThat(TemplateResolver.isUnderRemoteBase("http://localhost:8077/xsltx", base)).isFalse();
+    void urlResourceRootDetectsPrefixAndExactMatch() throws Exception {
+        UrlResourceRoot root = UrlResourceRoot.canonicalize(URI.create("http://localhost:8077/xslt"));
+        assertThat(root.contains("http://localhost:8077/xslt")).isTrue();
+        assertThat(root.contains("http://localhost:8077/xslt/ksef_invoice")).isTrue();
+        assertThat(root.contains("http://evil.example/xslt/ksef_invoice")).isFalse();
+        assertThat(root.contains("http://localhost:8077/xsltx")).isFalse();
     }
 
     // -----------------------------------------------------------------------

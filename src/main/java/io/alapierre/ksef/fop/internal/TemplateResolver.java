@@ -5,7 +5,6 @@ package io.alapierre.ksef.fop.internal;
 
 import net.sf.saxon.trans.NonDelegatingURIResolver;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlresolver.CatalogManager;
@@ -15,20 +14,14 @@ import org.xmlresolver.XMLResolverConfiguration;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -65,12 +58,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateResolver.class);
 
-    /** Connect + read timeout used for every HTTP fetch from the remote template server. */
-    private static final int REMOTE_TIMEOUT_MS = 10_000;
-
-    /** Hard cap on the body size of a single remotely fetched stylesheet, to avoid OOM. */
-    private static final int MAX_REMOTE_TEMPLATE_BYTES = 16 * 1024 * 1024;
-
     public static final String HTTP_PREFIX = "http://";
     public static final String HTTPS_PREFIX = "https://";
     private static final String VFS_SCHEME = "vfs";
@@ -102,49 +89,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         this.catalogManager = config.getFeature(ResolverFeature.CATALOG_MANAGER);
     }
 
-    /**
-     * Validates and normalizes an HTTP(S) resource-root base URL.
-     */
-    @NotNull
-    static String canonicalizeHttpBaseUrl(@NotNull String baseUrl) throws TransformerException {
-        String trimmed = baseUrl.trim();
-        if (trimmed.isEmpty()) {
-            throw new TransformerException("HTTP resource root must not be blank");
-        }
-        URI uri = parseUri(trimmed);
-        String scheme = uri.getScheme();
-        if (scheme == null) {
-            throw new TransformerException(
-                    "HTTP resource root must use http or https scheme: " + baseUrl);
-        }
-        String schemeLower = scheme.toLowerCase(Locale.ROOT);
-        if (!"http".equals(schemeLower) && !"https".equals(schemeLower)) {
-            throw new TransformerException(
-                    "HTTP resource root must use http or https scheme: " + baseUrl);
-        }
-        String host = uri.getHost();
-        if (host == null || host.isEmpty()) {
-            throw new TransformerException(
-                    "HTTP resource root must have a host: " + baseUrl);
-        }
-        return stripTrailingSlashes(uri.normalize().toString());
-    }
-
-    private static String stripTrailingSlashes(String value) {
-        int end = value.length();
-        while (end > 0 && value.charAt(end - 1) == '/') {
-            end--;
-        }
-        return end == value.length() ? value : value.substring(0, end);
-    }
-
-    /**
-     * True if {@code url} equals {@code httpRoot} or sits under it as a path segment.
-     */
-    public static boolean isUnderRemoteBase(@NotNull String url, @NotNull String httpRoot) {
-        return url.equals(httpRoot) || url.startsWith(httpRoot + "/");
-    }
-
     @NotNull
     List<ResourceRoot> getResourceRoots() {
         return resourceRoots;
@@ -161,7 +105,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
     public boolean isUnderAnyHttpRoot(@NotNull String url) {
         for (ResourceRoot root : resourceRoots) {
-            if (root.isUnder(url)) {
+            if (root.contains(url)) {
                 return true;
             }
         }
@@ -200,12 +144,19 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         //    a) Absolute href under an HTTP root.
         //    b) Relative href whose parent stylesheet was fetched from an HTTP root
         //       (base is the HTTP URL of the parent, set as systemId when it was loaded).
-        if (isUnderAnyHttpRoot(href)) {
-            return Optional.of(fetchFromRemote(requireUnderHttpRoot(normalizeUrl(href), href, base)));
+        for (ResourceRoot root : resourceRoots) {
+            Source remote = root.tryFetchAbsolute(href);
+            if (remote != null) {
+                return Optional.of(remote);
+            }
         }
-        if (base != null && isUnderAnyHttpRoot(base) && !href.contains(":")) {
-            String resolved = URI.create(base).resolve(href).normalize().toString();
-            return Optional.of(fetchFromRemote(requireUnderHttpRoot(resolved, href, base)));
+        if (base != null) {
+            for (ResourceRoot root : resourceRoots) {
+                Source remote = root.tryFetchRelativeToBase(href, base);
+                if (remote != null) {
+                    return Optional.of(remote);
+                }
+            }
         }
 
         // 1. http: / https: URIs → XML catalog (allowlist); anything not listed throws
@@ -246,7 +197,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         }
 
         for (ResourceRoot root : resourceRoots) {
-            Source s = tryResolveAtRoot(root, relativePath);
+            Source s = root.tryResolveRelative(relativePath);
             if (s != null) {
                 return Optional.of(s);
             }
@@ -286,7 +237,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
         List<Source> sources = new ArrayList<>(resourceRoots.size() + 1);
         for (ResourceRoot root : resourceRoots) {
-            Source s = tryResolveAtRoot(root, relativePath);
+            Source s = root.tryResolveRelative(relativePath);
             if (s != null) {
                 sources.add(s);
             }
@@ -300,24 +251,16 @@ public class TemplateResolver implements NonDelegatingURIResolver {
      * Resolves a relative resource to a public URI suitable for FOP external references
      * ({@code file:} or {@code http(s):}).
      */
-    public Optional<String> tryResolvePublicUri(String href) {
+    public Optional<String> tryResolvePublicUri(String href) throws TransformerException {
         if (href == null || href.contains(":")) {
             return Optional.empty();
         }
         String relativePath = href.startsWith("/") ? href.substring(1) : href;
 
         for (ResourceRoot root : resourceRoots) {
-            if (root.isHttp()) {
-                String url = root.resolveUrl(relativePath);
-                if (tryFetchFromRemote(url) != null) {
-                    return Optional.of(url);
-                }
-            } else {
-                Optional<Path> resolved = FilesystemRoots.resolveFileWithin(
-                        root.getFilesystemPath(), relativePath);
-                if (resolved.isPresent()) {
-                    return Optional.of(resolved.get().toUri().toString());
-                }
+            Optional<String> resolved = root.tryResolvePublicUri(relativePath);
+            if (resolved.isPresent()) {
+                return resolved;
             }
         }
 
@@ -326,88 +269,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             return Optional.of(classpathUrl.toString());
         }
         return Optional.empty();
-    }
-
-    // -----------------------------------------------------------------------
-    // Remote HTTP fetch
-    // -----------------------------------------------------------------------
-
-    private String requireUnderHttpRoot(String resolvedUrl, String href, String base) throws TransformerException {
-        if (!isUnderAnyHttpRoot(resolvedUrl)) {
-            throw new TransformerException("Remote template href escapes configured HTTP resource root(s): "
-                    + href
-                    + (Strings.isEmpty(base) ? "" : " (base: " + base + ")")
-                    + " resolved to " + resolvedUrl);
-        }
-        return resolvedUrl;
-    }
-
-    private static String normalizeUrl(String url) {
-        return URI.create(url).normalize().toString();
-    }
-
-    @Nullable
-    private Source tryResolveAtRoot(ResourceRoot root, String relativePath) throws TransformerException {
-        if (root.isHttp()) {
-            return tryFetchFromRemote(root.resolveUrl(relativePath));
-        }
-        return tryFilesystem(root.getFilesystemPath(), relativePath);
-    }
-
-    /**
-     * Single GET; returns {@code null} on 404 / network error (used when probing HTTP roots).
-     */
-    @Nullable
-    private Source tryFetchFromRemote(String url) {
-        try {
-            return fetchFromRemote(url);
-        } catch (TransformerException e) {
-            log.debug("Remote resource miss for {}: {}", url, e.getMessage());
-            return null;
-        }
-    }
-
-    private Source fetchFromRemote(String url) throws TransformerException {
-        log.debug("XSLT: fetching resource from remote server: {}", url);
-        HttpURLConnection connection = null;
-        try {
-            connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setConnectTimeout(REMOTE_TIMEOUT_MS);
-            connection.setReadTimeout(REMOTE_TIMEOUT_MS);
-            connection.setInstanceFollowRedirects(false);
-            connection.setRequestProperty("Accept", "application/xslt+xml, text/xml, application/xml, */*");
-            connection.setRequestMethod("GET");
-
-            int status = connection.getResponseCode();
-            if (status != HttpURLConnection.HTTP_OK) {
-                throw new TransformerException(
-                        "Remote resource server returned HTTP " + status + " for URL: " + url);
-            }
-
-            byte[] body = readFully(connection.getInputStream());
-            log.debug("XSLT: fetched {} bytes from {}", body.length, url);
-            return new StreamSource(new ByteArrayInputStream(body), url);
-
-        } catch (IOException e) {
-            throw new TransformerException(
-                    "Failed to fetch remote resource (server may be down): " + url + " — " + e.getMessage(), e);
-        } finally {
-            if (connection != null) connection.disconnect();
-        }
-    }
-
-    private static byte[] readFully(InputStream in) throws IOException, TransformerException {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        byte[] chunk = new byte[8192];
-        int n;
-        while ((n = in.read(chunk)) != -1) {
-            buf.write(chunk, 0, n);
-            if (buf.size() > MAX_REMOTE_TEMPLATE_BYTES) {
-                throw new TransformerException("Remote resource exceeds maximum allowed size of "
-                        + MAX_REMOTE_TEMPLATE_BYTES + " bytes");
-            }
-        }
-        return buf.toByteArray();
     }
 
     // -----------------------------------------------------------------------
@@ -470,25 +331,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     // -----------------------------------------------------------------------
     // Lookup strategies
     // -----------------------------------------------------------------------
-
-    /**
-     * Tries to load {@code relativePath} from under {@code root}.
-     *
-     * <p>Containment and regular-file check are delegated to
-     * {@link FilesystemRoots#resolveFileWithin(Path, String)}; symlink escapes and
-     * {@code ..} traversal fall through silently to the next lookup step.</p>
-     */
-    private static Source tryFilesystem(Path root, String relativePath) throws TransformerException {
-        Optional<Path> resolved = FilesystemRoots.resolveFileWithin(root, relativePath);
-        if (!resolved.isPresent()) {
-            return null;
-        }
-        try {
-            return new StreamSource(Files.newInputStream(resolved.get()), VFS_PREFIX + relativePath);
-        } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + resolved.get(), e);
-        }
-    }
 
     /**
      * Tries to load {@code path} as a classpath resource.

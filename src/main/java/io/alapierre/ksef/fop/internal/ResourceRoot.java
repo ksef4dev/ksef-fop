@@ -3,76 +3,54 @@ package io.alapierre.ksef.fop.internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
-import java.util.Objects;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import java.util.Optional;
 
 /**
- * A single canonicalised resource root — either a filesystem directory or an HTTP(S) base URL.
+ * A single canonicalised resource root used by {@link TemplateResolver}.
  */
-final class ResourceRoot {
+abstract class ResourceRoot {
 
-    private final Path filesystemPath;
-    private final String httpBaseUrl;
+    /**
+     * Tries to load {@code relativePath} from this root. Returns {@code null} on a miss.
+     */
+    @Nullable
+    abstract Source tryResolveRelative(@NotNull String relativePath) throws TransformerException;
 
-    private ResourceRoot(@Nullable Path filesystemPath, @Nullable String httpBaseUrl) {
-        this.filesystemPath = filesystemPath;
-        this.httpBaseUrl = httpBaseUrl;
-    }
-
-    static @NotNull ResourceRoot filesystem(@NotNull Path canonicalPath) {
-        return new ResourceRoot(canonicalPath, null);
-    }
-
-    static @NotNull ResourceRoot http(@NotNull String canonicalBaseUrl) {
-        return new ResourceRoot(null, canonicalBaseUrl);
-    }
+    /**
+     * Resolves a relative path to a public URI ({@code file:} or {@code http(s):}) when the
+     * resource exists under this root.
+     */
+    abstract @NotNull Optional<String> tryResolvePublicUri(@NotNull String relativePath)
+            throws TransformerException;
 
     boolean isHttp() {
-        return httpBaseUrl != null;
+        return false;
     }
 
-    @NotNull
-    Path getFilesystemPath() {
-        if (filesystemPath == null) {
-            throw new IllegalStateException("Not a filesystem root: " + httpBaseUrl);
-        }
-        return filesystemPath;
+    /**
+     * Whether {@code url} lies under this root. Always {@code false} for non-HTTP roots.
+     */
+    boolean contains(@NotNull String url) {
+        return false;
     }
 
-    @NotNull
-    String getHttpBaseUrl() {
-        if (httpBaseUrl == null) {
-            throw new IllegalStateException("Not an HTTP root: " + filesystemPath);
-        }
-        return httpBaseUrl;
+    /**
+     * Fetches an absolute URL when it lies under this HTTP root. Returns {@code null} when this
+     * is not an HTTP root or the URL is outside the root.
+     */
+    @Nullable
+    Source tryFetchAbsolute(@NotNull String url) throws TransformerException {
+        return null;
     }
 
-    boolean isUnder(@NotNull String url) {
-        return isHttp() && TemplateResolver.isUnderRemoteBase(url, httpBaseUrl);
-    }
-
-    @NotNull
-    String resolveUrl(@NotNull String relativePath) {
-        String path = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-        return getHttpBaseUrl() + "/" + path;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ResourceRoot)) return false;
-        ResourceRoot that = (ResourceRoot) o;
-        return Objects.equals(filesystemPath, that.filesystemPath)
-                && Objects.equals(httpBaseUrl, that.httpBaseUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(filesystemPath, httpBaseUrl);
-    }
-
-    @Override
-    public String toString() {
-        return isHttp() ? "ResourceRoot{http=" + httpBaseUrl + "}" : "ResourceRoot{file=" + filesystemPath + "}";
+    /**
+     * Resolves {@code href} against an HTTP {@code base} that lies under this root and fetches
+     * the result. Returns {@code null} when not applicable or on a miss.
+     */
+    @Nullable
+    Source tryFetchRelativeToBase(@NotNull String href, @NotNull String base) throws TransformerException {
+        return null;
     }
 }
