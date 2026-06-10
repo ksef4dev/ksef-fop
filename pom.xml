@@ -71,6 +71,7 @@
         <!-- Dependency versions -->
         <annotations.version>24.1.0</annotations.version>
         <assertj.version>3.27.7</assertj.version>
+        <equalsverifier.version>3.16.1</equalsverifier.version>
         <pdfbox.version>3.0.7</pdfbox.version>
         <slf4j.version>2.0.17</slf4j.version>
         <zxing.version>3.5.4</zxing.version>
@@ -81,6 +82,7 @@
         <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
         <maven.release-plugin.version>3.3.1</maven.release-plugin.version>
+        <japicmp.plugin.version>0.26.1</japicmp.plugin.version>
     </properties>
 
     <build>
@@ -143,6 +145,51 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.2.2</version>
+            </plugin>
+
+            <!--
+              Checks backward binary compatibility of the public API against the previous release.
+              The baseline (the latest non-SNAPSHOT version published in the repository) is resolved
+              automatically, so no configuration needs to be bumped at release time.
+            -->
+            <plugin>
+                <groupId>com.github.siom79.japicmp</groupId>
+                <artifactId>japicmp-maven-plugin</artifactId>
+                <version>${japicmp.plugin.version}</version>
+                <configuration>
+                    <parameter>
+                        <onlyModified>true</onlyModified>
+                        <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+                        <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
+                        <ignoreMissingClasses>true</ignoreMissingClasses>
+                        <!--
+                          Accepts the builder classes being made `final` in this release.
+
+                          Making a class `final` only breaks consumers that could actually subclass it,
+                          i.e. classes that expose a public or protected constructor.
+                          Our builders only have a package-private constructor, so they don't fall into this category.
+
+                          Remove this rule after 1.2.25 is released.
+                        -->
+                        <overrideCompatibilityChangeParameters>
+                            <overrideCompatibilityChangeParameter>
+                                <compatibilityChange>CLASS_NOW_NOT_EXTENDABLE</compatibilityChange>
+                                <binaryCompatible>true</binaryCompatible>
+                                <sourceCompatible>true</sourceCompatible>
+                                <semanticVersionLevel>PATCH</semanticVersionLevel>
+                            </overrideCompatibilityChangeParameter>
+                        </overrideCompatibilityChangeParameters>
+                    </parameter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>backward-compatibility</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>cmp</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -273,12 +320,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.42</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
@@ -353,6 +394,13 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj3</artifactId>
             <version>${xmlunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
+            <version>${equalsverifier.version}</version>
             <scope>test</scope>
         </dependency>
 

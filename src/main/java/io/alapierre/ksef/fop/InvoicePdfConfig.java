@@ -1,17 +1,8 @@
 package io.alapierre.ksef.fop;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * The {@code InvoicePdfConfig} class represents the configuration settings for generating PDF invoices.
  */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class InvoicePdfConfig {
 
     /**
@@ -27,4 +18,90 @@ public class InvoicePdfConfig {
      * If {@code false}, unit prices will be displayed with 2 decimal places. (default)
      */
     private boolean useExtendedPriceDecimalPlaces = false;
+
+    public InvoicePdfConfig() {
+    }
+
+    public InvoicePdfConfig(boolean showFooter, boolean useExtendedPriceDecimalPlaces) {
+        this.showFooter = showFooter;
+        this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
+    }
+
+    public boolean isShowFooter() {
+        return showFooter;
+    }
+
+    public void setShowFooter(boolean showFooter) {
+        this.showFooter = showFooter;
+    }
+
+    public boolean isUseExtendedPriceDecimalPlaces() {
+        return useExtendedPriceDecimalPlaces;
+    }
+
+    public void setUseExtendedPriceDecimalPlaces(boolean useExtendedPriceDecimalPlaces) {
+        this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o instanceof InvoicePdfConfig) {
+            InvoicePdfConfig other = (InvoicePdfConfig) o;
+            return other.canEqual(this)
+                    && showFooter == other.showFooter
+                    && useExtendedPriceDecimalPlaces == other.useExtendedPriceDecimalPlaces;
+        }
+        return false;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof InvoicePdfConfig;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Boolean.hashCode(showFooter);
+        result = 31 * result + Boolean.hashCode(useExtendedPriceDecimalPlaces);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoicePdfConfig(showFooter=" + showFooter
+                + ", useExtendedPriceDecimalPlaces=" + useExtendedPriceDecimalPlaces + ")";
+    }
+
+    public static InvoicePdfConfigBuilder builder() {
+        return new InvoicePdfConfigBuilder();
+    }
+
+    public static final class InvoicePdfConfigBuilder {
+
+        private boolean showFooter;
+        private boolean useExtendedPriceDecimalPlaces;
+
+        InvoicePdfConfigBuilder() {
+        }
+
+        public InvoicePdfConfigBuilder showFooter(boolean showFooter) {
+            this.showFooter = showFooter;
+            return this;
+        }
+
+        public InvoicePdfConfigBuilder useExtendedPriceDecimalPlaces(boolean useExtendedPriceDecimalPlaces) {
+            this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
+            return this;
+        }
+
+        public InvoicePdfConfig build() {
+            return new InvoicePdfConfig(showFooter, useExtendedPriceDecimalPlaces);
+        }
+
+        @Override
+        public String toString() {
+            return "InvoicePdfConfig.InvoicePdfConfigBuilder(showFooter=" + showFooter
+                    + ", useExtendedPriceDecimalPlaces=" + useExtendedPriceDecimalPlaces + ")";
+        }
+    }
 }

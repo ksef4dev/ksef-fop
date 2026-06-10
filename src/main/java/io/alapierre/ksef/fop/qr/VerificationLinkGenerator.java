@@ -1,7 +1,6 @@
 package io.alapierre.ksef.fop.qr;
 
 import io.alapierre.ksef.fop.qr.enums.ContextIdentifierType;
-import lombok.extern.slf4j.Slf4j;
 
 import java.security.PrivateKey;
 import java.time.LocalDate;
@@ -9,7 +8,6 @@ import java.time.format.DateTimeFormatter;
 
 import static io.alapierre.ksef.fop.qr.CryptoUtils.computeUrlEncodedSignedHash;
 
-@Slf4j
 public final class VerificationLinkGenerator {
 
     private static final DateTimeFormatter KSEF_DATE = DateTimeFormatter.ofPattern("dd-MM-yyyy");

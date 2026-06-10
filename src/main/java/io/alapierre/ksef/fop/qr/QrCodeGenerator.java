@@ -6,17 +6,18 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import io.alapierre.ksef.fop.qr.exceptions.BarcodeGenerationException;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 
 
-@Slf4j
 public class QrCodeGenerator {
+
+    private static final Logger log = LoggerFactory.getLogger(QrCodeGenerator.class);
 
     private QrCodeGenerator() {
     }
@@ -30,9 +31,10 @@ public class QrCodeGenerator {
      * @return The generated barcode as a byte array.
      * @throws BarcodeGenerationException if a problem with barcode generation occurs
      */
-    public static byte[] generateBarcode(@NonNull String barcodeText, int width, int height)  {
+    public static byte[] generateBarcode(String barcodeText, int width, int height)  {
+        Objects.requireNonNull(barcodeText, "barcodeText");
         try {
-            val buf = new ByteArrayOutputStream();
+            final ByteArrayOutputStream buf = new ByteArrayOutputStream();
             writeBarcode(barcodeText, width, height, buf);
             return buf.toByteArray();
         } catch (IOException ex) {
@@ -51,7 +53,9 @@ public class QrCodeGenerator {
      * @throws IOException if an I/O error occurs while writing the image to the output stream.
      * @throws BarcodeGenerationException if a problem with barcode generation occurs
      */
-    public static void writeBarcode(@NonNull String barcodeText, int width, int height, OutputStream out) throws IOException {
+    public static void writeBarcode(String barcodeText, int width, int height, OutputStream out) throws IOException {
+
+        Objects.requireNonNull(barcodeText, "barcodeText");
 
         if (width <= 0 || height <= 0) {
             throw new BarcodeGenerationException("width and height must be positive", null);

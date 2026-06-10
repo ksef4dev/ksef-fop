@@ -6,7 +6,6 @@ import io.alapierre.ksef.fop.internal.TemplateResolver;
 import io.alapierre.ksef.fop.internal.XmlFactories;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -15,6 +14,8 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.*;
@@ -32,8 +33,9 @@ import java.util.Map;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2023.11.11
  */
-@Slf4j
 public class PdfGenerator {
+
+    private static final Logger log = LoggerFactory.getLogger(PdfGenerator.class);
 
     private static final String MIME_PDF = "application/pdf";
 
