@@ -32,6 +32,17 @@ class QrCodeDataBuilderTest {
     }
 
     @Test
+    void buildRejectsNullQrCodeImage() {
+        QrCodeData.QrCodeDataBuilder builder = QrCodeData.builder()
+                .label("label")
+                .verificationLink("link")
+                .verificationLinkTitle("title");
+
+        NullPointerException ex = assertThrows(NullPointerException.class, builder::build);
+        assertEquals("qrCodeImage", ex.getMessage());
+    }
+
+    @Test
     void buildRejectsNullLabel() {
         QrCodeData.QrCodeDataBuilder builder = QrCodeData.builder()
                 .qrCodeImage(new byte[0])

@@ -44,7 +44,7 @@ public class QrCodeData {
     }
 
     private QrCodeData(QrCodeDataBuilder builder) {
-        this.qrCodeImage = builder.qrCodeImage;
+        this.qrCodeImage = Objects.requireNonNull(builder.qrCodeImage, "qrCodeImage");
         this.label = Objects.requireNonNull(builder.label, "label");
         this.verificationLink = Objects.requireNonNull(builder.verificationLink, "verificationLink");
         this.verificationLinkTitle = Objects.requireNonNull(builder.verificationLinkTitle, "verificationLinkTitle");
@@ -63,7 +63,7 @@ public class QrCodeData {
      * @param qrCodeImage the QR code image bytes
      */
     public void setQrCodeImage(byte @NotNull [] qrCodeImage) {
-        this.qrCodeImage = qrCodeImage;
+        this.qrCodeImage = Objects.requireNonNull(qrCodeImage, "qrCodeImage");
     }
 
     /**
