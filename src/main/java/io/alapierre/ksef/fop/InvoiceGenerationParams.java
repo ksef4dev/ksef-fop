@@ -140,7 +140,7 @@ public class InvoiceGenerationParams {
         this.customProperties = builder.customProperties;
         this.language = builder.language == null ? Language.PL : builder.language;
         this.languageLocale = builder.languageLocale;
-        this.templateRoots = builder.templateRoots == null
+        this.templateRoots = builder.templateRoots.isEmpty()
                 ? Collections.emptyList()
                 : Collections.unmodifiableList(new ArrayList<>(builder.templateRoots));
     }
@@ -396,7 +396,7 @@ public class InvoiceGenerationParams {
         private Map<String, Object> customProperties;
         private Language language = Language.PL;
         private String languageLocale;
-        private ArrayList<Path> templateRoots;
+        private final ArrayList<Path> templateRoots = new ArrayList<>();
 
         InvoiceGenerationParamsBuilder() {
         }
@@ -471,21 +471,19 @@ public class InvoiceGenerationParams {
         }
 
         public InvoiceGenerationParamsBuilder templateRoot(Path templateRoot) {
-            if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
             this.templateRoots.add(templateRoot);
             return this;
         }
 
         public InvoiceGenerationParamsBuilder templateRoots(Collection<? extends Path> templateRoots) {
             if (templateRoots != null) {
-                if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
                 this.templateRoots.addAll(templateRoots);
             }
             return this;
         }
 
         public InvoiceGenerationParamsBuilder clearTemplateRoots() {
-            if (this.templateRoots != null) this.templateRoots.clear();
+            this.templateRoots.clear();
             return this;
         }
 

@@ -68,7 +68,7 @@ public class UpoGenerationParams {
         this.language = builder.language == null ? Language.PL : builder.language;
         this.languageLocale = builder.languageLocale;
         this.templatePath = builder.templatePath;
-        this.templateRoots = builder.templateRoots == null
+        this.templateRoots = builder.templateRoots.isEmpty()
                 ? Collections.emptyList()
                 : Collections.unmodifiableList(new ArrayList<>(builder.templateRoots));
     }
@@ -202,7 +202,7 @@ public class UpoGenerationParams {
         private Language language = Language.PL;
         private String languageLocale;
         private String templatePath;
-        private ArrayList<Path> templateRoots;
+        private final ArrayList<Path> templateRoots = new ArrayList<>();
 
         UpoGenerationParamsBuilder() {
         }
@@ -232,21 +232,19 @@ public class UpoGenerationParams {
         }
 
         public UpoGenerationParamsBuilder templateRoot(Path templateRoot) {
-            if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
             this.templateRoots.add(templateRoot);
             return this;
         }
 
         public UpoGenerationParamsBuilder templateRoots(Collection<? extends Path> templateRoots) {
             if (templateRoots != null) {
-                if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
                 this.templateRoots.addAll(templateRoots);
             }
             return this;
         }
 
         public UpoGenerationParamsBuilder clearTemplateRoots() {
-            if (this.templateRoots != null) this.templateRoots.clear();
+            this.templateRoots.clear();
             return this;
         }
 
