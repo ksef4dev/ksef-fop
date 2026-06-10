@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public class InvoiceGenerationParams {
      * The library does not validate parameter names or values; callers are responsible for ensuring that
      * untrusted users cannot control this map when rendering trusted templates.
      */
-    private Map<String, Object> customProperties = new HashMap<>();
+    private Map<String, Object> customProperties;
 
     /**
      * @deprecated use {@link #languageLocale} instead, which accepts any BCP&nbsp;47
@@ -92,18 +91,7 @@ public class InvoiceGenerationParams {
      */
     @Deprecated
     public InvoiceGenerationParams() {
-        this(null,
-                null,
-                null,
-                null,
-                null,
-                false,
-                InvoiceSchema.FA3_1_0_E,
-                null,
-                null,
-                null,
-                null,
-                null);
+        this(builder().schema(InvoiceSchema.FA3_1_0_E));
     }
 
     /**
@@ -123,55 +111,38 @@ public class InvoiceGenerationParams {
             @Nullable String templatePath,
             Map<String, Object> customProperties,
             Language language) {
-        this(verificationLink,
-                logo,
-                logoUri,
-                currencyDate,
-                issuerUser,
-                showCorrectionDifferences,
-                schema,
-                ksefNumber,
-                invoiceQRCodeGeneratorRequest,
-                templatePath,
-                customProperties,
-                language,
-                null,
-                null);
+        this(builder()
+                .verificationLink(verificationLink)
+                .logo(logo)
+                .logoUri(logoUri)
+                .currencyDate(currencyDate)
+                .issuerUser(issuerUser)
+                .showCorrectionDifferences(showCorrectionDifferences)
+                .schema(schema)
+                .ksefNumber(ksefNumber)
+                .invoiceQRCodeGeneratorRequest(invoiceQRCodeGeneratorRequest)
+                .templatePath(templatePath)
+                .customProperties(customProperties)
+                .language(language));
     }
 
-    private InvoiceGenerationParams(
-            @Nullable String verificationLink,
-            byte[] logo,
-            URI logoUri,
-            @Nullable LocalDate currencyDate,
-            @Nullable String issuerUser,
-            boolean showCorrectionDifferences,
-            @NotNull InvoiceSchema schema,
-            @Nullable String ksefNumber,
-            @Nullable InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest,
-            @Nullable String templatePath,
-            Map<String, Object> customProperties,
-            Language language,
-            @Nullable String languageLocale,
-            List<Path> templateRoots) {
-        this.verificationLink = verificationLink;
-        this.logo = logo;
-        this.logoUri = logoUri;
-        this.currencyDate = currencyDate;
-        this.issuerUser = issuerUser;
-        this.showCorrectionDifferences = showCorrectionDifferences;
-        this.schema = Objects.requireNonNull(schema, "schema");
-        this.ksefNumber = ksefNumber;
-        this.invoiceQRCodeGeneratorRequest = invoiceQRCodeGeneratorRequest;
-        this.templatePath = templatePath;
-        this.customProperties = customProperties == null
-                ? Collections.emptyMap()
-                : Collections.unmodifiableMap(customProperties);
-        this.language = language == null ? Language.PL : language;
-        this.languageLocale = languageLocale;
-        this.templateRoots = templateRoots == null
+    private InvoiceGenerationParams(InvoiceGenerationParamsBuilder builder) {
+        this.verificationLink = builder.verificationLink;
+        this.logo = builder.logo;
+        this.logoUri = builder.logoUri;
+        this.currencyDate = builder.currencyDate;
+        this.issuerUser = builder.issuerUser;
+        this.showCorrectionDifferences = builder.showCorrectionDifferences;
+        this.schema = Objects.requireNonNull(builder.schema, "schema");
+        this.ksefNumber = builder.ksefNumber;
+        this.invoiceQRCodeGeneratorRequest = builder.invoiceQRCodeGeneratorRequest;
+        this.templatePath = builder.templatePath;
+        this.customProperties = builder.customProperties;
+        this.language = builder.language == null ? Language.PL : builder.language;
+        this.languageLocale = builder.languageLocale;
+        this.templateRoots = builder.templateRoots == null
                 ? Collections.emptyList()
-                : Collections.unmodifiableList(new ArrayList<>(templateRoots));
+                : Collections.unmodifiableList(new ArrayList<>(builder.templateRoots));
     }
 
     @Nullable
@@ -278,6 +249,7 @@ public class InvoiceGenerationParams {
      * The library does not validate parameter names or values; callers are responsible for ensuring that
      * untrusted users cannot control this map when rendering trusted templates.
      */
+    @Nullable
     public Map<String, Object> getCustomProperties() {
         return customProperties;
     }
@@ -421,7 +393,7 @@ public class InvoiceGenerationParams {
         private String ksefNumber;
         private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
         private String templatePath;
-        private Map<String, Object> customProperties = new HashMap<>();
+        private Map<String, Object> customProperties;
         private Language language = Language.PL;
         private String languageLocale;
         private ArrayList<Path> templateRoots;
@@ -505,9 +477,7 @@ public class InvoiceGenerationParams {
         }
 
         public InvoiceGenerationParamsBuilder templateRoots(Collection<? extends Path> templateRoots) {
-            if (templateRoots == null) {
-                throw new NullPointerException("templateRoots cannot be null");
-            }
+            Objects.requireNonNull(templateRoots, "template roots cannot be null");
             if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
             this.templateRoots.addAll(templateRoots);
             return this;
@@ -519,9 +489,7 @@ public class InvoiceGenerationParams {
         }
 
         public InvoiceGenerationParams build() {
-            return new InvoiceGenerationParams(verificationLink, logo, logoUri, currencyDate, issuerUser,
-                    showCorrectionDifferences, schema, ksefNumber, invoiceQRCodeGeneratorRequest, templatePath,
-                    customProperties, language, languageLocale, templateRoots);
+            return new InvoiceGenerationParams(this);
         }
 
         @Override

@@ -22,7 +22,7 @@ public class UpoGenerationParams {
      * When both are set, {@link #languageLocale} wins (see {@link #resolveLanguageTag()}).
      */
     @Deprecated
-    private Language language = Language.PL;
+    private Language language;
 
     /**
      * Optional BCP&nbsp;47 language tag used to select the label file for translations
@@ -45,14 +45,14 @@ public class UpoGenerationParams {
     /**
      * Ordered list of filesystem directories searched before the classpath when resolving templates.
      */
-    private List<Path> templateRoots = Collections.emptyList();
+    private List<Path> templateRoots;
 
     /**
      * @deprecated use the builder instead.
      */
     @Deprecated
     public UpoGenerationParams() {
-        this(UpoSchema.UPO_V4_3, null, null, null, null);
+        this(builder().schema(UpoSchema.UPO_V4_3));
     }
 
     /**
@@ -60,18 +60,17 @@ public class UpoGenerationParams {
      */
     @Deprecated
     public UpoGenerationParams(@NotNull UpoSchema schema, Language language) {
-        this(schema, language, null, null, null);
+        this(builder().schema(schema).language(language));
     }
 
-    private UpoGenerationParams(@NotNull UpoSchema schema, Language language, @Nullable String languageLocale,
-                               @Nullable String templatePath, List<Path> templateRoots) {
-        this.schema = Objects.requireNonNull(schema, "schema");
-        this.language = language == null ? Language.PL : language;
-        this.languageLocale = languageLocale;
-        this.templatePath = templatePath;
-        this.templateRoots = templateRoots == null
+    private UpoGenerationParams(UpoGenerationParamsBuilder builder) {
+        this.schema = Objects.requireNonNull(builder.schema, "schema");
+        this.language = builder.language == null ? Language.PL : builder.language;
+        this.languageLocale = builder.languageLocale;
+        this.templatePath = builder.templatePath;
+        this.templateRoots = builder.templateRoots == null
                 ? Collections.emptyList()
-                : Collections.unmodifiableList(new ArrayList<>(templateRoots));
+                : Collections.unmodifiableList(new ArrayList<>(builder.templateRoots));
     }
 
     @NotNull
@@ -253,7 +252,7 @@ public class UpoGenerationParams {
         }
 
         public UpoGenerationParams build() {
-            return new UpoGenerationParams(schema, language, languageLocale, templatePath, templateRoots);
+            return new UpoGenerationParams(this);
         }
 
         @Override
