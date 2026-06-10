@@ -63,7 +63,11 @@ final class UrlResourceRoot extends ResourceRoot {
     @NotNull
     URI resolveRelative(@NotNull String relativePath) {
         String path = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-        return baseUri.resolve(path).normalize();
+        // baseUri is the scoped root directory (its trailing slash is stripped during
+        // canonicalization). Resolve against "baseUri/" so the relative path lands *under* the
+        // root; resolving against the bare baseUri would treat its last segment as a file and
+        // replace it (RFC 3986), silently dropping e.g. the NIP segment of a scoped root.
+        return URI.create(baseUri + "/").resolve(path).normalize();
     }
 
     @Override
