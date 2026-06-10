@@ -7,6 +7,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ class GenerationParamsBuilderTest {
         void setsEveryProperty() {
             byte[] logo = {1, 2, 3};
             URI logoUri = URI.create("https://example.test/logo.png");
-            LocalDate currencyDate = LocalDate.of(2026, 6, 10);
+            LocalDate currencyDate = LocalDate.of(2026, Month.JUNE, 10);
             InvoiceQRCodeGeneratorRequest qr = InvoiceQRCodeGeneratorRequest.onlineQrBuilder("https://example.test/qr");
             Map<String, Object> customProperties = new HashMap<>();
             customProperties.put("foo", "bar");
@@ -78,7 +79,7 @@ class GenerationParamsBuilderTest {
         void settersSetEveryProperty() {
             byte[] logo = {4, 5, 6};
             URI logoUri = URI.create("https://example.test/logo2.png");
-            LocalDate currencyDate = LocalDate.of(2026, 1, 2);
+            LocalDate currencyDate = LocalDate.of(2026, Month.JANUARY, 2);
             InvoiceQRCodeGeneratorRequest qr = InvoiceQRCodeGeneratorRequest.onlineQrBuilder("https://example.test/qr2");
             Map<String, Object> customProperties = new HashMap<>();
             customProperties.put("baz", "qux");

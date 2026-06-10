@@ -29,6 +29,8 @@ public class QrCodeData {
      */
     @Deprecated
     public QrCodeData() {
+        // Suppresses Sonar warning
+        this.qrCodeImage = new byte[0];
     }
 
     /**
@@ -171,7 +173,7 @@ public class QrCodeData {
      */
     public static final class QrCodeDataBuilder {
 
-        private byte @NotNull [] qrCodeImage;
+        private byte [] qrCodeImage;
         private String label;
         private String verificationLink;
         private String verificationLinkTitle;
