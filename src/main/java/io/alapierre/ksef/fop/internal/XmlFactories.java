@@ -55,9 +55,6 @@ public final class XmlFactories {
      */
     private static final Configuration SAXON_CONFIGURATION;
 
-    /**
-     * Precompiled templates
-     */
     private static final Map<TemplateKey, Templates> TEMPLATE_CACHE = new ConcurrentHashMap<>();
 
     static {
@@ -124,19 +121,16 @@ public final class XmlFactories {
         try {
             TransformerFactory factory = createTransformerFactory();
             factory.setURIResolver(key.resolver);
-            return factory.newTemplates(key.resolver.resolve(key.templatePath, null));
+            javax.xml.transform.Source stylesheet = key.resolver.resolve(key.templatePath, null);
+            return factory.newTemplates(stylesheet);
         } catch (TransformerException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Returns a compiled {@link Templates} for {@code templatePath}, resolved against the given
-     * {@code roots} (then the classpath) by a {@link TemplateResolver}.
-     *
-     * <p><strong>Caching:</strong> Compiled templates are cached indefinitely, keyed by
-     * {@code (roots, templatePath)}. Once a template has been compiled, later changes to the
-     * underlying stylesheet files are <em>not</em> picked up for the lifetime of the JVM.</p>
+     * Returns a compiled {@link Templates} for {@code templatePath}, resolved by a
+     * {@link TemplateResolver}. Cached per {@code (roots, remoteBaseUrl, templatePath)}.
      */
     public static Templates getTemplate(TemplateResolver resolver, String templatePath) throws TransformerException {
         TemplateKey key = new TemplateKey(resolver, templatePath);
@@ -169,12 +163,13 @@ public final class XmlFactories {
         public boolean equals(Object o) {
             if (!(o instanceof TemplateKey)) return false;
             TemplateKey that = (TemplateKey) o;
-            return Objects.equals(resolver.getRoots(), that.resolver.getRoots()) && Objects.equals(templatePath, that.templatePath);
+            return Objects.equals(resolver.getResourceRoots(), that.resolver.getResourceRoots())
+                    && Objects.equals(templatePath, that.templatePath);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(resolver.getRoots(), templatePath);
+            return Objects.hash(resolver.getResourceRoots(), templatePath);
         }
     }
 }

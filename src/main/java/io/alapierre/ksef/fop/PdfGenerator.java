@@ -87,9 +87,10 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
-        Templates template = XmlFactories.getTemplate(resolver, resolveUpoTemplatePath(params));
+        String upoTemplatePath = resolveUpoTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), upoTemplatePath);
+        TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
+        Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
         Transformer transformer = template.newTransformer();
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
@@ -112,8 +113,9 @@ public class PdfGenerator {
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws TransformerException, FOPException {
         String langCode = params.resolveLanguageTag();
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
         QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
         List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
         generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, out);
@@ -136,8 +138,9 @@ public class PdfGenerator {
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
                                          OutputStream out) throws TransformerException, FOPException {
-        TemplateResolver resolver = new TemplateResolver(params.getTemplateRoots());
-        TranslationService translationService = new TranslationService(resolver);
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
         generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
     }
 
@@ -165,14 +168,46 @@ public class PdfGenerator {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
-        Templates template = XmlFactories.getTemplate(resolver, resolveTemplatePath(params));
+        String stylesheetPath = resolveTemplatePath(params);
+        Templates template = XmlFactories.getTemplate(resolver, stylesheetPath);
         Transformer transformer = template.newTransformer();
 
-        applyParameters(params, qrCodes, duplicateDate, translationService, transformer);
+        applyParameters(params, qrCodes, duplicateDate, resolver, translationService, transformer);
 
         Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
         Result result = new SAXResult(fop.getDefaultHandler());
         transformer.transform(xmlSource, result);
+    }
+
+    private static TemplateResolver createTemplateResolver(List<URI> resourceRoots,
+                                                           String templatePath) throws TransformerException {
+        TemplateResolver resolver = new TemplateResolver(resourceRoots);
+        requireHttpTemplatePathUnderResourceRoots(resolver, templatePath);
+        return resolver;
+    }
+
+    /**
+     * When HTTP resource roots are configured, an HTTP(S) {@code templatePath} must sit under
+     * one of them so misconfiguration fails at setup time. With no HTTP roots, an HTTP
+     * {@code templatePath} may still resolve via the XML catalog to a classpath resource.
+     */
+    private static void requireHttpTemplatePathUnderResourceRoots(@NotNull TemplateResolver resolver,
+                                                                  @NotNull String templatePath)
+            throws TransformerException {
+        if (!resolver.hasHttpResourceRoots() || Strings.isEmpty(templatePath)) {
+            return;
+        }
+        String trimmed = templatePath.trim();
+        if (!trimmed.startsWith(TemplateResolver.HTTP_PREFIX)
+                && !trimmed.startsWith(TemplateResolver.HTTPS_PREFIX)) {
+            return;
+        }
+        String normalized = URI.create(trimmed).normalize().toString();
+        if (!resolver.isUnderAnyHttpRoot(normalized)) {
+            throw new TransformerException(
+                    "HTTP templatePath is not under any configured HTTP resource root: templatePath="
+                            + templatePath);
+        }
     }
 
     private @NotNull String resolveTemplatePath(InvoiceGenerationParams params) {
@@ -206,8 +241,9 @@ public class PdfGenerator {
     private void applyParameters(InvoiceGenerationParams params,
                                  @Nullable List<QrCodeData> qrCodes,
                                  @Nullable LocalDate duplicateDate,
+                                 @NotNull TemplateResolver resolver,
                                  @NotNull TranslationService translationService,
-                                 @NotNull Transformer transformer) {
+                                 @NotNull Transformer transformer) throws TransformerException {
 
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
@@ -218,7 +254,7 @@ public class PdfGenerator {
         }
 
         if (params.getLogoUri() != null) {
-            setParam(transformer, "logoUri", params.getLogoUri().toString());
+            setParam(transformer, "logoUri", resolveLogoUri(resolver, params.getLogoUri()));
         }
 
         if (duplicateDate != null) {
@@ -276,6 +312,27 @@ public class PdfGenerator {
 
     private void setParam(@NotNull Transformer transformer, @NotNull String name, @Nullable Object value) {
         if (value != null) transformer.setParameter(name, value);
+    }
+
+  /**
+     * Resolves a logo URI against configured resource roots when it is a relative path;
+     * absolute {@code file:} / {@code http(s):} URIs are passed through unchanged.
+     */
+    private static String resolveLogoUri(@NotNull TemplateResolver resolver, @NotNull URI logoUri)
+            throws TransformerException {
+        String scheme = logoUri.getScheme();
+        if (scheme != null) {
+            String lower = scheme.toLowerCase(java.util.Locale.ROOT);
+            if ("file".equals(lower) || "http".equals(lower) || "https".equals(lower)) {
+                return logoUri.toString();
+            }
+        }
+        String path = logoUri.getPath();
+        if (path == null || path.isEmpty()) {
+            return logoUri.toString();
+        }
+        return resolver.tryResolvePublicUri(path)
+                .orElse(logoUri.toString());
     }
 
     private FopFactory createFopFactory() {

@@ -42,6 +42,13 @@ public class TranslationService {
     private final URIResolver resolver;
     private final DocumentBuilder documentBuilder;
 
+    /**
+     * HTTP(S) entry template URL ({@code templatePath}). When set together with
+     * a configured HTTP resource root, label files are fetched relative to it.
+     */
+    @Nullable
+    private final String remoteEntryUrl;
+
     /** No-override service: labels come from the library classpath only. */
     public TranslationService() {
         this(newClasspathOnlyResolver());
@@ -55,7 +62,16 @@ public class TranslationService {
      * and translations.</p>
      */
     public TranslationService(@NotNull URIResolver resolver) {
+        this(resolver, null);
+    }
+
+    /**
+     * @param remoteEntryUrl resolved entry template URL; remote label fetch is enabled only when
+     *                       this is HTTP(S) and under a configured HTTP resource root
+     */
+    public TranslationService(@NotNull URIResolver resolver, @Nullable String remoteEntryUrl) {
         this.resolver = Objects.requireNonNull(resolver, "resolver");
+        this.remoteEntryUrl = resolveRemoteEntryUrl(resolver, remoteEntryUrl);
         try {
             this.documentBuilder = XmlFactories.DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -71,7 +87,7 @@ public class TranslationService {
      */
     public Document getTranslationsAsXml(String lang) {
         String targetLang = Strings.defaultIfEmpty(lang, DEFAULT_LANGUAGE);
-        return DOCUMENT_CACHE.computeIfAbsent(targetLang, this::loadMergedDocument);
+        return DOCUMENT_CACHE.computeIfAbsent(cacheKey(targetLang), k -> loadMergedDocument(targetLang));
     }
 
     /**
@@ -102,8 +118,10 @@ public class TranslationService {
      * each individual root's partial override is copied on top of the classpath default
      * for the same file name. Priority (earlier wins) is:</p>
      * <ol>
+     *   <li>Locale-specific file from the template server (when {@link #remoteEntryUrl} is set)</li>
      *   <li>Locale-specific file in each user root (in insertion order)</li>
      *   <li>Locale-specific file on the classpath</li>
+     *   <li>Base file from the template server (when {@link #remoteEntryUrl} is set)</li>
      *   <li>Base file in each user root (in insertion order)</li>
      *   <li>Base file on the classpath</li>
      * </ol>
@@ -133,32 +151,84 @@ public class TranslationService {
     }
 
     /**
-     * Loads every parse-able XML document behind {@code relativePath} (user roots first,
-     * then classpath). Missing or unreadable sources are skipped silently — callers treat
-     * the result as "best-effort" and a language with zero hits falls back to an empty doc.
+     * Loads every parse-able XML document behind {@code relativePath}. When {@link #remoteEntryUrl}
+     * is set, tries the template server first (whole file); otherwise, or on miss, uses user roots
+     * and classpath via {@link TemplateResolver#resolveAll(String)}.
      */
     private List<Document> loadAllVariants(String relativePath) {
+        List<Document> docs = new ArrayList<>();
+
+        if (remoteEntryUrl != null && resolver instanceof TemplateResolver) {
+            Document remote = loadRemoteDocument((TemplateResolver) resolver, relativePath);
+            if (remote != null) {
+                docs.add(remote);
+                return docs;
+            }
+        }
+
         List<Source> sources;
         try {
             if (resolver instanceof TemplateResolver) {
                 sources = ((TemplateResolver) resolver).resolveAll(relativePath);
             } else {
-                // Custom resolver: can only give us a single source, so there's no
-                // layering across roots / classpath available from here.
                 Source single = resolveSingle(relativePath);
                 sources = (single == null) ? Collections.emptyList() : Collections.singletonList(single);
             }
         } catch (TransformerException e) {
             log.debug("Resolver error for {}: {}", relativePath, e.getMessage());
-            return Collections.emptyList();
+            return docs;
         }
 
-        List<Document> docs = new ArrayList<>(sources.size());
         for (Source source : sources) {
             Document doc = parseSource(source, relativePath);
             if (doc != null) docs.add(doc);
         }
         return docs;
+    }
+
+    @Nullable
+    private Document loadRemoteDocument(TemplateResolver templateResolver, String relativePath) {
+        String href = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
+        try {
+            return templateResolver.tryResolve(href, remoteEntryUrl)
+                    .map(source -> parseSource(source, href))
+                    .orElse(null);
+        } catch (TransformerException e) {
+            log.debug("Remote label miss for {} (base {}): {}", href, remoteEntryUrl, e.getMessage());
+            return null;
+        }
+    }
+
+    private static boolean isRemoteEntryUrl(@Nullable String url) {
+        if (Strings.isEmpty(url)) {
+            return false;
+        }
+        String trimmed = url.trim();
+        return trimmed.startsWith(TemplateResolver.HTTP_PREFIX)
+                || trimmed.startsWith(TemplateResolver.HTTPS_PREFIX);
+    }
+
+    /**
+     * Remote labels use the same gate as live template fetch: HTTP {@code templatePath} under
+     * a configured HTTP resource root. Catalog-mapped HTTP paths skip remote labels.
+     */
+    @Nullable
+    private static String resolveRemoteEntryUrl(@NotNull URIResolver resolver, @Nullable String remoteEntryUrl) {
+        if (!isRemoteEntryUrl(remoteEntryUrl)) {
+            return null;
+        }
+        if (resolver instanceof TemplateResolver) {
+            TemplateResolver templateResolver = (TemplateResolver) resolver;
+            String trimmed = remoteEntryUrl.trim();
+            if (templateResolver.isUnderAnyHttpRoot(trimmed)) {
+                return trimmed;
+            }
+        }
+        return null;
+    }
+
+    private String cacheKey(String lang) {
+        return (remoteEntryUrl != null ? remoteEntryUrl : "") + "|" + lang;
     }
 
     @Nullable

@@ -4,6 +4,9 @@
 package io.alapierre.ksef.fop.internal;
 
 import net.sf.saxon.trans.NonDelegatingURIResolver;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlresolver.CatalogManager;
 import org.xmlresolver.ResolverFeature;
 import org.xmlresolver.XMLResolverConfiguration;
@@ -15,8 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,24 +29,34 @@ import java.util.Optional;
  *
  * <p>Every resource is looked up in the following order:</p>
  * <ol>
- *   <li>If the resource name starts with {@code http:} or {@code https:}, it is resolved
- *       using an XML catalog.</li>
- *   <li>Each configured filesystem root, in insertion order.</li>
+ *   <li>When HTTP(S) resource roots are configured: absolute {@code href} values under such a
+ *       root, and relative {@code href} values whose {@code base} sits under such a root, are
+ *       fetched over HTTP (GET; redirects are not followed).</li>
+ *   <li>If the resource name starts with {@code http:} or {@code https:} and was not loaded
+ *       in step&nbsp;1, it is resolved using the XML catalog (allowlisted entries rewrite to
+ *       {@code classpath:} resources — no network I/O to the original URL).</li>
+ *   <li>Each configured resource root ({@code file:} directory or {@code http(s):} base), in
+ *       insertion order.</li>
  *   <li>Classpath.</li>
  * </ol>
  * <p>Anything unresolved throws {@link TransformerException}.</p>
  *
  * <p><strong>Containment guarantee.</strong> For each filesystem root, the resolved path is
  * verified to remain within the root. Both {@code ..} traversal and symlinks pointing outside
- * the root are rejected.</p>
+ * the root are rejected. For HTTP roots, a URL resolving outside the configured base
+ * ({@code ../} escapes, authority changes) is rejected.</p>
  *
  * <p>System IDs produced by this resolver use the {@code vfs:} scheme
  * (e.g. {@code vfs:///templates/fa3/ksef_invoice.xsl}) so that Saxon treats them as
- * absolute and does not attempt to resolve them against the JVM working directory.</p>
+ * absolute and does not attempt to resolve them against the JVM working directory.
+ * Resources fetched over HTTP use the source URL as the system ID so Saxon resolves relative
+ * {@code xsl:import}/{@code include} hrefs against it.</p>
  *
  * <p>This class is <strong>internal</strong> and may change between releases.</p>
  */
 public class TemplateResolver implements NonDelegatingURIResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(TemplateResolver.class);
 
     public static final String HTTP_PREFIX = "http://";
     public static final String HTTPS_PREFIX = "https://";
@@ -52,14 +64,24 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     private static final String VFS_PREFIX = VFS_SCHEME + ":///";
     private static final URI VFS_ROOT = URI.create(VFS_PREFIX);
 
-    private final List<Path> roots;
+    private final List<ResourceRoot> resourceRoots;
     private final CatalogManager catalogManager;
 
-    public TemplateResolver(List<Path> roots) throws TransformerException {
+    /** Constructs a resolver without user resource roots (classpath / catalog only). */
+    public TemplateResolver() throws TransformerException {
+        this(Collections.emptyList());
+    }
+
+    /**
+     * Constructs a resolver from ordered resource roots.
+     *
+     * @param roots ordered list of filesystem ({@code file:}) or HTTP(S) base URIs
+     */
+    public TemplateResolver(List<URI> roots) throws TransformerException {
         try {
-            this.roots = FilesystemRoots.canonicalize(roots);
+            this.resourceRoots = ResourceRoots.canonicalize(roots);
         } catch (IOException e) {
-            throw new TransformerException("Template root is not accessible: " + e.getMessage(), e);
+            throw new TransformerException("Resource root is not accessible: " + e.getMessage(), e);
         }
         XMLResolverConfiguration config = new XMLResolverConfiguration();
         config.setFeature(ResolverFeature.CATALOG_FILES,
@@ -67,15 +89,38 @@ public class TemplateResolver implements NonDelegatingURIResolver {
         this.catalogManager = config.getFeature(ResolverFeature.CATALOG_MANAGER);
     }
 
-    List<Path> getRoots() {
-        return roots;
+    @NotNull
+    List<ResourceRoot> getResourceRoots() {
+        return resourceRoots;
+    }
+
+    public boolean hasHttpResourceRoots() {
+        for (ResourceRoot root : resourceRoots) {
+            if (root.isHttp()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUnderAnyHttpRoot(@NotNull String url) {
+        for (ResourceRoot root : resourceRoots) {
+            if (root.contains(url)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         Optional<Source> resolved = tryResolve(href, base);
         if (resolved.isPresent()) {
-            return resolved.get();
+            Source source = resolved.get();
+            String systemId = source.getSystemId();
+            log.debug("XSLT: resolved href='{}' base='{}' -> systemId={}",
+                    href, Strings.isEmpty(base) ? "(none)" : base, systemId);
+            return source;
         }
         throw new TransformerException("Template not found: " + href
                 + (Strings.isEmpty(base) ? "" : " (base: " + base + ")"));
@@ -87,7 +132,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
      *
      * <p>Genuine programmer errors (null {@code href}, malformed URIs, unsupported URI
      * schemes, or http/https URIs missing from the XML catalog) still propagate as
-     * {@link TransformerException}. "Not found" for filesystem+classpath is the only
+     * {@link TransformerException}. "Not found" for resource roots and classpath is the only
      * condition that collapses to an empty result.</p>
      */
     public Optional<Source> tryResolve(String href, String base) throws TransformerException {
@@ -95,8 +140,28 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException("Cannot resolve null href");
         }
 
+        // 0. Remote HTTP/HTTPS fetch from configured resource roots.
+        //    a) Absolute href under an HTTP root.
+        //    b) Relative href whose parent stylesheet was fetched from an HTTP root
+        //       (base is the HTTP URL of the parent, set as systemId when it was loaded).
+        for (ResourceRoot root : resourceRoots) {
+            Source remote = root.tryFetchAbsolute(href);
+            if (remote != null) {
+                return Optional.of(remote);
+            }
+        }
+        if (base != null) {
+            for (ResourceRoot root : resourceRoots) {
+                Source remote = root.tryFetchRelativeToBase(href, base);
+                if (remote != null) {
+                    return Optional.of(remote);
+                }
+            }
+        }
+
         // 1. http: / https: URIs → XML catalog (allowlist); anything not listed throws
         if (href.startsWith(HTTP_PREFIX) || href.startsWith(HTTPS_PREFIX)) {
+            String requestedUri = href;
             URI mapped = catalogManager.lookupURI(href);
             if (mapped == null) {
                 throw new TransformerException("External URI not in catalog: " + href);
@@ -104,6 +169,12 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             if (!"classpath".equals(mapped.getScheme())) {
                 throw new TransformerException("Catalog must map to a classpath: URI, got: " + mapped);
             }
+            log.debug(
+                    "XSLT: stylesheet URL '{}' rewritten by classpath catalog to 'classpath:{}' — "
+                            + "bytes are loaded from the classpath/JAR only, never via HTTP from that URL "
+                            + "(having template-server up or down does not change this; remove the catalog rewrite if you want a real HTTP fetch).",
+                    requestedUri,
+                    mapped.getSchemeSpecificPart());
             href = "/" + mapped.getSchemeSpecificPart();
         }
 
@@ -112,7 +183,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             throw new TransformerException("Unsupported URI scheme in href: " + href);
         }
 
-        // 2 + 3. Derive the effective relative path, then try filesystem roots and classpath.
+        // 2 + 3. Derive the effective relative path, then try resource roots and classpath.
         // Root-relative hrefs bypass the base URI: this keeps them portable across whatever
         // base URI the XSLT engine feeds us (file:, vfs:, jar:, …) and avoids the need to
         // validate the base scheme when the caller has already said "this path is absolute".
@@ -125,9 +196,11 @@ public class TemplateResolver implements NonDelegatingURIResolver {
             relativePath = virtualUri.getPath().substring(1);
         }
 
-        for (Path root : roots) {
-            Source s = tryFilesystem(root, relativePath);
-            if (s != null) return Optional.of(s);
+        for (ResourceRoot root : resourceRoots) {
+            Source s = root.tryResolveRelative(relativePath);
+            if (s != null) {
+                return Optional.of(s);
+            }
         }
 
         Source s = tryClasspath(relativePath);
@@ -135,7 +208,7 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     }
 
     /**
-     * Collects every resolvable source for {@code href} — one per configured filesystem root
+     * Collects every resolvable source for {@code href} — one per configured resource root
      * that contains a match, followed by the classpath entry if present. Unlike
      * {@link #tryResolve(String, String)}, which stops at the first hit, this is used by
      * layered resources such as i18n labels that must be overlaid on top of the classpath
@@ -162,14 +235,40 @@ public class TemplateResolver implements NonDelegatingURIResolver {
 
         String relativePath = href.startsWith("/") ? href.substring(1) : href;
 
-        List<Source> sources = new ArrayList<>(roots.size() + 1);
-        for (Path root : roots) {
-            Source s = tryFilesystem(root, relativePath);
-            if (s != null) sources.add(s);
+        List<Source> sources = new ArrayList<>(resourceRoots.size() + 1);
+        for (ResourceRoot root : resourceRoots) {
+            Source s = root.tryResolveRelative(relativePath);
+            if (s != null) {
+                sources.add(s);
+            }
         }
         Source cp = tryClasspath(relativePath);
         if (cp != null) sources.add(cp);
         return sources;
+    }
+
+    /**
+     * Resolves a relative resource to a public URI suitable for FOP external references
+     * ({@code file:} or {@code http(s):}).
+     */
+    public Optional<String> tryResolvePublicUri(String href) throws TransformerException {
+        if (href == null || href.contains(":")) {
+            return Optional.empty();
+        }
+        String relativePath = href.startsWith("/") ? href.substring(1) : href;
+
+        for (ResourceRoot root : resourceRoots) {
+            Optional<String> resolved = root.tryResolvePublicUri(relativePath);
+            if (resolved.isPresent()) {
+                return resolved;
+            }
+        }
+
+        URL classpathUrl = TemplateResolver.class.getClassLoader().getResource(relativePath);
+        if (classpathUrl != null) {
+            return Optional.of(classpathUrl.toString());
+        }
+        return Optional.empty();
     }
 
     // -----------------------------------------------------------------------
@@ -232,25 +331,6 @@ public class TemplateResolver implements NonDelegatingURIResolver {
     // -----------------------------------------------------------------------
     // Lookup strategies
     // -----------------------------------------------------------------------
-
-    /**
-     * Tries to load {@code relativePath} from under {@code root}.
-     *
-     * <p>Containment and regular-file check are delegated to
-     * {@link FilesystemRoots#resolveFileWithin(Path, String)}; symlink escapes and
-     * {@code ..} traversal fall through silently to the next lookup step.</p>
-     */
-    private static Source tryFilesystem(Path root, String relativePath) throws TransformerException {
-        Optional<Path> resolved = FilesystemRoots.resolveFileWithin(root, relativePath);
-        if (!resolved.isPresent()) {
-            return null;
-        }
-        try {
-            return new StreamSource(Files.newInputStream(resolved.get()), VFS_PREFIX + relativePath);
-        } catch (IOException e) {
-            throw new TransformerException("File is not accessible: " + resolved.get(), e);
-        }
-    }
 
     /**
      * Tries to load {@code path} as a classpath resource.

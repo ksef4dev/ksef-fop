@@ -143,8 +143,10 @@ InvoiceGenerationParams params = InvoiceGenerationParams.builder()
 When `templatePath` is set the library uses it directly; when it is `null` (the default) the
 template is resolved automatically from the schema.
 
-> **Security note:** `templatePath` is used as-is to load a classpath resource. Make sure
-> untrusted users cannot control this value or the underlying XSL content.
+**HTTP(S) URL as `templatePath` (catalog):** you may pass a URL such as `http://localhost:8077/xslt/ksef_invoice` so it lines up with a **template-server** route. `TemplateResolver` does **not** download templates from arbitrary hosts: every allowed `http(s):` stylesheet URI must appear in **`classpath:catalog.xml`**, mapped to a trusted classpath resource (typically your packaged XSLT). Nested `xsl:import` / `xsl:include` that use URLs must be catalogued the same way. See `HttpTemplatePathInvoiceTest` and `src/test/resources/catalog.xml`.
+
+> **Security note:** `templatePath` is resolved through `TemplateResolver` (classpath / template roots /
+> catalog-mapped HTTPS). Make sure untrusted users cannot control this value or inject catalog entries.
 
 ## Custom translations
 
@@ -154,12 +156,12 @@ XML documents at `i18n/labels.xml` (base / Polish) and `i18n/labels_<lang>.xml` 
 locale. The XSLT stylesheets load these files at runtime via `document()`, routed
 through the **same URIResolver** that resolves custom templates. This means label
 overrides use exactly the same mechanism as template overrides — there is no separate
-"translation root" concept: overrides live under `InvoiceGenerationParams.templateRoots`.
+"translation root" concept: overrides live under `InvoiceGenerationParams.resourceRoots`.
 
 ### 1. Create your labels XML file(s)
 
 Drop them next to any templates you might be overriding, under an `i18n/` directory
-inside one of your `templateRoots`:
+inside one of your `resourceRoots`:
 
 `/etc/ksef/i18n/labels.xml` (Polish / base):
 
@@ -181,14 +183,14 @@ inside one of your `templateRoots`:
 </labels>
 ````
 
-### 2. Point `templateRoots` at the directory containing `i18n/`
+### 2. Point `resourceRoots` at the directory containing `i18n/`
 
 ````java
 InvoiceGenerationParams params = InvoiceGenerationParams.builder()
         .schema(InvoiceSchema.FA3_1_0_E)
         .ksefNumber("1234567890-20231221-XXXXXXXX-XX")
         .language(InvoiceLanguage.EN)
-        .templateRoot(Path.of("/etc/ksef"))
+        .resourceRoot(Paths.get("/etc/ksef").toUri())
         .build();
 
 PdfGenerator generator = new PdfGenerator("fop.xconf");
@@ -235,11 +237,12 @@ supplied one).
 ### Using `TranslationService` directly
 
 You rarely need to touch this class: `PdfGenerator` creates a per-invocation instance
-from your `templateRoots`. If you need to look up labels from Java (e.g. for tooling or
+from your `resourceRoots`. If you need to look up labels from Java (e.g. for tooling or
 tests), pass your own `URIResolver` (most likely a `TemplateResolver`):
 
 ````java
-URIResolver resolver = new TemplateResolver(List.of(Path.of("/etc/ksef")));
+URIResolver resolver = new TemplateResolver(
+        Collections.singletonList(Paths.get("/etc/ksef").toUri()));
 TranslationService ts = new TranslationService(resolver);
 
 String label = ts.getTranslation("en", "seller"); // "Vendor"

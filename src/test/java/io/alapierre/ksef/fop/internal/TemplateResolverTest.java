@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +34,7 @@ class TemplateResolverTest {
         Path file = root.resolve("my-template.xsl");
         write(file, "<xsl/>");
 
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
         Source source = resolver.resolve("my-template.xsl", "");
 
         assertThat(source).isNotNull();
@@ -45,7 +46,7 @@ class TemplateResolverTest {
         Path file = root2.resolve("found-in-second.xsl");
         write(file, "<xsl/>");
 
-        TemplateResolver resolver = new TemplateResolver(Arrays.asList(root1, root2));
+        TemplateResolver resolver = new TemplateResolver(Arrays.asList(root1.toUri(), root2.toUri()));
         Source source = resolver.resolve("found-in-second.xsl", "");
 
         assertThat(source).isNotNull();
@@ -57,7 +58,7 @@ class TemplateResolverTest {
         write(root1.resolve("template.xsl"), "root1");
         write(root2.resolve("template.xsl"), "root2");
 
-        TemplateResolver resolver = new TemplateResolver(Arrays.asList(root1, root2));
+        TemplateResolver resolver = new TemplateResolver(Arrays.asList(root1.toUri(), root2.toUri()));
         Source source = resolver.resolve("template.xsl", "");
 
         assertThat(source).isInstanceOf(StreamSource.class);
@@ -94,7 +95,7 @@ class TemplateResolverTest {
         Path file = root.resolve("my template.xsl");
         write(file, "<xsl/>");
 
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
         Source source = resolver.resolve("my template.xsl", "");
 
         assertThat(source).isNotNull();
@@ -122,7 +123,7 @@ class TemplateResolverTest {
         write(subDir.resolve("included.xsl"), "<included/>");
         write(root.resolve("templates").resolve("shared.xsl"), "<shared/>");
 
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
 
         // First: entry point
         Source main = resolver.resolve("templates/custom/main.xsl", "");
@@ -137,6 +138,45 @@ class TemplateResolverTest {
         Source shared = resolver.resolve("../shared.xsl", "vfs:///templates/custom/included.xsl");
         assertThat(shared).isNotNull();
         assertThat(shared.getSystemId()).isEqualTo("vfs:///templates/shared.xsl");
+    }
+
+    // -----------------------------------------------------------------------
+    // HTTP resource root validation
+    // -----------------------------------------------------------------------
+
+    @Test
+    void filesystemOnlyResolverHasNoHttpRoots(@TempDir Path root) throws Exception {
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
+        assertThat(resolver.isUnderAnyHttpRoot("http://localhost:8077/xslt/ksef_invoice")).isFalse();
+    }
+
+    @Test
+    void httpResourceRootTrailingSlashesAreStripped(@TempDir Path root) throws Exception {
+        TemplateResolver resolver = new TemplateResolver(
+                Arrays.asList(root.toUri(), URI.create("http://localhost:8077/xslt///")));
+        assertThat(resolver.isUnderAnyHttpRoot("http://localhost:8077/xslt/ksef_invoice")).isTrue();
+        assertThat(resolver.isUnderAnyHttpRoot("http://localhost:8077/xsltx/ksef_invoice")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ftp://localhost/xslt",
+            "http:///xslt",
+            "https:///only-path"
+    })
+    void invalidHttpResourceRootThrowsOnConstruction(String httpRoot, @TempDir Path root) {
+        assertThatThrownBy(() ->
+                new TemplateResolver(Arrays.asList(root.toUri(), URI.create(httpRoot))))
+                .isInstanceOf(TransformerException.class);
+    }
+
+    @Test
+    void urlResourceRootDetectsPrefixAndExactMatch() throws Exception {
+        UrlResourceRoot root = UrlResourceRoot.canonicalize(URI.create("http://localhost:8077/xslt"));
+        assertThat(root.contains("http://localhost:8077/xslt")).isTrue();
+        assertThat(root.contains("http://localhost:8077/xslt/ksef_invoice")).isTrue();
+        assertThat(root.contains("http://evil.example/xslt/ksef_invoice")).isFalse();
+        assertThat(root.contains("http://localhost:8077/xsltx")).isFalse();
     }
 
     // -----------------------------------------------------------------------
@@ -185,7 +225,7 @@ class TemplateResolverTest {
 
     @Test
     void dotDotTraversalIsRejected(@TempDir Path root) throws Exception {
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
 
         assertThatThrownBy(() ->
                 resolver.resolve("../../etc/passwd", null))
@@ -195,7 +235,7 @@ class TemplateResolverTest {
     @Test
     void dotDotInBaseDoesNotEscapeRoot(@TempDir Path root) throws Exception {
         // Trying to escape via a crafted base
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
 
         assertThatThrownBy(() ->
                 resolver.resolve("../../../etc/passwd", "vfs:///templates/fa3/ksef_invoice.xsl"))
@@ -213,7 +253,7 @@ class TemplateResolverTest {
         Path link = root.resolve("evil.xsl");
         Files.createSymbolicLink(link, target);
 
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
 
         assertThatThrownBy(() ->
                 resolver.resolve("evil.xsl", ""))
@@ -227,7 +267,7 @@ class TemplateResolverTest {
     @ParameterizedTest
     @ValueSource(strings = {"", "vfs:///templates"})
     void missingTemplateThrows(String base, @TempDir Path root) throws Exception {
-        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root));
+        TemplateResolver resolver = new TemplateResolver(Collections.singletonList(root.toUri()));
 
         assertThatThrownBy(() ->
                 resolver.resolve("nonexistent.xsl", base))
