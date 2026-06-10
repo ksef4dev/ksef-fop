@@ -70,8 +70,7 @@ public class InvoiceGenerationParams {
      * limited to the values defined by this enum. Kept for backward compatibility.
      * When both are set, {@link #languageLocale} wins (see {@link #resolveLanguageTag()}).
      */
-    @Deprecated
-    private Language language = Language.PL;
+    private Language language;
 
     /**
      * Optional BCP&nbsp;47 language tag used to select the label file for translations

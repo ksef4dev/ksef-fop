@@ -24,7 +24,6 @@ public class UpoGenerationParams {
      * limited to the values defined by this enum. Kept for backward compatibility.
      * When both are set, {@link #languageLocale} wins (see {@link #resolveLanguageTag()}).
      */
-    @Deprecated
     private Language language;
 
     /**

@@ -34,6 +34,7 @@ class GenerationParamsBuilderTest {
     class InvoiceParams {
 
         @Test
+        @SuppressWarnings("deprecation")
         void setsEveryProperty() {
             byte[] logo = {1, 2, 3};
             URI logoUri = URI.create("https://example.test/logo.png");
@@ -134,6 +135,7 @@ class GenerationParamsBuilderTest {
     class UpoParams {
 
         @Test
+        @SuppressWarnings("deprecation")
         void setsEveryProperty() {
             UpoGenerationParams params = UpoGenerationParams.builder()
                     .schema(UpoSchema.UPO_V4_3)
