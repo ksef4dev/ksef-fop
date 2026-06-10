@@ -86,7 +86,7 @@ public class InvoiceGenerationParams {
     /**
      * Ordered list of filesystem directories searched before the classpath when resolving templates.
      */
-    private List<Path> templateRoots;
+    private final List<Path> templateRoots;
 
     /**
      * @deprecated use the builder instead.
