@@ -432,7 +432,7 @@ public class InvoiceGenerationParams {
         }
 
         public InvoiceGenerationParamsBuilder schema(@NotNull InvoiceSchema schema) {
-            this.schema = Objects.requireNonNull(schema, "schema");
+            this.schema = schema;
             return this;
         }
 
@@ -477,9 +477,10 @@ public class InvoiceGenerationParams {
         }
 
         public InvoiceGenerationParamsBuilder templateRoots(Collection<? extends Path> templateRoots) {
-            Objects.requireNonNull(templateRoots, "template roots cannot be null");
-            if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
-            this.templateRoots.addAll(templateRoots);
+            if (templateRoots != null) {
+                if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
+                this.templateRoots.addAll(templateRoots);
+            }
             return this;
         }
 

@@ -208,7 +208,7 @@ public class UpoGenerationParams {
         }
 
         public UpoGenerationParamsBuilder schema(@NotNull UpoSchema schema) {
-            this.schema = Objects.requireNonNull(schema, "schema");
+            this.schema = schema;
             return this;
         }
 
@@ -238,11 +238,10 @@ public class UpoGenerationParams {
         }
 
         public UpoGenerationParamsBuilder templateRoots(Collection<? extends Path> templateRoots) {
-            if (templateRoots == null) {
-                throw new NullPointerException("templateRoots cannot be null");
+            if (templateRoots != null) {
+                if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
+                this.templateRoots.addAll(templateRoots);
             }
-            if (this.templateRoots == null) this.templateRoots = new ArrayList<>();
-            this.templateRoots.addAll(templateRoots);
             return this;
         }
 
