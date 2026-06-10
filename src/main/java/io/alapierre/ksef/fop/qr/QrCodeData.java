@@ -31,6 +31,9 @@ public class QrCodeData {
     public QrCodeData() {
         // Suppresses Sonar warning
         this.qrCodeImage = new byte[0];
+        this.label = "";
+        this.verificationLink = "";
+        this.verificationLinkTitle = "";
     }
 
     /**
