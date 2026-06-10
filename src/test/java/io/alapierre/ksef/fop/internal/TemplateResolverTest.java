@@ -179,6 +179,20 @@ class TemplateResolverTest {
         assertThat(root.contains("http://localhost:8077/xsltx")).isFalse();
     }
 
+    @Test
+    void urlResourceRootResolvesRelativePathUnderScopedRoot() throws Exception {
+        // A scoped root whose last segment (here a NIP) must be preserved: a bare relative href
+        // resolves *under* the root rather than replacing the trailing segment.
+        UrlResourceRoot root = UrlResourceRoot.canonicalize(
+                URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890"));
+        assertThat(root.resolveRelative("ksef_invoice.xsl"))
+                .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/ksef_invoice.xsl"));
+        assertThat(root.resolveRelative("i18n/labels_pl.xml"))
+                .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/i18n/labels_pl.xml"));
+        assertThat(root.resolveRelative("/ksef_invoice.xsl"))
+                .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/ksef_invoice.xsl"));
+    }
+
     // -----------------------------------------------------------------------
     // Catalog / HTTP URIs
     // -----------------------------------------------------------------------

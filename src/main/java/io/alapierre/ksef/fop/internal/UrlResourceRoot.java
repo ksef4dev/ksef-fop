@@ -63,7 +63,7 @@ final class UrlResourceRoot extends ResourceRoot {
     @NotNull
     URI resolveRelative(@NotNull String relativePath) {
         String path = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-        return baseUri.resolve(path).normalize();
+        return URI.create(baseUri + "/").resolve(path).normalize();
     }
 
     @Override
