@@ -45,47 +45,16 @@ public class InvoiceGenerationParams {
     @Nullable
     private InvoiceQRCodeGeneratorRequest invoiceQRCodeGeneratorRequest;
 
-    /**
-     * Optional classpath-relative path to a custom XSLT invoice template.
-     * <p>
-     * Security note: This value must reference a trusted stylesheet available on the application's classpath.
-     * The library does not validate where this path comes from; callers are responsible for ensuring that
-     * untrusted users cannot control this value or the underlying XSLT content.
-     */
     @Nullable
     private String templatePath;
 
-    /**
-     * Optional template-specific XSLT parameters forwarded to the transformer.
-     * <p>
-     * Security note: Values in this map are passed directly as XSLT parameters.
-     * The library does not validate parameter names or values; callers are responsible for ensuring that
-     * untrusted users cannot control this map when rendering trusted templates.
-     */
     private Map<String, Object> customProperties;
 
-    /**
-     * @deprecated use {@link #languageLocale} instead, which accepts any BCP&nbsp;47
-     * language tag (e.g. {@code "en-US"}, {@code "uk"}, {@code "ar-SA"}) and is not
-     * limited to the values defined by this enum. Kept for backward compatibility.
-     * When both are set, {@link #languageLocale} wins (see {@link #resolveLanguageTag()}).
-     */
     private Language language;
 
-    /**
-     * Optional BCP&nbsp;47 language tag used to select the label file for translations
-     * (e.g. {@code "en"}, {@code "en-US"}, {@code "uk"}, {@code "ar-SA"}). Both
-     * {@code _} and {@code -} separators are accepted. Unknown tags fall back to the
-     * default language ({@link Language#DEFAULT_LANGUAGE_TAG}) without raising an error.
-     *
-     * <p>When set, this value takes precedence over the deprecated {@link #language} enum.</p>
-     */
     @Nullable
     private String languageLocale;
 
-    /**
-     * Ordered list of filesystem directories searched before the classpath when resolving templates.
-     */
     private final List<Path> templateRoots;
 
     /**
