@@ -20,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies that each builder method on {@link InvoiceGenerationParams.InvoiceGenerationParamsBuilder}
- * and {@link UpoGenerationParams.UpoGenerationParamsBuilder} sets the matching property on the built
- * instance. These builders deliberately do not follow the JavaBean getter/setter naming, so the
- * correspondence between builder methods and properties is not trivial.
+ * Verifies that both construction paths populate {@link InvoiceGenerationParams} and
+ * {@link UpoGenerationParams}: the fluent builder (which deliberately does not follow JavaBean
+ * getter/setter naming) and the plain setters on a no-arg instance.
  */
 class GenerationParamsBuilderTest {
 
@@ -72,6 +71,46 @@ class GenerationParamsBuilderTest {
             assertEquals(customProperties, params.getCustomProperties());
             assertEquals(Language.EN, params.getLanguage());
             assertEquals("en-US", params.getLanguageLocale());
+        }
+
+        @Test
+        @SuppressWarnings("deprecation")
+        void settersSetEveryProperty() {
+            byte[] logo = {4, 5, 6};
+            URI logoUri = URI.create("https://example.test/logo2.png");
+            LocalDate currencyDate = LocalDate.of(2026, 1, 2);
+            InvoiceQRCodeGeneratorRequest qr = InvoiceQRCodeGeneratorRequest.onlineQrBuilder("https://example.test/qr2");
+            Map<String, Object> customProperties = new HashMap<>();
+            customProperties.put("baz", "qux");
+
+            InvoiceGenerationParams params = new InvoiceGenerationParams();
+            params.setVerificationLink("https://example.test/verify2");
+            params.setLogo(logo);
+            params.setLogoUri(logoUri);
+            params.setCurrencyDate(currencyDate);
+            params.setIssuerUser("issuer2");
+            params.setShowCorrectionDifferences(true);
+            params.setSchema(InvoiceSchema.FA3_1_0_E);
+            params.setKsefNumber("KSEF-999");
+            params.setInvoiceQRCodeGeneratorRequest(qr);
+            params.setTemplatePath("/custom/template2.xsl");
+            params.setCustomProperties(customProperties);
+            params.setLanguage(Language.EN);
+            params.setLanguageLocale("uk");
+
+            assertEquals("https://example.test/verify2", params.getVerificationLink());
+            assertArrayEquals(logo, params.getLogo());
+            assertEquals(logoUri, params.getLogoUri());
+            assertEquals(currencyDate, params.getCurrencyDate());
+            assertEquals("issuer2", params.getIssuerUser());
+            assertTrue(params.isShowCorrectionDifferences());
+            assertEquals(InvoiceSchema.FA3_1_0_E, params.getSchema());
+            assertEquals("KSEF-999", params.getKsefNumber());
+            assertSame(qr, params.getInvoiceQRCodeGeneratorRequest());
+            assertEquals("/custom/template2.xsl", params.getTemplatePath());
+            assertEquals(customProperties, params.getCustomProperties());
+            assertEquals(Language.EN, params.getLanguage());
+            assertEquals("uk", params.getLanguageLocale());
         }
 
         @Test
@@ -148,6 +187,21 @@ class GenerationParamsBuilderTest {
             assertEquals(Language.EN, params.getLanguage());
             assertEquals("en-US", params.getLanguageLocale());
             assertEquals("/custom/upo.xsl", params.getTemplatePath());
+        }
+
+        @Test
+        @SuppressWarnings("deprecation")
+        void settersSetEveryProperty() {
+            UpoGenerationParams params = new UpoGenerationParams();
+            params.setSchema(UpoSchema.UPO_V4_3);
+            params.setLanguage(Language.EN);
+            params.setLanguageLocale("uk");
+            params.setTemplatePath("/custom/upo2.xsl");
+
+            assertEquals(UpoSchema.UPO_V4_3, params.getSchema());
+            assertEquals(Language.EN, params.getLanguage());
+            assertEquals("uk", params.getLanguageLocale());
+            assertEquals("/custom/upo2.xsl", params.getTemplatePath());
         }
 
         @Test

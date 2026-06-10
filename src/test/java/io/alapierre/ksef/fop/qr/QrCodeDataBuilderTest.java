@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Verifies that each {@link QrCodeData.QrCodeDataBuilder} method sets the matching property on the
- * built instance, and that the not-null validation is enforced by {@link QrCodeData#build()} rather
- * than by the individual builder setters.
+ * Verifies that {@link QrCodeData} is populated correctly through both paths: the fluent builder
+ * (whose not-null validation is deferred to {@link QrCodeData#build()}) and the plain setters
+ * (which validate eagerly).
  */
 class QrCodeDataBuilderTest {
 
@@ -79,5 +79,37 @@ class QrCodeDataBuilderTest {
     void builderSettersDoNotValidateEagerly() {
         // Validation lives in the private constructor, so the setter accepts a null without throwing.
         assertDoesNotThrow(() -> QrCodeData.builder().label(null));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void settersSetEveryProperty() {
+        byte[] image = {4, 5, 6};
+
+        QrCodeData data = new QrCodeData();
+        data.setQrCodeImage(image);
+        data.setLabel("KSeF 999");
+        data.setVerificationLink("https://example.test/verify2");
+        data.setVerificationLinkTitle("Verify2");
+
+        assertArrayEquals(image, data.getQrCodeImage());
+        assertEquals("KSeF 999", data.getLabel());
+        assertEquals("https://example.test/verify2", data.getVerificationLink());
+        assertEquals("Verify2", data.getVerificationLinkTitle());
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void settersRejectNull() {
+        QrCodeData data = new QrCodeData();
+
+        assertEquals("qrCodeImage",
+                assertThrows(NullPointerException.class, () -> data.setQrCodeImage(null)).getMessage());
+        assertEquals("label",
+                assertThrows(NullPointerException.class, () -> data.setLabel(null)).getMessage());
+        assertEquals("verificationLink",
+                assertThrows(NullPointerException.class, () -> data.setVerificationLink(null)).getMessage());
+        assertEquals("verificationLinkTitle",
+                assertThrows(NullPointerException.class, () -> data.setVerificationLinkTitle(null)).getMessage());
     }
 }
