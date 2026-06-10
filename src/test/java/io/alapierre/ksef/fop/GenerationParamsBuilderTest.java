@@ -126,8 +126,8 @@ class GenerationParamsBuilderTest {
                     .templateRoot(ROOT_A)
                     .build();
 
-            assertThrows(UnsupportedOperationException.class,
-                    () -> params.getTemplateRoots().add(ROOT_B));
+            List<Path> roots = params.getTemplateRoots();
+            assertThrows(UnsupportedOperationException.class, () -> roots.add(ROOT_B));
         }
     }
 
@@ -202,8 +202,8 @@ class GenerationParamsBuilderTest {
                     .templateRoot(ROOT_A)
                     .build();
 
-            assertThrows(UnsupportedOperationException.class,
-                    () -> params.getTemplateRoots().add(ROOT_B));
+            List<Path> roots = params.getTemplateRoots();
+            assertThrows(UnsupportedOperationException.class, () -> roots.add(ROOT_B));
         }
     }
 }
