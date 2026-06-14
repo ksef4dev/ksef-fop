@@ -90,7 +90,7 @@ public class PdfGenerator {
         String upoTemplatePath = resolveUpoTemplatePath(params);
         TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), upoTemplatePath);
         TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
-        Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
+        Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath, invoicePdfConfig.isTemplateCacheEnabled());
         Transformer transformer = template.newTransformer();
         applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
@@ -169,7 +169,7 @@ public class PdfGenerator {
         Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
         String stylesheetPath = resolveTemplatePath(params);
-        Templates template = XmlFactories.getTemplate(resolver, stylesheetPath);
+        Templates template = XmlFactories.getTemplate(resolver, stylesheetPath, invoicePdfConfig.isTemplateCacheEnabled());
         Transformer transformer = template.newTransformer();
 
         applyParameters(params, qrCodes, duplicateDate, resolver, translationService, transformer);

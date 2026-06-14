@@ -130,10 +130,25 @@ public final class XmlFactories {
 
     /**
      * Returns a compiled {@link Templates} for {@code templatePath}, resolved by a
-     * {@link TemplateResolver}. Cached per {@code (roots, remoteBaseUrl, templatePath)}.
+     * {@link TemplateResolver}. Uses the in-memory template cache (default behaviour).
      */
     public static Templates getTemplate(TemplateResolver resolver, String templatePath) throws TransformerException {
+        return getTemplate(resolver, templatePath, true);
+    }
+
+    /**
+     * Returns a compiled {@link Templates} for {@code templatePath}, resolved by a
+     * {@link TemplateResolver}.
+     *
+     * @param cacheEnabled when {@code true} (default overload), caches per {@code (roots, templatePath)};
+     *                     when {@code false}, always recompiles from the current template source
+     */
+    public static Templates getTemplate(TemplateResolver resolver, String templatePath, boolean cacheEnabled)
+            throws TransformerException {
         TemplateKey key = new TemplateKey(resolver, templatePath);
+        if (!cacheEnabled) {
+            return createTemplates(key);
+        }
         try {
             return TEMPLATE_CACHE.computeIfAbsent(key, XmlFactories::createTemplates);
         } catch (RuntimeException wrapped) {
