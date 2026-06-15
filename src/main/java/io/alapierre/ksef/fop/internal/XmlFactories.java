@@ -145,6 +145,14 @@ public final class XmlFactories {
         }
     }
 
+    /**
+     * Clears the in-memory cache of compiled XSLT {@link Templates}.
+     * Call after template or include files change at runtime (e.g. management API upload).
+     */
+    public static void clearCompiledTemplateCache() {
+        TEMPLATE_CACHE.clear();
+    }
+
     private XmlFactories() {
         // utility class
     }
