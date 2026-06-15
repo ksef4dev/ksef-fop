@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
@@ -15,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class XmlFactoriesTest {
@@ -129,5 +131,21 @@ class XmlFactoriesTest {
     private static Transformer createStylesheetTransformer() throws TransformerException {
         StreamSource stylesheet = new StreamSource(new ByteArrayInputStream(TRIVIAL_STYLESHEET.getBytes(StandardCharsets.UTF_8)));
         return XmlFactories.createTransformerFactory().newTransformer(stylesheet);
+    }
+
+    @Test
+    void clearCompiledTemplateCache_allowsRecompilation() throws Exception {
+        TemplateResolver resolver = new TemplateResolver();
+        String templatePath = "templates/fa3/ksef_invoice.xsl";
+
+        Templates first = XmlFactories.getTemplate(resolver, templatePath);
+        Templates second = XmlFactories.getTemplate(resolver, templatePath);
+        assertNotNull(first);
+        assertNotNull(second);
+
+        XmlFactories.clearCompiledTemplateCache();
+
+        Templates afterClear = XmlFactories.getTemplate(resolver, templatePath);
+        assertNotNull(afterClear);
     }
 }

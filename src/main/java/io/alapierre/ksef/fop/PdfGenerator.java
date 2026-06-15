@@ -366,4 +366,12 @@ public class PdfGenerator {
         }
     }
 
+    /**
+     * Clears the in-memory cache of compiled XSLT templates used by PDF generation.
+     * Safe to call from any thread; the next render recompiles from the current template source.
+     */
+    public static void clearCompiledTemplateCache() {
+        XmlFactories.clearCompiledTemplateCache();
+    }
+
 }
