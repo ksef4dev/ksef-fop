@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Release (verify + publish)
+on:
+  workflow_dispatch:
+    branches:
+      - master
+
+permissions: { }
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # 5.0.2
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Setup Maven cache
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
+        with:
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            setup-java-${{ runner.os }}-maven-
+          path: ~/.m2/repository
+
+      - name: Verify
+        run: |
+          set -euo pipefail
+          mvn --show-version --batch-mode --errors --no-transfer-progress verify
+
+  release:
+    name: Release
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: osrh
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Configure Git user for release commits
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # 5.0.2
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY_B64 }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Release prepare
+        run: |
+          set -euo pipefail
+          mvn -B -DskipTests -Darguments="-DskipTests" release:prepare
+
+      - name: Release perform
+        run: |
+          set -euo pipefail
+          mvn -B -DskipTests -Darguments="-DskipTests" release:perform
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}
+
+      - name: Push release commits and tags
+        run: |
+          set -euo pipefail
+          git push --follow-tags origin HEAD:${GITHUB_REF_NAME}
