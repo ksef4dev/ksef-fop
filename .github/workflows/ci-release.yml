@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
-name: Release (verify + publish)
+name: Release (verify + publish + GitHub release)
+
 on:
   workflow_dispatch:
     branches:
@@ -44,7 +45,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout (full history + tags)
+      - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
           fetch-depth: 0
@@ -72,6 +73,14 @@ jobs:
           set -euo pipefail
           mvn -B -DskipTests -Darguments="-DskipTests" release:prepare
 
+      - name: Get release tag
+        id: release_tag
+        run: |
+          set -euo pipefail
+          TAG="$(git describe --tags --abbrev=0)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Release tag: $TAG"
+
       - name: Release perform
         run: |
           set -euo pipefail
@@ -85,3 +94,14 @@ jobs:
         run: |
           set -euo pipefail
           git push --follow-tags origin HEAD:${GITHUB_REF_NAME}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # 2.5.0
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            target/*.jar
+            target/checkout/**/target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
