@@ -3,6 +3,8 @@
  */
 package io.alapierre.ksef.fop.internal;
 
+import io.alapierre.ksef.fop.http.RemoteResourceFetcher;
+import io.alapierre.ksef.fop.http.RemoteResourceFetchers;
 import net.sf.saxon.trans.NonDelegatingURIResolver;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -78,8 +80,16 @@ public class TemplateResolver implements NonDelegatingURIResolver {
      * @param roots ordered list of filesystem ({@code file:}) or HTTP(S) base URIs
      */
     public TemplateResolver(List<URI> roots) throws TransformerException {
+        this(roots, RemoteResourceFetchers.get());
+    }
+
+    /**
+     * Constructs a resolver with an explicit HTTP client (primarily for tests).
+     */
+    public TemplateResolver(List<URI> roots, @NotNull RemoteResourceFetcher remoteResourceFetcher)
+            throws TransformerException {
         try {
-            this.resourceRoots = ResourceRoots.canonicalize(roots);
+            this.resourceRoots = ResourceRoots.canonicalize(roots, remoteResourceFetcher);
         } catch (IOException e) {
             throw new TransformerException("Resource root is not accessible: " + e.getMessage(), e);
         }

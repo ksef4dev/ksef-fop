@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop.internal;
 
+import io.alapierre.ksef.fop.http.RemoteResourceFetcher;
 import org.jetbrains.annotations.NotNull;
 
 import javax.xml.transform.TransformerException;
@@ -34,15 +35,22 @@ public final class ResourceRoots {
         return scheme == null || "file".equalsIgnoreCase(scheme);
     }
 
-    public static @NotNull List<ResourceRoot> canonicalize(@NotNull List<URI> roots)
-            throws IOException, TransformerException {
+  /**
+   * Canonicalises resource roots using the supplied HTTP client for remote roots.
+   *
+   * @param fetcher HTTP client for {@code http(s):} roots; must not be {@code null}
+   */
+    public static @NotNull List<ResourceRoot> canonicalize(
+            @NotNull List<URI> roots,
+            @NotNull RemoteResourceFetcher fetcher
+    ) throws IOException, TransformerException {
         List<ResourceRoot> result = new ArrayList<>(roots.size());
         for (URI root : roots) {
             if (root == null) {
                 throw new IllegalArgumentException("Resource root must not be null");
             }
             if (isHttp(root)) {
-                result.add(UrlResourceRoot.canonicalize(root));
+                result.add(UrlResourceRoot.canonicalize(root, fetcher));
             } else if (isFilesystem(root)) {
                 Path canonical = FilesystemRoots.canonicalize(
                         Collections.singletonList(toFilesystemPath(root))).get(0);

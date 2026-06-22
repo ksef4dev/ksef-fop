@@ -1,5 +1,6 @@
 package io.alapierre.ksef.fop.internal;
 
+import io.alapierre.ksef.fop.http.RemoteResourceFetcher;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -171,8 +173,27 @@ class TemplateResolverTest {
     }
 
     @Test
+    void usesInjectedRemoteResourceFetcherForAbsoluteHttpHref() throws Exception {
+        RemoteResourceFetcher fetcher = uri -> {
+            assertThat(uri.toString()).isEqualTo("http://example.com/xslt/ksef_invoice.xsl");
+            return "<xsl:stylesheet version=\"1.0\"/>".getBytes(StandardCharsets.UTF_8);
+        };
+
+        TemplateResolver resolver = new TemplateResolver(
+                Collections.singletonList(URI.create("http://example.com/xslt")),
+                fetcher
+        );
+
+        Source source = resolver.resolve("http://example.com/xslt/ksef_invoice.xsl", "");
+
+        assertThat(source).isNotNull();
+        assertThat(source.getSystemId()).isEqualTo("http://example.com/xslt/ksef_invoice.xsl");
+    }
+
+    @Test
     void urlResourceRootDetectsPrefixAndExactMatch() throws Exception {
-        UrlResourceRoot root = UrlResourceRoot.canonicalize(URI.create("http://localhost:8077/xslt"));
+        RemoteResourceFetcher unused = uri -> new byte[0];
+        UrlResourceRoot root = UrlResourceRoot.canonicalize(URI.create("http://localhost:8077/xslt"), unused);
         assertThat(root.contains("http://localhost:8077/xslt")).isTrue();
         assertThat(root.contains("http://localhost:8077/xslt/ksef_invoice")).isTrue();
         assertThat(root.contains("http://evil.example/xslt/ksef_invoice")).isFalse();
@@ -181,16 +202,33 @@ class TemplateResolverTest {
 
     @Test
     void urlResourceRootResolvesRelativePathUnderScopedRoot() throws Exception {
+        RemoteResourceFetcher unused = uri -> new byte[0];
         // A scoped root whose last segment (here a NIP) must be preserved: a bare relative href
         // resolves *under* the root rather than replacing the trailing segment.
         UrlResourceRoot root = UrlResourceRoot.canonicalize(
-                URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890"));
+                URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890"), unused);
         assertThat(root.resolveRelative("ksef_invoice.xsl"))
                 .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/ksef_invoice.xsl"));
         assertThat(root.resolveRelative("i18n/labels_pl.xml"))
                 .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/i18n/labels_pl.xml"));
         assertThat(root.resolveRelative("/ksef_invoice.xsl"))
                 .isEqualTo(URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890/ksef_invoice.xsl"));
+    }
+
+    @Test
+    void urlResourceRootDoesNotFetchRelativePathEscapingScopedRoot() throws Exception {
+        AtomicBoolean fetcherCalled = new AtomicBoolean(false);
+        RemoteResourceFetcher fetcher = uri -> {
+            fetcherCalled.set(true);
+            return new byte[0];
+        };
+        UrlResourceRoot root = UrlResourceRoot.canonicalize(
+                URI.create("http://localhost:8077/xslt/SALES_INVOICE/1234567890"), fetcher);
+
+        Source source = root.tryResolveRelative("../ksef_invoice.xsl");
+
+        assertThat(source).isNull();
+        assertThat(fetcherCalled).isFalse();
     }
 
     // -----------------------------------------------------------------------

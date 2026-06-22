@@ -9,6 +9,7 @@
 * [Invoice PDF](#invoices)
 * [Examples](#examples)
 * [Custom templates](#custom-templates)
+* [Remote HTTP template fetching](#remote-http-template-fetching)
 * [Custom translations](#custom-translations)
 * [Custom properties](#custom-properties)
 * [FOP Schema](#fop-schema)
@@ -147,6 +148,58 @@ template is resolved automatically from the schema.
 
 > **Security note:** `templatePath` is resolved through `TemplateResolver` (classpath / template roots /
 > catalog-mapped HTTPS). Make sure untrusted users cannot control this value or inject catalog entries.
+
+## Remote HTTP template fetching
+
+When `InvoiceGenerationParams.resourceRoots` (or `UpoGenerationParams.resourceRoots`) includes an
+`http:` or `https:` base URL, ksef-fop fetches stylesheets, includes, logos and label files over
+HTTP from that base. The actual HTTP client is pluggable via **`RemoteResourceFetcher`**
+(a `@FunctionalInterface` with a single `fetch(URI)` method).
+
+### Default behaviour
+
+If the host application does **nothing**, ksef-fop uses **`HttpURLConnectionRemoteResourceFetcher`**:
+GET only, no redirect following, 10 s timeouts, 16 MB body cap. URL containment (staying within the
+configured resource root, rejecting `../` escapes) is enforced by `UrlResourceRoot` **before** the
+fetcher is called.
+
+### Registering a custom client
+
+Host applications that embed ksef-fop (e.g. a Micronaut service with its own `HttpClient`) register
+an implementation at startup:
+
+````java
+RemoteResourceFetchers.setGlobal(myFetcher);
+````
+
+`TemplateResolver` obtains the active fetcher via `RemoteResourceFetchers.get()` — you do **not**
+pass it through `InvoiceGenerationParams`.
+
+For tests and stubs, a lambda is enough:
+
+````java
+RemoteResourceFetcher stub = uri -> "<xsl:stylesheet version=\"1.0\"/>".getBytes(StandardCharsets.UTF_8);
+````
+
+### Host application responsibility
+
+> [!IMPORTANT]
+> **Providing a correct `RemoteResourceFetcher` implementation (or consciously using the built-in
+> default) is the responsibility of the application that embeds ksef-fop.** The library validates
+> that fetched URLs stay under configured HTTP resource roots, but it cannot audit your HTTP
+> stack. An incorrect or careless custom fetcher can introduce serious vulnerabilities.
+
+| Risk | What the built-in default does | What your implementation must guarantee |
+|------|-------------------------------|----------------------------------------|
+| **SSRF** | Only URLs already accepted by `UrlResourceRoot` containment are passed to `fetch` | Do not widen scope (e.g. follow redirects to external hosts, honour `X-Forwarded-*` overrides, or fetch URLs outside the passed `URI`) |
+| **Unbounded downloads** | 16 MB response cap | Enforce a comparable body size limit |
+| **Redirect abuse** | Redirects disabled | Do not follow redirects; ksef-fop validates only the original URL before calling `fetch` |
+| **Credential leakage** | No auth headers sent | If you propagate `Authorization` or cookies, restrict to trusted template-server URLs only |
+| **Untrusted content** | N/A (transport) | Fetch only from operator-controlled template servers; treat response bytes as trusted input to XSLT only when the source is trusted |
+| **TLS** | JVM default trust store | Use HTTPS and appropriate certificate validation for production template servers |
+
+If you do not need a custom HTTP stack, **prefer the default** — do not register a fetcher unless
+you have a concrete integration requirement (framework `HttpClient`, observability, auth propagation).
 
 ## Custom translations
 
