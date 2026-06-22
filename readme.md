@@ -193,7 +193,7 @@ RemoteResourceFetcher stub = uri -> "<xsl:stylesheet version=\"1.0\"/>".getBytes
 |------|-------------------------------|----------------------------------------|
 | **SSRF** | Only URLs already accepted by `UrlResourceRoot` containment are passed to `fetch` | Do not widen scope (e.g. follow redirects to external hosts, honour `X-Forwarded-*` overrides, or fetch URLs outside the passed `URI`) |
 | **Unbounded downloads** | 16 MB response cap | Enforce a comparable body size limit |
-| **Redirect abuse** | Redirects disabled | Do not follow redirects unless you re-validate the target URL against the resource root |
+| **Redirect abuse** | Redirects disabled | Do not follow redirects; ksef-fop validates only the original URL before calling `fetch` |
 | **Credential leakage** | No auth headers sent | If you propagate `Authorization` or cookies, restrict to trusted template-server URLs only |
 | **Untrusted content** | N/A (transport) | Fetch only from operator-controlled template servers; treat response bytes as trusted input to XSLT only when the source is trusted |
 | **TLS** | JVM default trust store | Use HTTPS and appropriate certificate validation for production template servers |

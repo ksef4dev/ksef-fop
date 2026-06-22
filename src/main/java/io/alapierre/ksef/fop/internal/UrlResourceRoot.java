@@ -114,6 +114,10 @@ final class UrlResourceRoot extends ResourceRoot {
     @NotNull
     Source fetch(@NotNull URI url) throws TransformerException {
         String urlString = url.toString();
+        if (!containsUri(url)) {
+            throw new TransformerException("Remote template URL escapes configured HTTP resource root '"
+                    + baseUri + "': " + urlString);
+        }
         log.debug("XSLT: fetching resource from remote server: {}", urlString);
         try {
             byte[] body = fetcher.fetch(url);
