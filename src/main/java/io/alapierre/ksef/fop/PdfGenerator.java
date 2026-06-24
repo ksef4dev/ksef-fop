@@ -7,12 +7,9 @@ import io.alapierre.ksef.fop.internal.XmlFactories;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.fop.apps.*;
-import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.configuration.Configuration;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.configuration.ConfigurationException;
-import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -35,13 +32,11 @@ import java.util.Map;
 @Slf4j
 public class PdfGenerator {
 
-    private static final String MIME_PDF = "application/pdf";
-
     private final InvoicePdfConfig invoicePdfConfig;
-    private final Configuration fopConfiguration;
+    private final FopRendererPool fopRenderer;
 
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
-        this(loadResource(fopConfig), invoicePdfConfig);
+        this(() -> loadResource(fopConfig), invoicePdfConfig);
     }
 
     public PdfGenerator(String fopConfig) throws IOException, ConfigurationException {
@@ -53,8 +48,13 @@ public class PdfGenerator {
     }
 
     public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig) throws ConfigurationException {
-        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        this.fopConfiguration = cfgBuilder.build(fopConfig);
+        this.fopRenderer = new FopRendererPool(fopConfig, invoicePdfConfig.getRendererPoolSize());
+        this.invoicePdfConfig = invoicePdfConfig;
+    }
+
+    private PdfGenerator(FopRendererPool.FopConfigSource fopConfigSource, InvoicePdfConfig invoicePdfConfig)
+            throws IOException, ConfigurationException {
+        this.fopRenderer = new FopRendererPool(fopConfigSource, invoicePdfConfig.getRendererPoolSize());
         this.invoicePdfConfig = invoicePdfConfig;
     }
 
@@ -83,26 +83,24 @@ public class PdfGenerator {
      * @throws FOPException         throws when FOP error occurs
      */
     public void generateUpo(Source upoXML, UpoGenerationParams params, OutputStream out) throws TransformerException, FOPException {
-        FopFactory fopFactory = createFopFactory();
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
+        fopRenderer.render(out, fop -> {
+            String upoTemplatePath = resolveUpoTemplatePath(params);
+            TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), upoTemplatePath);
+            TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
+            Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
+            Transformer transformer = template.newTransformer();
+            applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
-        String upoTemplatePath = resolveUpoTemplatePath(params);
-        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), upoTemplatePath);
-        TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
-        Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
-        Transformer transformer = template.newTransformer();
-        applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
-
-        Result res = new SAXResult(fop.getDefaultHandler());
-        transformer.transform(upoXML, res);
+            Result res = new SAXResult(fop.getDefaultHandler());
+            transformer.transform(upoXML, res);
+        });
     }
 
     /**
      * Generates a regular invoice PDF based on the input XML, using InvoiceGenerationParams for configurable options.
      * This method is responsible for creating a new invoice and does not handle duplicate-related logic.
      *
-     * @param invoiceXml e-invoice FA(2) XML
+     * @param invoiceXml KSeF invoice XML matching the schema selected in {@code params}
      * @param params An instance of InvoiceGenerationParams, containing settings like KSeF number, verification link,
      *               QR code, and logo.
      * @param out The OutputStream where the generated PDF will be written.
@@ -112,20 +110,22 @@ public class PdfGenerator {
     public void generateInvoice(byte[] invoiceXml,
                                 InvoiceGenerationParams params,
                                 OutputStream out) throws TransformerException, FOPException {
-        String langCode = params.resolveLanguageTag();
-        String templatePath = resolveTemplatePath(params);
-        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
-        TranslationService translationService = new TranslationService(resolver, templatePath);
-        QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
-        List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
-        generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, out);
+        fopRenderer.render(out, fop -> {
+            String langCode = params.resolveLanguageTag();
+            String templatePath = resolveTemplatePath(params);
+            TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+            TranslationService translationService = new TranslationService(resolver, templatePath);
+            QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
+            List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
+            generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, fop);
+        });
     }
 
     /**
      * Generates a duplicate invoice PDF based on the input XML, using InvoiceGenerationParams for configurable options.
      * This method specifically handles the generation of a duplicate invoice, inserting the duplicate date.
      *
-     * @param invoiceXml The source XML file representing the e-invoice FA(2) format.
+     * @param invoiceXml KSeF invoice XML matching the schema selected in {@code params}.
      * @param params An instance of InvoiceGenerationParams, containing settings like KSeF number, verification link,
      *               QR code, logo, and duplicate date.
      * @param duplicateDate The date when the duplicate invoice was issued.
@@ -138,10 +138,12 @@ public class PdfGenerator {
                                          InvoiceGenerationParams params,
                                          LocalDate duplicateDate,
                                          OutputStream out) throws TransformerException, FOPException {
-        String templatePath = resolveTemplatePath(params);
-        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
-        TranslationService translationService = new TranslationService(resolver, templatePath);
-        generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, out);
+        fopRenderer.render(out, fop -> {
+            String templatePath = resolveTemplatePath(params);
+            TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+            TranslationService translationService = new TranslationService(resolver, templatePath);
+            generatePdfInvoice(invoiceXml, params, null, duplicateDate, resolver, translationService, fop);
+        });
     }
 
     /**
@@ -150,8 +152,11 @@ public class PdfGenerator {
      *
      * @param invoiceXml The source XML representing the invoice.
      * @param params An instance of InvoiceGenerationParams containing additional data for the invoice.
+     * @param qrCodes QR code data to include in the PDF, or null when no QR codes should be rendered.
      * @param duplicateDate The date the duplicate invoice was issued (can be null for regular invoices).
-     * @param out The OutputStream where the generated PDF will be written.
+     * @param resolver Resolver used for templates, labels, and resources referenced during transformation.
+     * @param translationService Service used to resolve translated labels for the selected language.
+     * @param fop FOP instance receiving SAX events and writing the generated PDF.
      * @throws FOPException If an error occurs during the FOP processing.
      * @throws TransformerException If an error occurs during the XSLT transformation.
      */
@@ -161,12 +166,8 @@ public class PdfGenerator {
                                     @Nullable LocalDate duplicateDate,
                                     TemplateResolver resolver,
                                     TranslationService translationService,
-                                    OutputStream out)
+                                    Fop fop)
             throws FOPException, TransformerException {
-
-        FopFactory fopFactory = createFopFactory();
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        Fop fop = fopFactory.newFop(MIME_PDF, foUserAgent, out);
 
         String stylesheetPath = resolveTemplatePath(params);
         Templates template = XmlFactories.getTemplate(resolver, stylesheetPath);
@@ -314,7 +315,7 @@ public class PdfGenerator {
         if (value != null) transformer.setParameter(name, value);
     }
 
-  /**
+    /**
      * Resolves a logo URI against configured resource roots when it is a relative path;
      * absolute {@code file:} / {@code http(s):} URIs are passed through unchanged.
      */
@@ -333,17 +334,6 @@ public class PdfGenerator {
         }
         return resolver.tryResolvePublicUri(path)
                 .orElse(logoUri.toString());
-    }
-
-    private FopFactory createFopFactory() {
-        URI baseUri = new File(".").toURI();
-        ClasspathResourceResolver resourceResolver = new ClasspathResourceResolver();
-        InternalResourceResolver internalResourceResolver = ResourceResolverFactory.createInternalResourceResolver(baseUri, resourceResolver);
-        FopFactoryBuilder builder = new FopFactoryBuilder(baseUri, resourceResolver);
-
-        builder.setConfiguration(fopConfiguration);
-        builder.getFontManager().setResourceResolver(internalResourceResolver);
-        return builder.build();
     }
 
     private static InputStream loadResource(String resource) throws IOException {
