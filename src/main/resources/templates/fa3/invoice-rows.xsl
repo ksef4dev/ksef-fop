@@ -33,77 +33,96 @@
     <xsl:template name="positionsTable">
         <xsl:param name="faWiersz"/>
 
-        <!-- Calculate column width for name based on presence of other columns -->
-        <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
-        <!-- Optional columns: Indeks (8%), GTIN/PKWiU (5%), PKOB (6%), CN (6%), KwotaAkcyzy (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
-        <xsl:variable name="nameColumnWidth">
-            <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
-            <xsl:variable name="indeksWidth" select="if ($faWiersz/crd:Indeks) then 8 else 0"/>
-            <xsl:variable name="gtinWidth" select="if ($faWiersz/crd:GTIN) then 5 else 0"/>
-            <xsl:variable name="pkwiuWidth" select="if ($faWiersz/crd:PKWiU) then 5 else 0"/>
-            <xsl:variable name="cnWidth" select="if ($faWiersz/crd:CN) then 6 else 0"/>
-            <xsl:variable name="pkobWidth" select="if ($faWiersz/crd:PKOB) then 6 else 0"/>
-            <xsl:variable name="kwotaAkcyzyWidth" select="if ($faWiersz/crd:KwotaAkcyzy) then 8 else 0"/>
-            <xsl:variable name="p6aWidth" select="if ($faWiersz/crd:P_6A) then 9 else 0"/>
-            <xsl:variable name="p9aWidth" select="if ($faWiersz/crd:P_9A) then 10 else 0"/>
-            <xsl:variable name="p9bWidth" select="if ($faWiersz/crd:P_9B) then 10 else 0"/>
-            <xsl:variable name="p10Width" select="if ($faWiersz/crd:P_10) then 7 else 0"/>
-            <xsl:variable name="p12Width" select="if ($faWiersz/crd:P_12) then 8 else 0"/>
-            <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
-            <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
-            <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $gtinWidth - $pkwiuWidth - $cnWidth - $pkobWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
-            <xsl:value-of select="concat($calculatedWidth, '%')"/>
-        </xsl:variable>
+        <!-- Dynamic column widths: scale all existing columns to fit the table budget -->
+        <xsl:variable name="unitMaxLen"
+                      select="max((0, for $u in $faWiersz/crd:P_8A return string-length(normalize-space(string($u)))))"/>
+        <xsl:variable name="unitColumnWidth" select="local:unitColumnWidthPercent($unitMaxLen)"/>
+        <xsl:variable name="identifierColumnsSum"
+                      select="(if ($faWiersz/crd:Indeks) then 8 else 0)
+                            + (if ($faWiersz/crd:GTIN) then 5 else 0)
+                            + (if ($faWiersz/crd:PKWiU) then 5 else 0)
+                            + (if ($faWiersz/crd:CN) then 6 else 0)
+                            + (if ($faWiersz/crd:PKOB) then 6 else 0)"/>
+        <xsl:variable name="fixedColumnsSum"
+                      select="local:positionFixedColumnsSum($unitColumnWidth,
+                          boolean($faWiersz/crd:KwotaAkcyzy),
+                          boolean($faWiersz/crd:P_6A),
+                          boolean($faWiersz/crd:P_9A),
+                          boolean($faWiersz/crd:P_9B),
+                          boolean($faWiersz/crd:P_10),
+                          boolean($faWiersz/crd:P_12),
+                          boolean($faWiersz/crd:P_11),
+                          boolean($faWiersz/crd:P_11Vat),
+                          boolean($faWiersz/crd:P_11A))
+                          + $identifierColumnsSum"/>
+        <xsl:variable name="columnScale" select="local:positionColumnScale($fixedColumnsSum, true())"/>
+        <xsl:variable name="nameColumnWidth" select="local:colPct(local:positionNameColumnWidth($fixedColumnsSum, $columnScale, true()))"/>
+        <xsl:variable name="lpColumnWidth" select="local:scaledCol(4, $columnScale)"/>
+        <xsl:variable name="indeksColumnWidth" select="local:scaledCol(8, $columnScale)"/>
+        <xsl:variable name="gtinColumnWidth" select="local:scaledCol(5, $columnScale)"/>
+        <xsl:variable name="pkwiuColumnWidth" select="local:scaledCol(5, $columnScale)"/>
+        <xsl:variable name="cnColumnWidth" select="local:scaledCol(6, $columnScale)"/>
+        <xsl:variable name="pkobColumnWidth" select="local:scaledCol(6, $columnScale)"/>
+        <xsl:variable name="kwotaAkcyzyColumnWidth" select="local:scaledCol(8, $columnScale)"/>
+        <xsl:variable name="qtyColumnWidth" select="local:scaledCol(8, $columnScale)"/>
+        <xsl:variable name="unitColumnWidthPct" select="local:scaledCol($unitColumnWidth, $columnScale)"/>
+        <xsl:variable name="p9aColumnWidth" select="local:scaledCol(10, $columnScale)"/>
+        <xsl:variable name="p9bColumnWidth" select="local:scaledCol(10, $columnScale)"/>
+        <xsl:variable name="p10ColumnWidth" select="local:scaledCol(7, $columnScale)"/>
+        <xsl:variable name="p12ColumnWidth" select="local:scaledCol(8, $columnScale)"/>
+        <xsl:variable name="p11ColumnWidth" select="local:scaledCol(10, $columnScale)"/>
+        <xsl:variable name="p11vatColumnWidth" select="local:scaledCol(7, $columnScale)"/>
+        <xsl:variable name="p11aColumnWidth" select="local:scaledCol(10, $columnScale)"/>
+        <xsl:variable name="p6aColumnWidth" select="local:scaledCol(9, $columnScale)"/>
 
         <!-- Define the table structure -->
-        <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
+        <fo:table table-layout="fixed" width="100%" border-collapse="collapse" space-after="5mm">
             <!-- Define table columns -->
-            <fo:table-column column-width="4%"/> <!-- Lp. -->
+            <fo:table-column column-width="{$lpColumnWidth}"/> <!-- Lp. -->
             <xsl:if test="$faWiersz/crd:Indeks">
-                <fo:table-column column-width="8%"/> <!-- Indeks -->
+                <fo:table-column column-width="{$indeksColumnWidth}"/> <!-- Indeks -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:GTIN">
-                <fo:table-column column-width="5%"/> <!-- GTIN -->
+                <fo:table-column column-width="{$gtinColumnWidth}"/> <!-- GTIN -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:PKWiU">
-                <fo:table-column column-width="5%"/> <!-- PKWiU -->
+                <fo:table-column column-width="{$pkwiuColumnWidth}"/> <!-- PKWiU -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:CN">
-                <fo:table-column column-width="6%"/> <!-- CN -->
+                <fo:table-column column-width="{$cnColumnWidth}"/> <!-- CN -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:PKOB">
-                <fo:table-column column-width="6%"/> <!-- PKOB -->
+                <fo:table-column column-width="{$pkobColumnWidth}"/> <!-- PKOB -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:KwotaAkcyzy">
-                <fo:table-column column-width="8%"/> <!-- Kwota akcyzy -->
+                <fo:table-column column-width="{$kwotaAkcyzyColumnWidth}"/> <!-- Kwota akcyzy -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa - dynamiczna szerokość -->
-            <fo:table-column column-width="8%"/> <!-- Ilość -->
-            <fo:table-column column-width="5%"/> <!-- Jednostka -->
+            <fo:table-column column-width="{$qtyColumnWidth}"/> <!-- Ilość -->
+            <fo:table-column column-width="{$unitColumnWidthPct}"/> <!-- Jednostka -->
             <xsl:if test="$faWiersz/crd:P_9A">
-                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
+                <fo:table-column column-width="{$p9aColumnWidth}"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_9B">
-                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
+                <fo:table-column column-width="{$p9bColumnWidth}"/> <!-- Cena jednostkowa brutto -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_10">
-                <fo:table-column column-width="7%"/> <!-- Rabat -->
+                <fo:table-column column-width="{$p10ColumnWidth}"/> <!-- Rabat -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_12">
-                <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+                <fo:table-column column-width="{$p12ColumnWidth}"/> <!-- Stawka podatku -->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_11">
-                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
+                <fo:table-column column-width="{$p11ColumnWidth}"/> <!-- Wartość sprzedaży netto-->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_11Vat">
-                <fo:table-column column-width="7%"/> <!-- Kwota VAT-->
+                <fo:table-column column-width="{$p11vatColumnWidth}"/> <!-- Kwota VAT-->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_11A">
-                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
+                <fo:table-column column-width="{$p11aColumnWidth}"/> <!-- Wartość sprzedaży brutto-->
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_6A">
-                <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
+                <fo:table-column column-width="{$p6aColumnWidth}"/> <!-- Data dostawy (P_6A) -->
             </xsl:if>
 
             <!-- Table header -->
@@ -521,71 +540,91 @@
         <xsl:variable name="diffShowP11Vat" select="boolean($faWierszBefore/crd:P_11Vat or $faWierszAfter/crd:P_11Vat)"/>
         <xsl:variable name="diffShowP11A" select="boolean($faWierszBefore/crd:P_11A or $faWierszAfter/crd:P_11A)"/>
 
-        <!-- Calculate column width for name based on union of optional columns -->
-        <xsl:variable name="nameColumnWidth">
-            <xsl:variable name="fixedWidth" select="17"/>
-            <xsl:variable name="indeksWidth" select="if ($diffShowIndeks) then 8 else 0"/>
-            <xsl:variable name="gtinWidth" select="if ($diffShowGTIN) then 5 else 0"/>
-            <xsl:variable name="pkwiuWidth" select="if ($diffShowPKWiU) then 5 else 0"/>
-            <xsl:variable name="cnWidth" select="if ($diffShowCN) then 6 else 0"/>
-            <xsl:variable name="pkobWidth" select="if ($diffShowPKOB) then 6 else 0"/>
-            <xsl:variable name="kwotaAkcyzyWidth" select="if ($diffShowKwotaAkcyzy) then 8 else 0"/>
-            <xsl:variable name="p6aWidth" select="if ($diffShowP6A) then 9 else 0"/>
-            <xsl:variable name="p9aWidth" select="if ($diffShowP9A) then 10 else 0"/>
-            <xsl:variable name="p9bWidth" select="if ($diffShowP9B) then 10 else 0"/>
-            <xsl:variable name="p10Width" select="if ($diffShowP10) then 7 else 0"/>
-            <xsl:variable name="p12Width" select="8"/>
-            <xsl:variable name="p11Width" select="if ($diffShowP11) then 10 else 0"/>
-            <xsl:variable name="p11vatWidth" select="if ($diffShowP11Vat) then 7 else 0"/>
-            <xsl:variable name="p11aWidth" select="if ($diffShowP11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $gtinWidth - $pkwiuWidth - $cnWidth - $pkobWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
-            <xsl:value-of select="concat($calculatedWidth, '%')"/>
-        </xsl:variable>
+        <xsl:variable name="diffUnitMaxLen"
+                      select="max((0, for $u in ($faWierszBefore/crd:P_8A | $faWierszAfter/crd:P_8A) return string-length(normalize-space(string($u)))))"/>
+        <xsl:variable name="diffUnitColumnWidth" select="local:unitColumnWidthPercent($diffUnitMaxLen)"/>
+        <xsl:variable name="diffIdentifierColumnsSum"
+                      select="(if ($diffShowIndeks) then 8 else 0)
+                            + (if ($diffShowGTIN) then 5 else 0)
+                            + (if ($diffShowPKWiU) then 5 else 0)
+                            + (if ($diffShowCN) then 6 else 0)
+                            + (if ($diffShowPKOB) then 6 else 0)"/>
+        <xsl:variable name="diffFixedColumnsSum"
+                      select="local:positionFixedColumnsSum($diffUnitColumnWidth,
+                          $diffShowKwotaAkcyzy,
+                          $diffShowP6A,
+                          $diffShowP9A,
+                          $diffShowP9B,
+                          $diffShowP10,
+                          true(),
+                          $diffShowP11,
+                          $diffShowP11Vat,
+                          $diffShowP11A)
+                          + $diffIdentifierColumnsSum"/>
+        <xsl:variable name="diffColumnScale" select="local:positionColumnScale($diffFixedColumnsSum, true())"/>
+        <xsl:variable name="nameColumnWidth" select="local:colPct(local:positionNameColumnWidth($diffFixedColumnsSum, $diffColumnScale, true()))"/>
+        <xsl:variable name="lpColumnWidth" select="local:scaledCol(4, $diffColumnScale)"/>
+        <xsl:variable name="indeksColumnWidth" select="local:scaledCol(8, $diffColumnScale)"/>
+        <xsl:variable name="gtinColumnWidth" select="local:scaledCol(5, $diffColumnScale)"/>
+        <xsl:variable name="pkwiuColumnWidth" select="local:scaledCol(5, $diffColumnScale)"/>
+        <xsl:variable name="cnColumnWidth" select="local:scaledCol(6, $diffColumnScale)"/>
+        <xsl:variable name="pkobColumnWidth" select="local:scaledCol(6, $diffColumnScale)"/>
+        <xsl:variable name="kwotaAkcyzyColumnWidth" select="local:scaledCol(8, $diffColumnScale)"/>
+        <xsl:variable name="qtyColumnWidth" select="local:scaledCol(8, $diffColumnScale)"/>
+        <xsl:variable name="unitColumnWidthPct" select="local:scaledCol($diffUnitColumnWidth, $diffColumnScale)"/>
+        <xsl:variable name="p9aColumnWidth" select="local:scaledCol(10, $diffColumnScale)"/>
+        <xsl:variable name="p9bColumnWidth" select="local:scaledCol(10, $diffColumnScale)"/>
+        <xsl:variable name="p10ColumnWidth" select="local:scaledCol(7, $diffColumnScale)"/>
+        <xsl:variable name="p12ColumnWidth" select="local:scaledCol(8, $diffColumnScale)"/>
+        <xsl:variable name="p11ColumnWidth" select="local:scaledCol(10, $diffColumnScale)"/>
+        <xsl:variable name="p11vatColumnWidth" select="local:scaledCol(7, $diffColumnScale)"/>
+        <xsl:variable name="p11aColumnWidth" select="local:scaledCol(10, $diffColumnScale)"/>
+        <xsl:variable name="p6aColumnWidth" select="local:scaledCol(9, $diffColumnScale)"/>
 
-        <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
-            <fo:table-column column-width="4%"/> <!-- Lp. -->
+        <fo:table table-layout="fixed" width="100%" border-collapse="collapse" space-after="5mm">
+            <fo:table-column column-width="{$lpColumnWidth}"/> <!-- Lp. -->
             <xsl:if test="$diffShowIndeks">
-                <fo:table-column column-width="8%"/> <!-- Indeks -->
+                <fo:table-column column-width="{$indeksColumnWidth}"/> <!-- Indeks -->
             </xsl:if>
             <xsl:if test="$diffShowGTIN">
-                <fo:table-column column-width="5%"/> <!-- GTIN -->
+                <fo:table-column column-width="{$gtinColumnWidth}"/> <!-- GTIN -->
             </xsl:if>
             <xsl:if test="$diffShowPKWiU">
-                <fo:table-column column-width="5%"/> <!-- PKWiU -->
+                <fo:table-column column-width="{$pkwiuColumnWidth}"/> <!-- PKWiU -->
             </xsl:if>
             <xsl:if test="$diffShowCN">
-                <fo:table-column column-width="6%"/> <!-- CN -->
+                <fo:table-column column-width="{$cnColumnWidth}"/> <!-- CN -->
             </xsl:if>
             <xsl:if test="$diffShowPKOB">
-                <fo:table-column column-width="6%"/> <!-- PKOB -->
+                <fo:table-column column-width="{$pkobColumnWidth}"/> <!-- PKOB -->
             </xsl:if>
             <xsl:if test="$diffShowKwotaAkcyzy">
-                <fo:table-column column-width="8%"/> <!-- Kwota akcyzy -->
+                <fo:table-column column-width="{$kwotaAkcyzyColumnWidth}"/> <!-- Kwota akcyzy -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
-            <fo:table-column column-width="8%"/> <!-- Ilość -->
-            <fo:table-column column-width="5%"/> <!-- Jednostka -->
+            <fo:table-column column-width="{$qtyColumnWidth}"/> <!-- Ilość -->
+            <fo:table-column column-width="{$unitColumnWidthPct}"/> <!-- Jednostka -->
             <xsl:if test="$diffShowP9A">
-                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa netto -->
+                <fo:table-column column-width="{$p9aColumnWidth}"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
             <xsl:if test="$diffShowP9B">
-                <fo:table-column column-width="10%"/> <!-- Cena jednostkowa brutto -->
+                <fo:table-column column-width="{$p9bColumnWidth}"/> <!-- Cena jednostkowa brutto -->
             </xsl:if>
             <xsl:if test="$diffShowP10">
-                <fo:table-column column-width="7%"/> <!-- Rabat -->
+                <fo:table-column column-width="{$p10ColumnWidth}"/> <!-- Rabat -->
             </xsl:if>
-            <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+            <fo:table-column column-width="{$p12ColumnWidth}"/> <!-- Stawka podatku -->
             <xsl:if test="$diffShowP11">
-                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży netto-->
+                <fo:table-column column-width="{$p11ColumnWidth}"/> <!-- Wartość sprzedaży netto-->
             </xsl:if>
             <xsl:if test="$diffShowP11Vat">
-                <fo:table-column column-width="7%"/> <!-- Kwota VAT-->
+                <fo:table-column column-width="{$p11vatColumnWidth}"/> <!-- Kwota VAT-->
             </xsl:if>
             <xsl:if test="$diffShowP11A">
-                <fo:table-column column-width="10%"/> <!-- Wartość sprzedaży brutto-->
+                <fo:table-column column-width="{$p11aColumnWidth}"/> <!-- Wartość sprzedaży brutto-->
             </xsl:if>
             <xsl:if test="$diffShowP6A">
-                <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
+                <fo:table-column column-width="{$p6aColumnWidth}"/> <!-- Data dostawy (P_6A) -->
             </xsl:if>
 
             <!-- Table header -->

@@ -2,7 +2,8 @@
 <xsl:stylesheet version="2.0"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:local="urn:local">
+                xmlns:local="urn:local"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xsl:function name="local:norm" as="xsd:string">
         <xsl:param name="value" as="item()?"/>
         <xsl:sequence select="normalize-space(string($value))"/>
@@ -13,6 +14,105 @@
         <xsl:param name="chunkSize" as="xsd:integer"/>
         <xsl:variable name="v" select="string($value)"/>
         <xsl:sequence select="replace($v, concat('(.{', $chunkSize, '})'), concat('$1', '&#x200B;'))"/>
+    </xsl:function>
+
+    <!-- Dynamic table column width helpers (positions / order rows) -->
+    <xsl:variable name="local:minProductNameColumnWidth" select="10"/>
+
+    <xsl:function name="local:unitColumnWidthPercent" as="xs:double">
+        <xsl:param name="unitMaxLen" as="xs:integer"/>
+        <xsl:sequence select="
+            if ($unitMaxLen gt 10) then 8
+            else if ($unitMaxLen gt 6) then 7
+            else if ($unitMaxLen gt 4) then 6
+            else 5"/>
+    </xsl:function>
+
+    <xsl:function name="local:colPct" as="xs:string">
+        <xsl:param name="width" as="xs:double"/>
+        <xsl:sequence select="concat(format-number($width, '0.####'), '%')"/>
+    </xsl:function>
+
+    <!-- Sum of nominal column widths excluding the flexible product-name column -->
+    <xsl:function name="local:positionFixedColumnsSum" as="xs:double">
+        <xsl:param name="unitWidth" as="xs:double"/>
+        <xsl:param name="showKwotaAkcyzy" as="xs:boolean"/>
+        <xsl:param name="showP6A" as="xs:boolean"/>
+        <xsl:param name="showP9A" as="xs:boolean"/>
+        <xsl:param name="showP9B" as="xs:boolean"/>
+        <xsl:param name="showP10" as="xs:boolean"/>
+        <xsl:param name="showP12" as="xs:boolean"/>
+        <xsl:param name="showP11" as="xs:boolean"/>
+        <xsl:param name="showP11Vat" as="xs:boolean"/>
+        <xsl:param name="showP11A" as="xs:boolean"/>
+        <xsl:sequence select="
+            4 + 8 + $unitWidth
+            + (if ($showKwotaAkcyzy) then 8 else 0)
+            + (if ($showP6A) then 9 else 0)
+            + (if ($showP9A) then 10 else 0)
+            + (if ($showP9B) then 10 else 0)
+            + (if ($showP10) then 7 else 0)
+            + (if ($showP12) then 8 else 0)
+            + (if ($showP11) then 10 else 0)
+            + (if ($showP11Vat) then 7 else 0)
+            + (if ($showP11A) then 10 else 0)"/>
+    </xsl:function>
+
+    <!-- Leave 1% slack so borders/padding do not exceed the page width -->
+    <xsl:variable name="local:positionTableWidthBudget" select="99"/>
+
+    <xsl:function name="local:positionColumnScale" as="xs:double">
+        <xsl:param name="fixedSum" as="xs:double"/>
+        <xsl:param name="showProductName" as="xs:boolean"/>
+        <xsl:variable name="budget" select="$local:positionTableWidthBudget - (if ($showProductName) then $local:minProductNameColumnWidth else 0)"/>
+        <xsl:sequence select="if ($fixedSum gt $budget) then $budget div $fixedSum else 1"/>
+    </xsl:function>
+
+    <xsl:function name="local:positionNameColumnWidth" as="xs:double">
+        <xsl:param name="fixedSum" as="xs:double"/>
+        <xsl:param name="scale" as="xs:double"/>
+        <xsl:param name="showProductName" as="xs:boolean"/>
+        <xsl:sequence select="
+            if (not($showProductName)) then 0
+            else max(($local:minProductNameColumnWidth, $local:positionTableWidthBudget - ($fixedSum * $scale)))"/>
+    </xsl:function>
+
+    <xsl:function name="local:scaledCol" as="xs:string">
+        <xsl:param name="nominal" as="xs:double"/>
+        <xsl:param name="scale" as="xs:double"/>
+        <xsl:sequence select="local:colPct($nominal * $scale)"/>
+    </xsl:function>
+
+    <xsl:function name="local:orderFixedColumnsSum" as="xs:double">
+        <xsl:param name="showUU_IDZ" as="xs:boolean"/>
+        <xsl:param name="showP9AZ" as="xs:boolean"/>
+        <xsl:param name="showP11NettoZ" as="xs:boolean"/>
+        <xsl:param name="showP11VatZ" as="xs:boolean"/>
+        <xsl:sequence select="
+            4 + 12 + 6
+            + (if ($showUU_IDZ) then 14 else 0)
+            + (if ($showP9AZ) then 12 else 0)
+            + 8
+            + (if ($showP11NettoZ) then 12 else 0)
+            + (if ($showP11VatZ) then 10 else 0)"/>
+    </xsl:function>
+
+    <xsl:variable name="local:orderTableWidthBudget" select="100"/>
+
+    <xsl:function name="local:orderColumnScale" as="xs:double">
+        <xsl:param name="fixedSum" as="xs:double"/>
+        <xsl:param name="showProductName" as="xs:boolean"/>
+        <xsl:variable name="budget" select="$local:orderTableWidthBudget - (if ($showProductName) then $local:minProductNameColumnWidth else 0)"/>
+        <xsl:sequence select="if ($fixedSum gt $budget) then $budget div $fixedSum else 1"/>
+    </xsl:function>
+
+    <xsl:function name="local:orderNameColumnWidth" as="xs:double">
+        <xsl:param name="fixedSum" as="xs:double"/>
+        <xsl:param name="scale" as="xs:double"/>
+        <xsl:param name="showProductName" as="xs:boolean"/>
+        <xsl:sequence select="
+            if (not($showProductName)) then 0
+            else max(($local:minProductNameColumnWidth, $local:orderTableWidthBudget - ($fixedSum * $scale)))"/>
     </xsl:function>
 
     <!-- Format used for formatting decimal numbers -->
