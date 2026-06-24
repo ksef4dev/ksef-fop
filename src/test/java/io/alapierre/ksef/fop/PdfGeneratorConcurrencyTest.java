@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PdfGeneratorConcurrencyTest {
 
     private static final Path INPUT_XML = Paths.get(
-            "src/test/resources/faktury/fa3/zaliczkowa/faktura-zaliczka-zamowienie.xml");
+            "src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml");
 
     @Test
     void sharedPdfGeneratorSerializesConcurrentInvoiceRendering() throws Exception {
