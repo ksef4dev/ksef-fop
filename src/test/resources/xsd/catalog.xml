@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OASIS XML catalog mapping the KSeF schema namespaces and remote import URLs to
+  the local (maxOccurs-capped) copies produced by download-schemas.sh.
+
+  This is the format used by command-line tools and CI. With xmllint, point
+  XML_CATALOG_FILES at this file and pass the "catalogs" and "schema" options,
+  validating a fixture against Schemat_FA_VAT(3)_v1-0E.xsd.
+
+  IntelliJ IDEA does NOT read this OASIS format; its "XML Catalog" setting wants a
+  java .properties file, so use catalog.properties (same directory) for the IDE.
+
+  Relative uri values are resolved against this file's location.
+-->
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="public">
+
+    <!-- Document namespace -> schema (lets the IDE pick the schema from the root xmlns) -->
+    <uri name="http://crd.gov.pl/wzor/2025/06/25/13775/" uri="Schemat_FA_VAT(3)_v1-0E.xsd"/>
+    <uri name="http://crd.gov.pl/wzor/2023/06/29/12648/" uri="Schemat_FA_VAT(2)_v1-0E.xsd"/>
+    <uri name="http://crd.gov.pl/wzor/2026/03/06/14189/" uri="Schemat_FA_RR(1)_v1-1E.xsd"/>
+
+    <!-- Remote xsd:import URLs -> local copies -->
+    <system systemId="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/StrukturyDanych_v10-0E.xsd"
+            uri="StrukturyDanych_v10-0E.xsd"/>
+    <system systemId="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/ElementarneTypyDanych_v10-0E.xsd"
+            uri="ElementarneTypyDanych_v10-0E.xsd"/>
+    <system systemId="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/KodyKrajow_v10-0E.xsd"
+            uri="KodyKrajow_v10-0E.xsd"/>
+
+</catalog>
