@@ -33,7 +33,8 @@ public class InvoicePdfConfig {
     /**
      * Number of isolated FOP renderers available to a single {@link PdfGenerator} instance.
      * The default is {@code 1}, which serializes rendering for maximum safety. Values lower
-     * than {@code 1} are treated as {@code 1}.
+     * than {@code 1} are treated as {@code 1}. Values greater than {@code 1} require a
+     * repeatable FOP configuration source, such as a classpath resource name.
      */
     @Builder.Default
     private int rendererPoolSize = 1;

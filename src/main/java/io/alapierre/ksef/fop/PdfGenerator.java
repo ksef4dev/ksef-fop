@@ -35,18 +35,58 @@ public class PdfGenerator {
     private final InvoicePdfConfig invoicePdfConfig;
     private final FopRendererPool fopRenderer;
 
+    /**
+     * Creates a generator from a repeatable classpath FOP configuration resource and invoice PDF options.
+     *
+     * <p>This constructor supports {@link InvoicePdfConfig#getRendererPoolSize()} values greater than
+     * {@code 1}, because the configuration resource can be opened separately for each renderer.</p>
+     *
+     * @param fopConfig classpath location of the FOP configuration file
+     * @param invoicePdfConfig invoice PDF rendering options
+     * @throws IOException if the configuration resource cannot be loaded
+     * @throws ConfigurationException if the FOP configuration cannot be parsed
+     */
     public PdfGenerator(String fopConfig, InvoicePdfConfig invoicePdfConfig) throws IOException, ConfigurationException {
         this(() -> loadResource(fopConfig), invoicePdfConfig);
     }
 
+    /**
+     * Creates a generator from a repeatable classpath FOP configuration resource using default invoice PDF options.
+     *
+     * @param fopConfig classpath location of the FOP configuration file
+     * @throws IOException if the configuration resource cannot be loaded
+     * @throws ConfigurationException if the FOP configuration cannot be parsed
+     */
     public PdfGenerator(String fopConfig) throws IOException, ConfigurationException {
         this(loadResource(fopConfig), new InvoicePdfConfig());
     }
 
+    /**
+     * Creates a generator from a one-shot FOP configuration stream using default invoice PDF options.
+     *
+     * <p>A raw {@link InputStream} can only be consumed once, so this constructor effectively supports
+     * only a single renderer. Use the classpath resource constructor when a renderer pool larger than
+     * {@code 1} is needed.</p>
+     *
+     * @param fopConfig stream containing the FOP configuration
+     * @throws ConfigurationException if the FOP configuration cannot be parsed
+     */
     public PdfGenerator(InputStream fopConfig) throws ConfigurationException {
         this(fopConfig, new InvoicePdfConfig());
     }
 
+    /**
+     * Creates a generator from a one-shot FOP configuration stream and invoice PDF options.
+     *
+     * <p>A raw {@link InputStream} can only be consumed once. If
+     * {@link InvoicePdfConfig#getRendererPoolSize()} is greater than {@code 1}, construction fails with
+     * {@link ConfigurationException}; use the classpath resource constructor for pooled rendering.</p>
+     *
+     * @param fopConfig stream containing the FOP configuration
+     * @param invoicePdfConfig invoice PDF rendering options
+     * @throws ConfigurationException if the FOP configuration cannot be parsed or pooled rendering is requested
+     *                                for a one-shot stream
+     */
     public PdfGenerator(InputStream fopConfig, InvoicePdfConfig invoicePdfConfig) throws ConfigurationException {
         this.fopRenderer = new FopRendererPool(fopConfig, invoicePdfConfig.getRendererPoolSize());
         this.invoicePdfConfig = invoicePdfConfig;

@@ -53,7 +53,8 @@ class FopRendererPool {
         return cfgBuilder.build(fopConfig);
     }
 
-    private static Configuration buildConfiguration(FopConfigSource fopConfigSource) throws IOException, ConfigurationException {
+    private static Configuration buildConfiguration(FopConfigSource fopConfigSource)
+            throws IOException, ConfigurationException {
         try (InputStream fopConfig = fopConfigSource.open()) {
             return buildConfiguration(fopConfig);
         }

@@ -28,7 +28,7 @@ class PdfGeneratorConcurrencyTest {
             "src/test/resources/faktury/fa3/podstawowa/FA_3_Przyklad_1.xml");
 
     @Test
-    void sharedPdfGeneratorSerializesConcurrentInvoiceRendering() throws Exception {
+    void sharedPdfGeneratorReusesFopFactoryForConcurrentInvoiceRendering() throws Exception {
         PdfGenerator generator = new PdfGenerator("fop.xconf");
         assertConcurrentRenderingKeepsConfiguredFonts(generator);
     }
