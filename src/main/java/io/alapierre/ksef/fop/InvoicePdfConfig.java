@@ -1,6 +1,5 @@
 package io.alapierre.ksef.fop;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class InvoicePdfConfig {
 
@@ -21,7 +19,7 @@ public class InvoicePdfConfig {
      */
     @Builder.Default
     private boolean showFooter = false;
-    
+
     /**
      * Indicates whether to use extended decimal places (4 places) for unit prices.
      * If {@code true}, unit prices (P_9A, P_9B) will be displayed with 4 decimal places.
@@ -38,4 +36,24 @@ public class InvoicePdfConfig {
      */
     @Builder.Default
     private int rendererPoolSize = 1;
+
+    /**
+     * Creates a configuration with the specified footer and price formatting options.
+     * The renderer pool size defaults to {@code 1}.
+     */
+    public InvoicePdfConfig(boolean showFooter, boolean useExtendedPriceDecimalPlaces) {
+        this.showFooter = showFooter;
+        this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
+    }
+
+    /**
+     * Creates a configuration with all options specified.
+     */
+    public InvoicePdfConfig(boolean showFooter,
+                            boolean useExtendedPriceDecimalPlaces,
+                            int rendererPoolSize) {
+        this.showFooter = showFooter;
+        this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
+        this.rendererPoolSize = Math.max(1, rendererPoolSize);
+    }
 }
