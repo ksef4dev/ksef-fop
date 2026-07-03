@@ -147,6 +147,9 @@
     <entry key="orderDate">Order date</entry>
     <entry key="orders">Orders</entry>
     <entry key="deliveryConditions">Delivery conditions</entry>
+    <entry key="contractCurrencyAndRate">Contract currency and contract exchange rate</entry>
+    <entry key="contractCurrency">Contract currency</entry>
+    <entry key="contractRate">Contract exchange rate</entry>
     <entry key="registries">Registries</entry>
     <entry key="fullName">Full name</entry>
     <entry key="otherInfo">Other information</entry>

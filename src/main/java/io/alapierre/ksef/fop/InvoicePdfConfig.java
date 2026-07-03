@@ -40,7 +40,10 @@ public class InvoicePdfConfig {
     /**
      * Creates a configuration with the specified footer and price formatting options.
      * The renderer pool size defaults to {@code 1}.
+     *
+     * @deprecated Use {@link #builder()} instead.
      */
+    @Deprecated
     public InvoicePdfConfig(boolean showFooter, boolean useExtendedPriceDecimalPlaces) {
         this.showFooter = showFooter;
         this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
@@ -49,9 +52,9 @@ public class InvoicePdfConfig {
     /**
      * Creates a configuration with all options specified.
      */
-    public InvoicePdfConfig(boolean showFooter,
-                            boolean useExtendedPriceDecimalPlaces,
-                            int rendererPoolSize) {
+    InvoicePdfConfig(boolean showFooter,
+                     boolean useExtendedPriceDecimalPlaces,
+                     int rendererPoolSize) {
         this.showFooter = showFooter;
         this.useExtendedPriceDecimalPlaces = useExtendedPriceDecimalPlaces;
         this.rendererPoolSize = Math.max(1, rendererPoolSize);

@@ -147,6 +147,9 @@
     <entry key="orderDate">Data zamówienia</entry>
     <entry key="orders">Zamówienia</entry>
     <entry key="deliveryConditions">Warunki dostawy towarów</entry>
+    <entry key="contractCurrencyAndRate">Waluta umowna i kurs umowny</entry>
+    <entry key="contractCurrency">Waluta umowna</entry>
+    <entry key="contractRate">Kurs umowny</entry>
     <entry key="registries">Rejestry</entry>
     <entry key="fullName">Pełna nazwa</entry>
     <entry key="otherInfo">Pozostałe informacje</entry>
