@@ -1839,7 +1839,7 @@
                             </fo:block>
                         </xsl:if>
 
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 2 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa[1]/crd:KwotaZaplatyCzesciowej > 0)">
                             <fo:block font-size="7pt" text-align="left" space-after="1mm">
                                 <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'paymentInfo', $labels)"/>:</fo:inline>
                                 <xsl:text> </xsl:text><xsl:value-of select="key('kLabels', 'payment.partial', $labels)"/>
@@ -1912,7 +1912,7 @@
                         </xsl:if>
 
                         <!-- Tabela płatności częściowych -->
-                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
+                        <xsl:if test="crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 1 or crd:Fa/crd:Platnosc/crd:ZnacznikZaplatyCzesciowej = 2 or (crd:Fa/crd:Platnosc/crd:Zaplacono != 1 and crd:Fa/crd:Platnosc/crd:ZaplataCzesciowa)">
                             <fo:block space-before="2mm" space-after="2mm">
                                 <fo:table table-layout="fixed" width="100%">
                                     <fo:table-column column-width="25%"/>
