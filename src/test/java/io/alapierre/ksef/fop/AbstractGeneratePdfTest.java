@@ -38,7 +38,7 @@ class AbstractGeneratePdfTest {
         }
     }
 
-    private byte[] generateFa3InvoicePdf(String invoiceResource) throws Exception {
+    byte[] generateFa3InvoicePdf(String invoiceResource) throws Exception {
         PdfGenerator generator = new PdfGenerator(getFopConfig());
 
         InvoiceGenerationParams invoiceGenerationParams = InvoiceGenerationParams.builder()
@@ -50,22 +50,23 @@ class AbstractGeneratePdfTest {
             assertNotNull(inputStream);
 
             generator.generateInvoice(IOUtils.toByteArray(inputStream), invoiceGenerationParams, outputStream);
-            return writeDebugData(outputStream.toByteArray(), invoiceResource);
+            return outputStream.toByteArray();
         }
     }
 
-    private byte[] writeDebugData(byte[] pdfData, String resourceName) throws IOException {
-        if (DEBUG) {
-            Path destDir = Paths.get("target/test-output");
-            Path destFile = destDir.resolve(resourceName + ".pdf");
-            Files.createDirectories(destFile.getParent());
-            Files.write(destFile, pdfData);
-        }
-        return pdfData;
+    void writeDebugData(byte[] pdfData, String resourceName) throws IOException {
+        Path destDir = Paths.get("target/test-output");
+        Path destFile = destDir.resolve(resourceName + ".pdf");
+        Files.createDirectories(destFile.getParent());
+        Files.write(destFile, pdfData);
     }
 
     String generateFa3InvoiceText(String invoiceResource) throws Exception {
-        return extractTextFromPdf(generateFa3InvoicePdf(invoiceResource));
+        byte[] pdfData = generateFa3InvoicePdf(invoiceResource);
+        if (DEBUG) {
+            writeDebugData(pdfData, invoiceResource);
+        }
+        return extractTextFromPdf(pdfData);
     }
 
     static String textResource(String resource) throws IOException {
