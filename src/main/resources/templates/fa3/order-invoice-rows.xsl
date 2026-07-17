@@ -2,7 +2,8 @@
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/">
+                xmlns:crd="http://crd.gov.pl/wzor/2025/06/25/13775/"
+                xmlns:local="urn:local">
 
     <!-- Note: $labels parameter and kLabels key are defined in the main ksef_invoice.xsl -->
 
@@ -36,39 +37,37 @@
         <xsl:variable name="showP11VatZ" select="boolean($zamowienieWiersz[crd:P_11VatZ])"/>
         <xsl:variable name="showUU_IDZ" select="boolean($zamowienieWiersz[crd:UU_IDZ])"/>
 
-        <!-- Calculate column width for name based on presence of other columns -->
-        <xsl:variable name="nameColumnWidth">
-            <xsl:choose>
-                <xsl:when test="$showP11VatZ and $showP9AZ and $showUU_IDZ">22%</xsl:when>
-                <xsl:when test="$showP11VatZ and not($showP9AZ) and $showUU_IDZ">32%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and $showP9AZ and $showUU_IDZ">29%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and not($showP9AZ) and $showUU_IDZ">39%</xsl:when>
-                <xsl:when test="$showP11VatZ and $showP9AZ and not($showUU_IDZ)">36%</xsl:when>
-                <xsl:when test="$showP11VatZ and not($showP9AZ) and not($showUU_IDZ)">46%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and $showP9AZ and not($showUU_IDZ)">44%</xsl:when>
-                <xsl:otherwise>54%</xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+        <xsl:variable name="fixedColumnsSum" select="local:orderFixedColumnsSum($showUU_IDZ, $showP9AZ, $showP11NettoZ, $showP11VatZ)"/>
+        <xsl:variable name="columnScale" select="local:orderColumnScale($fixedColumnsSum, true())"/>
+        <xsl:variable name="nameColumnWidth" select="local:colPct(local:orderNameColumnWidth($fixedColumnsSum, $columnScale, true()))"/>
+        <xsl:variable name="lpColumnWidth" select="local:scaledCol(4, $columnScale)"/>
+        <xsl:variable name="uuIdzColumnWidth" select="local:scaledCol(14, $columnScale)"/>
+        <xsl:variable name="qtyColumnWidth" select="local:scaledCol(12, $columnScale)"/>
+        <xsl:variable name="unitColumnWidthPct" select="local:scaledCol(6, $columnScale)"/>
+        <xsl:variable name="p9azColumnWidth" select="local:scaledCol(12, $columnScale)"/>
+        <xsl:variable name="p12zColumnWidth" select="local:scaledCol(8, $columnScale)"/>
+        <xsl:variable name="p11nettozColumnWidth" select="local:scaledCol(12, $columnScale)"/>
+        <xsl:variable name="p11vatzColumnWidth" select="local:scaledCol(10, $columnScale)"/>
 
         <!-- Define the table structure -->
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
             <!-- Define table columns -->
-            <fo:table-column column-width="4%"/> <!-- Lp. -->
+            <fo:table-column column-width="{$lpColumnWidth}"/> <!-- Lp. -->
             <xsl:if test="$showUU_IDZ">
-                <fo:table-column column-width="14%"/> <!-- Unikalny numer wiersza -->
+                <fo:table-column column-width="{$uuIdzColumnWidth}"/> <!-- Unikalny numer wiersza -->
             </xsl:if>
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
-            <fo:table-column column-width="12%"/> <!-- Ilość -->
-            <fo:table-column column-width="6%"/> <!-- Jednostka -->
+            <fo:table-column column-width="{$qtyColumnWidth}"/> <!-- Ilość -->
+            <fo:table-column column-width="{$unitColumnWidthPct}"/> <!-- Jednostka -->
             <xsl:if test="$showP9AZ">
-                <fo:table-column column-width="12%"/> <!-- Cena jednostkowa netto -->
+                <fo:table-column column-width="{$p9azColumnWidth}"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
-            <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+            <fo:table-column column-width="{$p12zColumnWidth}"/> <!-- Stawka podatku -->
             <xsl:if test="$showP11NettoZ">
-                <fo:table-column column-width="12%"/> <!-- Wartość netto -->
+                <fo:table-column column-width="{$p11nettozColumnWidth}"/> <!-- Wartość netto -->
             </xsl:if>
             <xsl:if test="$showP11VatZ">
-                <fo:table-column column-width="10%"/> <!-- Kwota VAT -->
+                <fo:table-column column-width="{$p11vatzColumnWidth}"/> <!-- Kwota VAT -->
             </xsl:if>
 
             <!-- Table header -->
@@ -216,29 +215,31 @@
         <xsl:variable name="showP11NettoZ" select="boolean($zamowienieWierszAfter[crd:P_11NettoZ])"/>
         <xsl:variable name="showP11VatZ" select="boolean($zamowienieWierszAfter[crd:P_11VatZ])"/>
 
-        <xsl:variable name="nameColumnWidth">
-            <xsl:choose>
-                <xsl:when test="$showP11VatZ and $showP9AZ">36%</xsl:when>
-                <xsl:when test="$showP11VatZ and not($showP9AZ)">46%</xsl:when>
-                <xsl:when test="not($showP11VatZ) and $showP9AZ">44%</xsl:when>
-                <xsl:otherwise>54%</xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+        <xsl:variable name="diffFixedColumnsSum" select="local:orderFixedColumnsSum(false(), $showP9AZ, $showP11NettoZ, $showP11VatZ)"/>
+        <xsl:variable name="diffColumnScale" select="local:orderColumnScale($diffFixedColumnsSum, true())"/>
+        <xsl:variable name="nameColumnWidth" select="local:colPct(local:orderNameColumnWidth($diffFixedColumnsSum, $diffColumnScale, true()))"/>
+        <xsl:variable name="lpColumnWidth" select="local:scaledCol(4, $diffColumnScale)"/>
+        <xsl:variable name="qtyColumnWidth" select="local:scaledCol(12, $diffColumnScale)"/>
+        <xsl:variable name="unitColumnWidthPct" select="local:scaledCol(6, $diffColumnScale)"/>
+        <xsl:variable name="p9azColumnWidth" select="local:scaledCol(12, $diffColumnScale)"/>
+        <xsl:variable name="p12zColumnWidth" select="local:scaledCol(8, $diffColumnScale)"/>
+        <xsl:variable name="p11nettozColumnWidth" select="local:scaledCol(12, $diffColumnScale)"/>
+        <xsl:variable name="p11vatzColumnWidth" select="local:scaledCol(10, $diffColumnScale)"/>
 
         <fo:table table-layout="fixed" width="100%" border-collapse="separate" space-after="5mm">
-            <fo:table-column column-width="4%"/> <!-- Lp. -->
+            <fo:table-column column-width="{$lpColumnWidth}"/> <!-- Lp. -->
             <fo:table-column column-width="{$nameColumnWidth}"/> <!-- Nazwa -->
-            <fo:table-column column-width="12%"/> <!-- Ilość -->
-            <fo:table-column column-width="6%"/> <!-- Jednostka -->
+            <fo:table-column column-width="{$qtyColumnWidth}"/> <!-- Ilość -->
+            <fo:table-column column-width="{$unitColumnWidthPct}"/> <!-- Jednostka -->
             <xsl:if test="$showP9AZ">
-                <fo:table-column column-width="12%"/> <!-- Cena jednostkowa netto -->
+                <fo:table-column column-width="{$p9azColumnWidth}"/> <!-- Cena jednostkowa netto -->
             </xsl:if>
-            <fo:table-column column-width="8%"/> <!-- Stawka podatku -->
+            <fo:table-column column-width="{$p12zColumnWidth}"/> <!-- Stawka podatku -->
             <xsl:if test="$showP11NettoZ">
-                <fo:table-column column-width="12%"/> <!-- Wartość netto -->
+                <fo:table-column column-width="{$p11nettozColumnWidth}"/> <!-- Wartość netto -->
             </xsl:if>
             <xsl:if test="$showP11VatZ">
-                <fo:table-column column-width="10%"/> <!-- Kwota VAT -->
+                <fo:table-column column-width="{$p11vatzColumnWidth}"/> <!-- Kwota VAT -->
             </xsl:if>
 
             <fo:table-header>
