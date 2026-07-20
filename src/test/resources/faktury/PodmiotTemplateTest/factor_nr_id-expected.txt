@@ -1,0 +1,30 @@
+Numer faktury
+FV/1/02/2026
+Faktura podstawowa
+Sprzedawca Nabywca
+NIP: 1111111111
+Nazwa: Sprzedawca Sp. z o.o.
+Adres
+ul. Przykładowa 1, 00-001 Warszawa
+POLSKA
+NIP: 2222222222
+Faktor1
+Identyfikator podatkowy inny: DE 123456789
+Adres
+Teststraße 10, 10115 Berlin
+NIEMCY
+1 Faktor - w przypadku gdy na fakturze występują dane faktora
+Szczegóły
+Data wystawienia¹: 2026-02-01
+¹ z zastrzeżeniem art. 106na ust. 1 ustawy
+Faktura wystawiona w cenach netto w walucie PLN
+Pozycje
+Lp. Nazwa towaru lub usługi Ilość Jedn. Cena jedn.
+netto
+Stawka
+podatku
+Wartość
+sprzedaży
+netto
+1 Towar 4 001,49 szt. 1,00 23% 4 001,49
+Kwota należności ogółem: 4 001,49 PLN

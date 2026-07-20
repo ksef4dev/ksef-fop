@@ -2727,6 +2727,14 @@
                 <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'nip', $labels)"/>: </fo:inline>
                 <xsl:value-of select="$id/crd:NIP"/>
             </xsl:if>
+            <xsl:if test="$id/crd:NrID">
+                <fo:inline font-weight="600"><xsl:value-of select="key('kLabels', 'taxId', $labels)"/>: </fo:inline>
+                <xsl:if test="$id/crd:KodKraju">
+                    <xsl:value-of select="$id/crd:KodKraju"/>
+                    <xsl:text> </xsl:text>
+                </xsl:if>
+                <xsl:value-of select="$id/crd:NrID"/>
+            </xsl:if>
             <xsl:if test="crd:DaneIdentyfikacyjne/crd:IDWew">
                 <fo:inline font-weight="600">
                     <xsl:value-of select="key('kLabels', 'idWew', $labels)"/>: </fo:inline>
