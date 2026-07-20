@@ -107,6 +107,7 @@
     <entry key="splitPayment">Split payment</entry>
     <entry key="selfBilling">Self-billing</entry>
     <entry key="cashMethod">Cash method</entry>
+    <entry key="relatedEntities">Existing links between the buyer and the supplier of goods or services</entry>
     <entry key="payment">Payment</entry>
     <entry key="paymentInfo">Payment information</entry>
     <entry key="payment.paid">Paid</entry>

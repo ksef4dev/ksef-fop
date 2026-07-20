@@ -1750,6 +1750,20 @@
                     <!-- Adnotacje -->
                     <xsl:apply-templates select="crd:Fa/crd:Adnotacje"/>
 
+                    <!-- Dodatkowe informacje -->
+                    <xsl:if test="crd:Fa/crd:TP = 1">
+                        <fo:block border-bottom="solid 1px grey" space-after="4mm" space-before="4mm"/>
+                        <fo:block font-size="12pt" text-align="left" space-after="2mm">
+                            <fo:inline font-weight="bold">
+                                <xsl:value-of select="key('kLabels', 'additionalInfo', $labels)"/>
+                            </fo:inline>
+                        </fo:block>
+                        <fo:block id="TP" font-size="7pt" text-align="left" space-after="1mm">
+                            <xsl:text>- </xsl:text>
+                            <xsl:value-of select="key('kLabels', 'relatedEntities', $labels)"/>
+                        </fo:block>
+                    </xsl:if>
+
                     <!-- Dodatkowy opis-->
                     <xsl:if test="count(crd:Fa/crd:DodatkowyOpis) > 0">
                         <!-- Linia oddzielająca -->

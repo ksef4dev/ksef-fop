@@ -107,6 +107,7 @@
     <entry key="splitPayment">Mechanizm podzielonej płatności</entry>
     <entry key="selfBilling">Samofakturowanie</entry>
     <entry key="cashMethod">Metoda kasowa</entry>
+    <entry key="relatedEntities">Istniejące powiązania między nabywcą a dokonującym dostawy towarów lub usługodawcą</entry>
     <entry key="payment">Płatność</entry>
     <entry key="paymentInfo">Informacja o płatności</entry>
     <entry key="payment.paid">Zapłacono</entry>
