@@ -29,13 +29,30 @@
         <xsl:attribute name="padding-bottom">4pt</xsl:attribute>
     </xsl:attribute-set>
 
+    <!-- Checks whether all rows share one exchange rate. Returns true when every row has a rate and all are numerically equal. -->
+    <xsl:function name="local:hasCommonExchangeRate" as="xs:boolean">
+        <xsl:param name="rows"/>
+        <xsl:sequence select="count($rows) = count($rows/crd:KursWaluty) and local:distinctDecimalCount($rows/crd:KursWaluty) = 1"/>
+    </xsl:function>
+
+    <!-- Checks whether the shared common-rate header may be shown.
+         Returns true when exchange rate is common between lines and the invoice has no before/after correction data. -->
+    <xsl:function name="local:showCommonExchangeRateHeader" as="xs:boolean">
+        <xsl:param name="rows"/>
+        <xsl:sequence select="local:hasCommonExchangeRate($rows) and not($rows[crd:StanPrzed])"/>
+    </xsl:function>
+
     <!-- Template for rendering the positions table -->
     <xsl:template name="positionsTable">
         <xsl:param name="faWiersz"/>
 
+        <!-- Show the per-line exchange rate column when a rate is present and the invoice rates are not common across all rows.
+             Checked invoice-wide so before/after correction rows are taken into account. -->
+        <xsl:variable name="showExchangeRateColumn" select="boolean($faWiersz/crd:KursWaluty) and not(local:hasCommonExchangeRate(//crd:FaWiersz))"/>
+
         <!-- Calculate column width for name based on presence of other columns -->
         <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
-        <!-- Optional columns: Indeks (8%), GTIN/PKWiU (5%), PKOB (6%), CN (6%), KwotaAkcyzy (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%) -->
+        <!-- Optional columns: Indeks (8%), GTIN/PKWiU (5%), PKOB (6%), CN (6%), KwotaAkcyzy (8%), P_6A (9%), P_9A (10%), P_9B (10%), P_10 (7%), P_12 (8%), P_11 (10%), P_11Vat (7%), P_11A (10%), KursWaluty (8%) -->
         <xsl:variable name="nameColumnWidth">
             <xsl:variable name="fixedWidth" select="17"/> <!-- Lp + Quantity + Unit -->
             <xsl:variable name="indeksWidth" select="if ($faWiersz/crd:Indeks) then 8 else 0"/>
@@ -52,7 +69,8 @@
             <xsl:variable name="p11Width" select="if ($faWiersz/crd:P_11) then 10 else 0"/>
             <xsl:variable name="p11vatWidth" select="if ($faWiersz/crd:P_11Vat) then 7 else 0"/>
             <xsl:variable name="p11aWidth" select="if ($faWiersz/crd:P_11A) then 10 else 0"/>
-            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $gtinWidth - $pkwiuWidth - $cnWidth - $pkobWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth"/>
+            <xsl:variable name="exchangeRateWidth" select="if ($showExchangeRateColumn) then 8 else 0"/>
+            <xsl:variable name="calculatedWidth" select="100 - $fixedWidth - $indeksWidth - $gtinWidth - $pkwiuWidth - $cnWidth - $pkobWidth - $kwotaAkcyzyWidth - $p6aWidth - $p9aWidth - $p9bWidth - $p10Width - $p12Width - $p11Width - $p11vatWidth - $p11aWidth - $exchangeRateWidth"/>
             <xsl:value-of select="concat($calculatedWidth, '%')"/>
         </xsl:variable>
 
@@ -104,6 +122,9 @@
             </xsl:if>
             <xsl:if test="$faWiersz/crd:P_6A">
                 <fo:table-column column-width="9%"/> <!-- Data dostawy (P_6A) -->
+            </xsl:if>
+            <xsl:if test="$showExchangeRateColumn">
+                <fo:table-column column-width="8%"/> <!-- Kurs waluty -->
             </xsl:if>
 
             <!-- Table header -->
@@ -191,6 +212,11 @@
                             <fo:block><xsl:value-of select="key('kLabels', 'row.deliveryDate', $labels)"/></fo:block>
                         </fo:table-cell>
                     </xsl:if>
+                    <xsl:if test="$showExchangeRateColumn">
+                        <fo:table-cell xsl:use-attribute-sets="tableHeaderFont tableBorder table.cell.padding">
+                            <fo:block><xsl:value-of select="key('kLabels', 'row.exchangeRate', $labels)"/></fo:block>
+                        </fo:table-cell>
+                    </xsl:if>
                 </fo:table-row>
             </fo:table-header>
 
@@ -212,6 +238,7 @@
                 <xsl:with-param name="showP11" select="boolean($faWiersz/crd:P_11)" tunnel="yes"/>
                 <xsl:with-param name="showP11Vat" select="boolean($faWiersz/crd:P_11Vat)" tunnel="yes"/>
                 <xsl:with-param name="showP11A" select="boolean($faWiersz/crd:P_11A)" tunnel="yes"/>
+                <xsl:with-param name="showExchangeRate" select="$showExchangeRateColumn" tunnel="yes"/>
             </xsl:apply-templates>
         </fo:table-body>
         </fo:table>
@@ -233,6 +260,7 @@
         <xsl:param name="showP11" select="boolean(//crd:FaWiersz/crd:P_11)" tunnel="yes"/>
         <xsl:param name="showP11Vat" select="boolean(//crd:FaWiersz/crd:P_11Vat)" tunnel="yes"/>
         <xsl:param name="showP11A" select="boolean(//crd:FaWiersz/crd:P_11A)" tunnel="yes"/>
+        <xsl:param name="showExchangeRate" select="boolean(//crd:FaWiersz/crd:KursWaluty) and not(local:hasCommonExchangeRate(//crd:FaWiersz))" tunnel="yes"/>
         <fo:table-row>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
@@ -496,6 +524,13 @@
                 <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="center">
                     <fo:block>
                         <xsl:value-of select="crd:P_6A"/> <!-- Data dostawy (P_6A) -->
+                    </fo:block>
+                </fo:table-cell>
+            </xsl:if>
+            <xsl:if test="$showExchangeRate">
+                <fo:table-cell id="lineExchangeRate-{generate-id()}" xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="right">
+                    <fo:block>
+                        <xsl:value-of select="crd:KursWaluty"/> <!-- Kurs waluty -->
                     </fo:block>
                 </fo:table-cell>
             </xsl:if>

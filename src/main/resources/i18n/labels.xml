@@ -28,6 +28,7 @@
     <entry key="row.uniqueRowId">Unikalny numer wiersza</entry>
     <entry key="row.netValueShort">Wartość netto</entry>
     <entry key="row.stateBefore">Stan przed</entry>
+    <entry key="row.exchangeRate">Kurs waluty</entry>
     <entry key="common.yes">Tak</entry>
     <entry key="duplicate.fromDate">Duplikat z dnia</entry>
     <entry key="invoice.advance">Faktura zaliczkowa</entry>
@@ -67,6 +68,7 @@
     <entry key="correctionType.other">Korekta skutkująca w dacie innej, w tym gdy dla różnych pozycji faktury korygującej daty te są różne</entry>
     <entry key="issuePlace">Miejsce wystawienia</entry>
     <entry key="exchangeRate">Kurs waluty</entry>
+    <entry key="exchangeRateCommonNote">Kurs waluty wspólny dla wszystkich wierszy faktury</entry>
     <entry key="discountPeriod">Okres, którego dotyczy rabat</entry>
     <entry key="exchangeRateDate">Data kursu waluty</entry>
     <entry key="previousAdvanceInvoices">Numery wcześniejszych faktur zaliczkowych</entry>

@@ -61,4 +61,10 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
+    <!-- Counts distinct values, comparing them as decimals to preserve numeric equality regardless of formatting. -->
+    <xsl:function name="local:distinctDecimalCount" as="xsd:integer">
+        <xsl:param name="values"/>
+        <xsl:sequence select="count(distinct-values(for $v in $values return xsd:decimal($v)))"/>
+    </xsl:function>
 </xsl:stylesheet>

@@ -28,6 +28,7 @@
     <entry key="row.uniqueRowId">Unique row ID</entry>
     <entry key="row.netValueShort">Net value</entry>
     <entry key="row.stateBefore">State before</entry>
+    <entry key="row.exchangeRate">Exchange rate</entry>
     <entry key="common.yes">Yes</entry>
     <entry key="duplicate.fromDate">Duplicate from</entry>
     <entry key="invoice.advance">Advance Invoice</entry>
@@ -67,6 +68,7 @@
     <entry key="correctionType.other">Correction effective on another date, including when dates differ for various items</entry>
     <entry key="issuePlace">Place of issue</entry>
     <entry key="exchangeRate">Exchange rate</entry>
+    <entry key="exchangeRateCommonNote">Common exchange rate for all invoice rows</entry>
     <entry key="discountPeriod">Discount period</entry>
     <entry key="exchangeRateDate">Exchange rate date</entry>
     <entry key="previousAdvanceInvoices">Previous advance invoice numbers</entry>

@@ -865,10 +865,13 @@
                                             <xsl:value-of select="crd:Fa/crd:OkresFaKorygowanej"/>
                                         </fo:block>
                                     </xsl:if>
-                                    <xsl:if test="crd:Fa/crd:FaWiersz[1]/crd:KursWaluty">
-                                        <fo:block text-align="left" font-size="8pt">
+                                    <xsl:if test="local:showCommonExchangeRateHeader(crd:Fa/crd:FaWiersz)">
+                                        <fo:block id="exchangeRate" text-align="left" font-size="8pt">
                                             <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'exchangeRate', $labels)"/>: </fo:inline>
                                             <xsl:value-of select="crd:Fa/crd:FaWiersz[1]/crd:KursWaluty"/>
+                                        </fo:block>
+                                        <fo:block id="exchangeRateCommonNote" text-align="left" font-size="8pt">
+                                            <xsl:value-of select="key('kLabels', 'exchangeRateCommonNote', $labels)"/>
                                         </fo:block>
                                     </xsl:if>
                                     <xsl:choose>
