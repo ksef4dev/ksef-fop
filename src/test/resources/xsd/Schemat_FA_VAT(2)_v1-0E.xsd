@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:tns="http://crd.gov.pl/wzor/2023/06/29/12648/" targetNamespace="http://crd.gov.pl/wzor/2023/06/29/12648/" elementFormDefault="qualified" attributeFormDefault="unqualified" xml:lang="pl">
-	<xsd:import namespace="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" schemaLocation="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/StrukturyDanych_v10-0E.xsd"/>
+	<xsd:import namespace="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" schemaLocation="StrukturyDanych_v10-0E.xsd"/>
 	<xsd:simpleType name="TKodyKrajowUE">
 		<xsd:annotation>
 			<xsd:documentation>Kody krajów członkowskich Unii Europejskiej, w tym kod dla obszaru Irlandii Północnej</xsd:documentation>
@@ -2377,7 +2377,7 @@
 									<xsd:documentation>Kolejny numer faktury, nadany w ramach jednej lub więcej serii, który w sposób jednoznaczny identyfikuje fakturę</xsd:documentation>
 								</xsd:annotation>
 							</xsd:element>
-							<xsd:element name="WZ" type="tns:TZnakowy" minOccurs="0" maxOccurs="1000">
+							<xsd:element name="WZ" type="tns:TZnakowy" minOccurs="0" maxOccurs="unbounded">
 								<xsd:annotation>
 									<xsd:documentation>Numery dokumentów magazynowych WZ (wydanie na zewnątrz) związane z fakturą</xsd:documentation>
 								</xsd:annotation>
@@ -2629,7 +2629,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 																<xsd:documentation>Jeśli występuje obowiązek, o którym mowa w art. 42 ust. 5 ustawy, należy podać wartość "1", w przeciwnym przypadku - wartość "2"</xsd:documentation>
 															</xsd:annotation>
 														</xsd:element>
-														<xsd:element name="NowySrodekTransportu" maxOccurs="10000">
+														<xsd:element name="NowySrodekTransportu" maxOccurs="unbounded">
 															<xsd:complexType>
 																<xsd:sequence>
 																	<xsd:element name="P_22A" type="tns:TDataT">
@@ -2878,7 +2878,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 										</xsd:sequence>
 									</xsd:complexType>
 								</xsd:element>
-								<xsd:element name="Podmiot2K" minOccurs="0" maxOccurs="101">
+								<xsd:element name="Podmiot2K" minOccurs="0" maxOccurs="unbounded">
 									<xsd:annotation>
 										<xsd:documentation>W przypadku korekty danych nabywcy występującego jako Podmiot2 lub dodatkowego nabywcy występującego jako Podmiot3 należy podać pełne dane tego podmiotu występujące na fakturze korygowanej. Korekcie nie podlegają błędne numery identyfikujące nabywcę oraz dodatkowego nabywcę. W przypadku korygowania pozostałych danych nabywcy lub dodatkowego nabywcy wskazany numer identyfikacyjny ma być tożsamy z numerem w części Podmiot2 względnie Podmiot3 faktury korygującej</xsd:documentation>
 									</xsd:annotation>
@@ -2954,7 +2954,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 									<xsd:documentation>Istniejące powiązania między nabywcą a dokonującym dostawy towarów lub usługodawcą, zgodnie z § 10 ust. 4 pkt 3, z zastrzeżeniem ust. 4b rozporządzenia w sprawie szczegółowego zakresu danych zawartych w deklaracjach podatkowych i w ewidencji w zakresie podatku od towarów i usług</xsd:documentation>
 								</xsd:annotation>
 							</xsd:element>
-							<xsd:element name="DodatkowyOpis" type="tns:TKluczWartosc" minOccurs="0" maxOccurs="10000">
+							<xsd:element name="DodatkowyOpis" type="tns:TKluczWartosc" minOccurs="0" maxOccurs="unbounded">
 								<xsd:annotation>
 									<xsd:documentation>Pola przeznaczone dla wykazywania dodatkowych danych na fakturze, w tym wymaganych przepisami prawa, dla których nie przewidziano innych pól/elementów</xsd:documentation>
 								</xsd:annotation>
@@ -2990,7 +2990,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 									<xsd:documentation>Informacja dodatkowa niezbędna dla rolników ubiegających się o zwrot podatku akcyzowego zawartego w cenie oleju napędowego</xsd:documentation>
 								</xsd:annotation>
 							</xsd:element>
-							<xsd:element name="FaWiersz" minOccurs="0" maxOccurs="10000">
+							<xsd:element name="FaWiersz" minOccurs="0" maxOccurs="unbounded">
 								<xsd:annotation>
 									<xsd:documentation>Szczegółowe pozycje faktury w walucie, w której wystawiono fakturę - węzeł opcjonalny dla faktury zaliczkowej, faktury korygującej fakturę zaliczkową, oraz faktur korygujących dotyczących wszystkich dostaw towarów lub usług dokonanych lub świadczonych w danym okresie, o których mowa w art. 106j ust. 3 ustawy, dla których należy podać dane dotyczące opustu lub obniżki w podziale na stawki podatku i procedury w części Fa. W przypadku faktur korygujących, o których mowa w art. 106j ust. 3 ustawy, gdy opust lub obniżka ceny odnosi się do części dostaw towarów lub usług dokonanych lub świadczonych w danym okresie w części FaWiersz należy podać nazwy (rodzaje) towarów lub usług objętych korektą. W przypadku faktur, o których mowa w art. 106f ust. 3 ustawy, należy wykazać pełne wartości zamówienia lub umowy. W przypadku faktur korygujących pozycje faktury (w tym faktur korygujących faktury, o których mowa w art. 106f ust. 3 ustawy, jeśli korekta dotyczy wartości zamówienia), należy wykazać różnice wynikające z korekty poszczególnych pozycji lub dane pozycji korygowanych w stanie przed korektą i po korekcie jako osobne wiersze. W przypadku faktur korygujących faktury, o których mowa w art. 106f ust. 3 ustawy, jeśli korekta nie dotyczy wartości zamówienia i jednocześnie zmienia wysokość podstawy opodatkowania lub podatku, należy wprowadzić zapis wg stanu przed korektą i zapis w stanie po korekcie w celu potwierdzenia braku zmiany wartości danej pozycji faktury</xsd:documentation>
 								</xsd:annotation>
@@ -3344,7 +3344,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 												</xsd:sequence>
 											</xsd:complexType>
 										</xsd:element>
-										<xsd:element name="NrPartiiTowaru" type="tns:TZnakowy" minOccurs="0" maxOccurs="1000">
+										<xsd:element name="NrPartiiTowaru" type="tns:TZnakowy" minOccurs="0" maxOccurs="unbounded">
 											<xsd:annotation>
 												<xsd:documentation>Numery partii towaru</xsd:documentation>
 											</xsd:annotation>
@@ -3484,7 +3484,7 @@ dokonaną na rzecz podatnika dostawę towarów lub świadczenie usług, o który
 												<xsd:documentation>Wartość zamówienia lub umowy z uwzględnieniem kwoty podatku</xsd:documentation>
 											</xsd:annotation>
 										</xsd:element>
-										<xsd:element name="ZamowienieWiersz" maxOccurs="10000">
+										<xsd:element name="ZamowienieWiersz" maxOccurs="unbounded">
 											<xsd:annotation>
 												<xsd:documentation>Szczegółowe pozycje zamówienia lub umowy w walucie, w której wystawiono fakturę zaliczkową</xsd:documentation>
 											</xsd:annotation>
