@@ -72,7 +72,7 @@
         <annotations.version>24.1.0</annotations.version>
         <assertj.version>3.27.7</assertj.version>
         <pdfbox.version>3.0.7</pdfbox.version>
-        <slf4j.version>2.0.17</slf4j.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <zxing.version>3.5.4</zxing.version>
         <xmlunit.version>2.11.0</xmlunit.version>
 
@@ -287,7 +287,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.19</version>
+            <version>1.6.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -307,13 +307,13 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>12.5</version>
+            <version>13.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.xmlresolver</groupId>
             <artifactId>xmlresolver</artifactId>
-            <version>5.2.2</version>
+            <version>6.0.23</version>
         </dependency>
 
         <dependency>
