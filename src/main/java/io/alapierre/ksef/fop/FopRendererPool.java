@@ -43,6 +43,10 @@ class FopRendererPool {
         selectRenderer().render(out, operation);
     }
 
+    void renderWithFactory(FopRenderer.FactoryOperation operation) throws FOPException, TransformerException {
+        selectRenderer().renderWithFactory(operation);
+    }
+
     private FopRenderer selectRenderer() {
         int index = Math.floorMod(nextRenderer.getAndIncrement(), renderers.size());
         return renderers.get(index);

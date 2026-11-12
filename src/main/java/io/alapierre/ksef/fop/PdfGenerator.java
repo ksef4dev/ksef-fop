@@ -162,6 +162,32 @@ public class PdfGenerator {
     }
 
     /**
+     * PROTOTYPE: renders a long invoice in chunks of {@code rowsPerChunk} positions, each chunk as its own
+     * page sequence, cutting at real page breaks (see {@link ChunkedInvoiceRenderer}).
+     */
+    public ChunkedInvoiceRenderer.Stats generateInvoiceChunked(byte[] invoiceXml,
+                                                               InvoiceGenerationParams params,
+                                                               OutputStream out,
+                                                               int rowsPerChunk) throws TransformerException, FOPException {
+        ChunkedInvoiceRenderer.Stats[] stats = new ChunkedInvoiceRenderer.Stats[1];
+        fopRenderer.renderWithFactory(factory -> {
+            String langCode = params.resolveLanguageTag();
+            String templatePath = resolveTemplatePath(params);
+            TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+            TranslationService translationService = new TranslationService(resolver, templatePath);
+            QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
+            List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
+            Templates template = XmlFactories.getTemplate(resolver, templatePath);
+            stats[0] = new ChunkedInvoiceRenderer(factory, rowsPerChunk).render(invoiceXml, () -> {
+                Transformer transformer = newTransformer(template, resolver);
+                applyParameters(params, qrCodes, null, resolver, translationService, transformer);
+                return transformer;
+            }, out);
+        });
+        return stats[0];
+    }
+
+    /**
      * Generates a duplicate invoice PDF based on the input XML, using InvoiceGenerationParams for configurable options.
      * This method specifically handles the generation of a duplicate invoice, inserting the duplicate date.
      *
