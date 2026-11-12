@@ -128,7 +128,7 @@ public class PdfGenerator {
             TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), upoTemplatePath);
             TranslationService translationService = new TranslationService(resolver, upoTemplatePath);
             Templates template = XmlFactories.getTemplate(resolver, upoTemplatePath);
-            Transformer transformer = template.newTransformer();
+            Transformer transformer = newTransformer(template, resolver);
             applyLabelParameters(translationService, params.resolveLanguageTag(), transformer);
 
             Result res = new SAXResult(fop.getDefaultHandler());
@@ -211,13 +211,25 @@ public class PdfGenerator {
 
         String stylesheetPath = resolveTemplatePath(params);
         Templates template = XmlFactories.getTemplate(resolver, stylesheetPath);
-        Transformer transformer = template.newTransformer();
+        Transformer transformer = newTransformer(template, resolver);
 
         applyParameters(params, qrCodes, duplicateDate, resolver, translationService, transformer);
 
         Source xmlSource = new StreamSource(new ByteArrayInputStream(invoiceXml));
         Result result = new SAXResult(fop.getDefaultHandler());
         transformer.transform(xmlSource, result);
+    }
+
+    /**
+     * Creates a transformer bound to this request's resolver, so run-time lookups
+     * ({@code document()}, {@code doc()}) never use a resolver left in the shared Saxon
+     * configuration by another request.
+     */
+    private static Transformer newTransformer(Templates template, TemplateResolver resolver)
+            throws TransformerConfigurationException {
+        Transformer transformer = template.newTransformer();
+        transformer.setURIResolver(resolver);
+        return transformer;
     }
 
     private static TemplateResolver createTemplateResolver(List<URI> resourceRoots,
@@ -402,6 +414,27 @@ public class PdfGenerator {
      */
     public static void clearCompiledTemplateCache() {
         XmlFactories.clearCompiledTemplateCache();
+    }
+
+    /**
+     * Limits the number of compiled XSLT stylesheets kept in memory (LRU eviction).
+     *
+     * <p>Each compiled FA(3) invoice stylesheet takes several MB of heap and the cache is keyed by
+     * resource roots, so applications using one root per tenant should keep this bounded.
+     * Defaults to {@value XmlFactories#DEFAULT_TEMPLATE_CACHE_MAX_SIZE}; can also be set with the
+     * {@value XmlFactories#TEMPLATE_CACHE_MAX_SIZE_PROPERTY} system property.</p>
+     *
+     * @param maxSize maximum number of cached stylesheets, at least 1
+     */
+    public static void setCompiledTemplateCacheMaxSize(int maxSize) {
+        XmlFactories.setCompiledTemplateCacheMaxSize(maxSize);
+    }
+
+    /**
+     * Returns the number of compiled XSLT stylesheets currently cached.
+     */
+    public static int getCompiledTemplateCacheSize() {
+        return XmlFactories.compiledTemplateCacheSize();
     }
 
 }

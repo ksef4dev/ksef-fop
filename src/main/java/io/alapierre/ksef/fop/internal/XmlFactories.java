@@ -5,13 +5,16 @@ package io.alapierre.ksef.fop.internal;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.jaxp.SaxonTransformerFactory;
 import net.sf.saxon.lib.ParseOptions;
+import net.sf.saxon.trans.CompilerInfo;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -19,9 +22,8 @@ import javax.xml.transform.TransformerFactory;
 
 import org.xml.sax.SAXException;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Shared XML processing utilities with a hardened parser configuration.
@@ -55,7 +57,14 @@ public final class XmlFactories {
      */
     private static final Configuration SAXON_CONFIGURATION;
 
-    private static final Map<TemplateKey, Templates> TEMPLATE_CACHE = new ConcurrentHashMap<>();
+    /** System property overriding the default size of the compiled template cache. */
+    public static final String TEMPLATE_CACHE_MAX_SIZE_PROPERTY = "ksef.fop.template-cache.max-size";
+
+    /** Default number of compiled stylesheets kept in memory. */
+    public static final int DEFAULT_TEMPLATE_CACHE_MAX_SIZE = 32;
+
+    private static final BoundedTemplateCache<TemplateKey, Templates> TEMPLATE_CACHE =
+            new BoundedTemplateCache<TemplateKey, Templates>(readMaxSizeProperty());
 
     static {
         try {
@@ -117,32 +126,38 @@ public final class XmlFactories {
         return factory;
     }
 
-    private static Templates createTemplates(TemplateKey key) {
-        try {
-            TransformerFactory factory = createTransformerFactory();
-            factory.setURIResolver(key.resolver);
-            javax.xml.transform.Source stylesheet = key.resolver.resolve(key.templatePath, null);
-            return factory.newTemplates(stylesheet);
-        } catch (TransformerException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * Compiles a stylesheet with {@code resolver} used for {@code xsl:include}/{@code xsl:import}.
+     *
+     * <p>The resolver is attached to a per-compilation {@link CompilerInfo}, <strong>not</strong> to the
+     * factory: {@code SaxonTransformerFactory.setURIResolver} stores the resolver in the shared
+     * {@link #SAXON_CONFIGURATION}, so concurrent compilations for different resource roots would
+     * overwrite each other's resolver and fail with {@code Unexpected URI scheme}.</p>
+     */
+    private static Templates compile(TemplateResolver resolver, String templatePath) throws TransformerException {
+        SaxonTransformerFactory factory = (SaxonTransformerFactory) createTransformerFactory();
+        CompilerInfo compilerInfo = new CompilerInfo(SAXON_CONFIGURATION.getDefaultXsltCompilerInfo());
+        compilerInfo.setURIResolver(resolver);
+        Source stylesheet = resolver.resolve(templatePath, null);
+        return factory.newTemplates(stylesheet, compilerInfo);
     }
 
     /**
      * Returns a compiled {@link Templates} for {@code templatePath}, resolved by a
-     * {@link TemplateResolver}. Cached per {@code (roots, remoteBaseUrl, templatePath)}.
+     * {@link TemplateResolver}. Cached per {@code (resource roots, templatePath)} in a bounded
+     * LRU cache (see {@link #setCompiledTemplateCacheMaxSize(int)}).
+     *
+     * <p>Safe for concurrent use: compilation runs outside the cache lock, so a slow compilation
+     * (e.g. remote includes) does not block cache hits for other templates.</p>
      */
     public static Templates getTemplate(TemplateResolver resolver, String templatePath) throws TransformerException {
-        TemplateKey key = new TemplateKey(resolver, templatePath);
-        try {
-            return TEMPLATE_CACHE.computeIfAbsent(key, XmlFactories::createTemplates);
-        } catch (RuntimeException wrapped) {
-            Throwable cause = wrapped.getCause();
-            if (cause instanceof TransformerException) {
-                throw (TransformerException) cause;
-            }
-            throw wrapped;
+        TemplateKey key = new TemplateKey(resolver.getResourceRoots(), templatePath);
+        Templates cached = TEMPLATE_CACHE.get(key);
+        if (cached != null) {
+            return cached;
         }
+        Templates compiled = compile(resolver, templatePath);
+        return TEMPLATE_CACHE.putIfAbsent(key, compiled);
     }
 
     /**
@@ -153,17 +168,49 @@ public final class XmlFactories {
         TEMPLATE_CACHE.clear();
     }
 
+    /**
+     * Sets the maximum number of compiled stylesheets kept in memory; least recently used entries
+     * are evicted. A compiled FA(3) invoice stylesheet takes several MB of heap, so an unbounded
+     * cache grows with every distinct resource root (e.g. one root per tenant).
+     *
+     * <p>Defaults to {@value #DEFAULT_TEMPLATE_CACHE_MAX_SIZE}, overridable with the
+     * {@value #TEMPLATE_CACHE_MAX_SIZE_PROPERTY} system property.</p>
+     *
+     * @param maxSize maximum number of entries, at least 1
+     */
+    public static void setCompiledTemplateCacheMaxSize(int maxSize) {
+        TEMPLATE_CACHE.setMaxSize(maxSize);
+    }
+
+    /** Current number of compiled stylesheets in the cache. */
+    public static int compiledTemplateCacheSize() {
+        return TEMPLATE_CACHE.size();
+    }
+
+    static int readMaxSizeProperty() {
+        String value = System.getProperty(TEMPLATE_CACHE_MAX_SIZE_PROPERTY);
+        if (value == null || value.trim().isEmpty()) {
+            return DEFAULT_TEMPLATE_CACHE_MAX_SIZE;
+        }
+        try {
+            return Math.max(1, Integer.parseInt(value.trim()));
+        } catch (NumberFormatException e) {
+            return DEFAULT_TEMPLATE_CACHE_MAX_SIZE;
+        }
+    }
+
     private XmlFactories() {
         // utility class
     }
 
+    /** Cache key made of values only — does not retain the resolver (and its catalog) per entry. */
     private static final class TemplateKey {
 
-        private final TemplateResolver resolver;
+        private final List<ResourceRoot> resourceRoots;
         private final String templatePath;
 
-        private TemplateKey(TemplateResolver resolver, String templatePath) {
-            this.resolver = resolver;
+        private TemplateKey(List<ResourceRoot> resourceRoots, String templatePath) {
+            this.resourceRoots = resourceRoots;
             this.templatePath = templatePath;
         }
 
@@ -171,13 +218,13 @@ public final class XmlFactories {
         public boolean equals(Object o) {
             if (!(o instanceof TemplateKey)) return false;
             TemplateKey that = (TemplateKey) o;
-            return Objects.equals(resolver.getResourceRoots(), that.resolver.getResourceRoots())
+            return Objects.equals(resourceRoots, that.resourceRoots)
                     && Objects.equals(templatePath, that.templatePath);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(resolver.getResourceRoots(), templatePath);
+            return Objects.hash(resourceRoots, templatePath);
         }
     }
 }
