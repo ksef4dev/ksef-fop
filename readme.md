@@ -201,6 +201,23 @@ RemoteResourceFetcher stub = uri -> "<xsl:stylesheet version=\"1.0\"/>".getBytes
 If you do not need a custom HTTP stack, **prefer the default** — do not register a fetcher unless
 you have a concrete integration requirement (framework `HttpClient`, observability, auth propagation).
 
+### Compiled template cache
+
+Compiled stylesheets are cached per `(resourceRoots, templatePath)`. A compiled FA(3) invoice
+stylesheet takes several MB of heap, so the cache is bounded (LRU, default **32** entries).
+Applications that use one resource root per tenant (e.g. `…/xslt/{nip}`) should route tenants
+without custom templates to a shared root; otherwise every tenant costs one cache entry and one
+compilation.
+
+```java
+PdfGenerator.setCompiledTemplateCacheMaxSize(64);   // or -Dksef.fop.template-cache.max-size=64
+PdfGenerator.getCompiledTemplateCacheSize();        // current number of entries
+PdfGenerator.clearCompiledTemplateCache();          // after templates change at runtime
+```
+
+Compilation is safe for concurrent use with different resource roots: the include resolver is
+bound to each compilation, not to the shared Saxon configuration.
+
 ## Custom translations
 
 The library ships with built-in Polish and English translations for all PDF labels
