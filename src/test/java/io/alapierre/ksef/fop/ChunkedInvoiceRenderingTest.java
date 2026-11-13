@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChunkedInvoiceRenderingTest {
 
-    private static final String CHUNKED_TEMPLATE = "templates/chunked/chunked_invoice.xsl";
+    private static final String MULTI_TABLE_TEMPLATE = "templates/chunked/multi_table_invoice.xsl";
     private static final int ROWS = 300;
     private static final int ROWS_PER_CHUNK = 40;
 
@@ -39,52 +41,34 @@ class ChunkedInvoiceRenderingTest {
     }
 
     @Test
-    void chunkedPdfHasTheSamePagesAsSinglePassPdf() throws Exception {
-        InvoiceGenerationParams params = paramsFor(CHUNKED_TEMPLATE);
-
-        ByteArrayOutputStream chunked = new ByteArrayOutputStream();
-        ChunkedRenderingResult result = generator.generateInvoiceChunked(longInvoice, params, chunked, ROWS_PER_CHUNK);
-
-        assertTrue(result.isChunked(), "expected chunked rendering, got: " + result.getSinglePassReason());
-        assertTrue(result.getChunkCount() > 1);
-        List<String> expectedPages = pagesOf(singlePass(longInvoice, params));
-        List<String> chunkedPages = pagesOf(chunked.toByteArray());
-        assertEquals(expectedPages.size(), result.getPageCount());
-        assertEquals(expectedPages, chunkedPages);
-    }
-
-    @Test
-    void cutsOnlyAtPageBreaksWithoutPartiallyFilledPages() throws Exception {
-        ByteArrayOutputStream chunked = new ByteArrayOutputStream();
-        generator.generateInvoiceChunked(longInvoice, paramsFor(CHUNKED_TEMPLATE), chunked, ROWS_PER_CHUNK);
-
-        List<String> pages = pagesOf(chunked.toByteArray());
-        assertTrue(pages.get(0).contains("INVOICE HEADER"));
-        assertTrue(pages.get(0).contains("FIRST PAGE FOOTER"));
-        for (int i = 1; i < pages.size(); i++) {
-            assertFalse(pages.get(i).contains("FIRST PAGE FOOTER"), "continuation page " + (i + 1));
-            assertTrue(pages.get(i).contains("page " + (i + 1)), "page numbering continues on page " + (i + 1));
-        }
-        assertEquals(ROWS, positionsIn(pages), "every position is rendered exactly once");
-        assertTrue(pages.get(pages.size() - 1).contains("INVOICE SUMMARY: " + ROWS + " positions"));
-    }
-
-    @Test
-    void rendersInSinglePassWhenTemplateDoesNotSupportChunks() throws Exception {
+    void builtInTemplateIsRenderedInChunksWithTheSamePages() throws Exception {
         InvoiceGenerationParams params = InvoiceGenerationParams.builder().schema(InvoiceSchema.FA3_1_0_E).build();
+
+        assertChunkedLikeSinglePass(params);
+    }
+
+    @Test
+    void tablesInSeveralPageSequencesAreRenderedInChunksWithTheSamePages() throws Exception {
+        assertChunkedLikeSinglePass(paramsFor(MULTI_TABLE_TEMPLATE, Collections.<String, Object>emptyMap()));
+    }
+
+    @Test
+    void rendersInSinglePassWhenTheDocumentRefersAcrossPages() throws Exception {
+        InvoiceGenerationParams params = paramsFor(MULTI_TABLE_TEMPLATE,
+                Collections.<String, Object>singletonMap("pageReference", "true"));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ChunkedRenderingResult result = generator.generateInvoiceChunked(longInvoice, params, out, ROWS_PER_CHUNK);
 
         assertFalse(result.isChunked());
-        assertTrue(result.getSinglePassReason().contains("does not support"));
+        assertTrue(result.getSinglePassReason().contains("page-number-citation"), result.getSinglePassReason());
         assertEquals(pagesOf(singlePass(longInvoice, params)), pagesOf(out.toByteArray()));
     }
 
     @Test
-    void rendersInSinglePassWhenInvoiceFitsInOneChunk() throws Exception {
-        InvoiceGenerationParams params = paramsFor(CHUNKED_TEMPLATE);
-        byte[] shortInvoice = invoiceWithRows(ROWS_PER_CHUNK);
+    void rendersInSinglePassWhenTheDocumentFitsInOneChunk() throws Exception {
+        InvoiceGenerationParams params = paramsFor(MULTI_TABLE_TEMPLATE, Collections.<String, Object>emptyMap());
+        byte[] shortInvoice = invoiceWithRows(10);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ChunkedRenderingResult result = generator.generateInvoiceChunked(shortInvoice, params, out, ROWS_PER_CHUNK);
@@ -93,10 +77,22 @@ class ChunkedInvoiceRenderingTest {
         assertEquals(pagesOf(singlePass(shortInvoice, params)), pagesOf(out.toByteArray()));
     }
 
-    private static InvoiceGenerationParams paramsFor(String templatePath) {
+    private static void assertChunkedLikeSinglePass(InvoiceGenerationParams params) throws Exception {
+        ByteArrayOutputStream chunked = new ByteArrayOutputStream();
+        ChunkedRenderingResult result = generator.generateInvoiceChunked(longInvoice, params, chunked, ROWS_PER_CHUNK);
+
+        assertTrue(result.isChunked(), "expected chunked rendering, got: " + result.getSinglePassReason());
+        assertTrue(result.getChunkCount() > 2, "chunks: " + result.getChunkCount());
+        List<String> expected = pagesOf(singlePass(longInvoice, params));
+        assertEquals(expected.size(), result.getPageCount());
+        assertEquals(expected, pagesOf(chunked.toByteArray()));
+    }
+
+    private static InvoiceGenerationParams paramsFor(String templatePath, Map<String, Object> customProperties) {
         return InvoiceGenerationParams.builder()
                 .schema(InvoiceSchema.FA3_1_0_E)
                 .templatePath(templatePath)
+                .customProperties(customProperties)
                 .build();
     }
 
@@ -119,18 +115,6 @@ class ChunkedInvoiceRenderingTest {
         }
     }
 
-    private static int positionsIn(List<String> pages) {
-        Pattern position = Pattern.compile("POSITION-(\\d+) ");
-        int count = 0;
-        for (String page : pages) {
-            Matcher matcher = position.matcher(page);
-            while (matcher.find()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     /** Sample FA(3) invoice with its single position repeated; names of varying length give varying row heights. */
     private static byte[] invoiceWithRows(int rows) throws IOException {
         String invoice;
@@ -148,10 +132,9 @@ class ChunkedInvoiceRenderingTest {
                     .replaceFirst("<NrWierszaFa>[^<]*</NrWierszaFa>", "<NrWierszaFa>" + i + "</NrWierszaFa>")
                     .replaceFirst("<P_7>[^<]*</P_7>", "<P_7>" + name + "</P_7>"));
         }
+        int firstRow = invoice.indexOf("<FaWiersz>");
         String withoutRows = invoice.replaceAll("(?s)<FaWiersz>.*?</FaWiersz>\\s*", "");
-        int insertAt = withoutRows.indexOf("<Rozliczenie>") >= 0 ? withoutRows.indexOf("<Rozliczenie>")
-                : withoutRows.indexOf("<Platnosc>");
-        return (withoutRows.substring(0, insertAt) + positions + withoutRows.substring(insertAt))
+        return (withoutRows.substring(0, firstRow) + positions + withoutRows.substring(firstRow))
                 .getBytes(StandardCharsets.UTF_8);
     }
 

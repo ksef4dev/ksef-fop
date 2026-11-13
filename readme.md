@@ -220,11 +220,10 @@ bound to each compilation, not to the shared Saxon configuration.
 
 ### Chunked rendering of long invoices
 
-FOP keeps a whole `fo:page-sequence` in memory until it ends, and an invoice is one sequence, so a
-~250-page invoice needs about 0.5 GB of heap on its own. `generateInvoiceChunked` lays the position
-table out in chunks, each as its own page sequence, cut only at real page breaks: the last, partially
-filled page of a chunk is dropped and the next chunk starts with its first position. The PDF looks the
-same as one from `generateInvoice`, while FOP holds only one chunk in memory.
+FOP keeps a whole `fo:page-sequence` in memory until it ends, so a long invoice (hundreds of positions,
+a large attachment table) needs hundreds of MB of heap. `generateInvoiceChunked` lays long tables out
+in chunks of `rowsPerChunk` rows, each laid out separately, so FOP holds only one chunk at a time. The
+PDF looks the same as one from `generateInvoice`.
 
 ```java
 ChunkedRenderingResult result = generator.generateInvoiceChunked(invoiceXml, params, out, 1000);
@@ -232,20 +231,21 @@ result.isChunked();            // false -> rendered in a single pass, see result
 result.getChunkCount();
 ```
 
-The method renders in a single pass, exactly like `generateInvoice`, when the template does not
-support chunks, the invoice has at most `rowsPerChunk` positions, or no page break can be cut at.
-A template supports chunks when it:
+It works with any template; the template is not changed or involved. The XSL-FO it produces is written
+to a temporary file and split at table rows:
 
-- declares the parameters `chunkMode` (`''` whole invoice, `head`, `middle`, `tail`), `chunkFrom`,
-  `chunkTo` (`0` = until the last position) and `chunkInitialPage`;
-- in `head` renders the invoice start and positions `chunkFrom..chunkTo`, in `middle` only those
-  positions, in `tail` the positions from `chunkFrom` and the rest of the invoice;
-- starts `middle`/`tail` page sequences on continuation pages (no first-page master) at
-  `chunkInitialPage`;
-- marks every rendered position with the id `ksefrow-N` (N = 1-based position number).
+- every table directly in the flow (with only plain blocks around it) can be split: positions, correction
+  differences, orders, attachment tables, in any page sequence;
+- a chunk ends at the last page on which a row starts; that page is dropped and the next chunk reopens
+  the page sequence, blocks and table (header included) at that row, on the page master FOP used there;
+- the cut is accepted only if the next chunk's first page draws exactly what the dropped page drew
+  before that row, so a row broken across pages or text between tables is never lost; otherwise an
+  earlier page or a larger chunk is tried.
 
-Built-in templates do not support chunks yet; see `templates/chunked/chunked_invoice.xsl` in the tests
-for a minimal example.
+The invoice is rendered in a single pass, exactly like `generateInvoice`, when the document refers
+across pages (`fo:page-number-citation`, markers, internal links, bookmarks), uses multi-column regions
+or `page-position="last"` masters, tagged PDF is enabled, or no table is longer than `rowsPerChunk`.
+Nothing is written to the output before that decision. Temporary files go to `java.io.tmpdir`.
 
 ## Custom translations
 

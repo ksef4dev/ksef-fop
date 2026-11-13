@@ -6,7 +6,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
- * Passes an intermediate-format document through, dropping every page after the first {@code pagesToKeep}.
+ * Passes an intermediate-format document through, keeping only its first {@code pagesToKeep} pages; page sequences
+ * that would be left without pages are dropped as well.
  */
 final class PageDroppingFilter extends XMLFilterImpl {
 
@@ -23,7 +24,9 @@ final class PageDroppingFilter extends XMLFilterImpl {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (isDropping()) {
             droppedDepth++;
-        } else if (IntermediateFormat.isElement(uri, localName, IntermediateFormat.PAGE) && ++pagesSeen > pagesToKeep) {
+        } else if (FoNames.isIf(uri, localName, "page-sequence") && pagesSeen >= pagesToKeep) {
+            droppedDepth = 1;
+        } else if (FoNames.isIf(uri, localName, "page") && ++pagesSeen > pagesToKeep) {
             droppedDepth = 1;
         } else {
             super.startElement(uri, localName, qName, attributes);

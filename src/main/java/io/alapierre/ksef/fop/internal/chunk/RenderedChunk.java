@@ -3,29 +3,17 @@ package io.alapierre.ksef.fop.internal.chunk;
 import java.io.File;
 
 /**
- * A chunk laid out into an intermediate-format file, with the number of its pages that go into the final PDF.
+ * A chunk laid out into an intermediate-format file.
  */
 final class RenderedChunk {
 
-    private final File intermediateFormat;
-    private final int laidOutPages;
-    private final int pagesToKeep;
+    final ChunkRequest request;
+    final File intermediateFormat;
+    final ChunkLayout layout;
 
-    RenderedChunk(File intermediateFormat, int laidOutPages, int pagesToKeep) {
+    RenderedChunk(ChunkRequest request, File intermediateFormat, ChunkLayout layout) {
+        this.request = request;
         this.intermediateFormat = intermediateFormat;
-        this.laidOutPages = laidOutPages;
-        this.pagesToKeep = pagesToKeep;
-    }
-
-    File intermediateFormat() {
-        return intermediateFormat;
-    }
-
-    int laidOutPages() {
-        return laidOutPages;
-    }
-
-    int pagesToKeep() {
-        return pagesToKeep;
+        this.layout = layout;
     }
 }
