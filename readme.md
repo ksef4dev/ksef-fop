@@ -218,6 +218,35 @@ PdfGenerator.clearCompiledTemplateCache();          // after templates change at
 Compilation is safe for concurrent use with different resource roots: the include resolver is
 bound to each compilation, not to the shared Saxon configuration.
 
+### Chunked rendering of long invoices
+
+FOP keeps a whole `fo:page-sequence` in memory until it ends, and an invoice is one sequence, so a
+~250-page invoice needs about 0.5 GB of heap on its own. `generateInvoiceChunked` lays the position
+table out in chunks, each as its own page sequence, cut only at real page breaks: the last, partially
+filled page of a chunk is dropped and the next chunk starts with its first position. The PDF looks the
+same as one from `generateInvoice`, while FOP holds only one chunk in memory.
+
+```java
+ChunkedRenderingResult result = generator.generateInvoiceChunked(invoiceXml, params, out, 1000);
+result.isChunked();            // false -> rendered in a single pass, see result.getSinglePassReason()
+result.getChunkCount();
+```
+
+The method renders in a single pass, exactly like `generateInvoice`, when the template does not
+support chunks, the invoice has at most `rowsPerChunk` positions, or no page break can be cut at.
+A template supports chunks when it:
+
+- declares the parameters `chunkMode` (`''` whole invoice, `head`, `middle`, `tail`), `chunkFrom`,
+  `chunkTo` (`0` = until the last position) and `chunkInitialPage`;
+- in `head` renders the invoice start and positions `chunkFrom..chunkTo`, in `middle` only those
+  positions, in `tail` the positions from `chunkFrom` and the rest of the invoice;
+- starts `middle`/`tail` page sequences on continuation pages (no first-page master) at
+  `chunkInitialPage`;
+- marks every rendered position with the id `ksefrow-N` (N = 1-based position number).
+
+Built-in templates do not support chunks yet; see `templates/chunked/chunked_invoice.xsl` in the tests
+for a minimal example.
+
 ## Custom translations
 
 The library ships with built-in Polish and English translations for all PDF labels

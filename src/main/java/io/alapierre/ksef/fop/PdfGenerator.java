@@ -4,11 +4,16 @@ import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.internal.TemplateResolver;
 import io.alapierre.ksef.fop.internal.XmlFactories;
+import io.alapierre.ksef.fop.internal.chunk.ChunkTemplateContract;
+import io.alapierre.ksef.fop.internal.chunk.ChunkedInvoiceRenderer;
+import io.alapierre.ksef.fop.internal.chunk.NotChunkableException;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.configuration.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -162,29 +168,72 @@ public class PdfGenerator {
     }
 
     /**
-     * PROTOTYPE: renders a long invoice in chunks of {@code rowsPerChunk} positions, each chunk as its own
-     * page sequence, cutting at real page breaks (see {@link ChunkedInvoiceRenderer}).
+     * Renders a long invoice in chunks of {@code rowsPerChunk} positions, each chunk as its own page sequence
+     * cut at a real page break, so FOP keeps only one chunk in memory. The PDF looks the same as one produced by
+     * {@link #generateInvoice}.
+     *
+     * <p>Renders in a single pass, exactly like {@link #generateInvoice}, when the template does not support chunks
+     * (see {@link ChunkTemplateContract}), the invoice has at most {@code rowsPerChunk} positions, or no page break
+     * can be cut at. The result tells which way was taken.</p>
+     *
+     * @param invoiceXml KSeF invoice XML matching the schema selected in {@code params}
+     * @param params generation parameters, as for {@link #generateInvoice}
+     * @param out where the PDF is written
+     * @param rowsPerChunk positions per chunk, at least 1
+     * @return whether the invoice was rendered in chunks, with page and chunk counts
+     * @throws TransformerException when the XSLT transformation fails
+     * @throws FOPException when FOP rendering fails
      */
-    public ChunkedInvoiceRenderer.Stats generateInvoiceChunked(byte[] invoiceXml,
-                                                               InvoiceGenerationParams params,
-                                                               OutputStream out,
-                                                               int rowsPerChunk) throws TransformerException, FOPException {
-        ChunkedInvoiceRenderer.Stats[] stats = new ChunkedInvoiceRenderer.Stats[1];
-        fopRenderer.renderWithFactory(factory -> {
-            String langCode = params.resolveLanguageTag();
-            String templatePath = resolveTemplatePath(params);
-            TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
-            TranslationService translationService = new TranslationService(resolver, templatePath);
-            QrCodeBuilder qrCodeBuilder = new QrCodeBuilder(translationService);
-            List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
-            Templates template = XmlFactories.getTemplate(resolver, templatePath);
-            stats[0] = new ChunkedInvoiceRenderer(factory, rowsPerChunk).render(invoiceXml, () -> {
-                Transformer transformer = newTransformer(template, resolver);
-                applyParameters(params, qrCodes, null, resolver, translationService, transformer);
-                return transformer;
-            }, out);
-        });
-        return stats[0];
+    public ChunkedRenderingResult generateInvoiceChunked(byte[] invoiceXml,
+                                                         InvoiceGenerationParams params,
+                                                         OutputStream out,
+                                                         int rowsPerChunk) throws TransformerException, FOPException {
+        if (rowsPerChunk < 1) {
+            throw new IllegalArgumentException("rowsPerChunk must be positive: " + rowsPerChunk);
+        }
+        AtomicReference<ChunkedRenderingResult> result = new AtomicReference<>();
+        fopRenderer.renderWithFactory(factory ->
+                result.set(renderInvoiceChunked(factory, invoiceXml, params, out, rowsPerChunk)));
+        return result.get();
+    }
+
+    private ChunkedRenderingResult renderInvoiceChunked(FopFactory factory,
+                                                        byte[] invoiceXml,
+                                                        InvoiceGenerationParams params,
+                                                        OutputStream out,
+                                                        int rowsPerChunk) throws TransformerException, FOPException {
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
+        List<QrCodeData> qrCodes = new QrCodeBuilder(translationService).buildQrCodes(
+                params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, params.resolveLanguageTag());
+        Templates template = XmlFactories.getTemplate(resolver, templatePath);
+        ChunkedInvoiceRenderer.InvoiceTransformerSupplier transformers = () -> {
+            Transformer transformer = newTransformer(template, resolver);
+            applyParameters(params, qrCodes, null, resolver, translationService, transformer);
+            return transformer;
+        };
+
+        if (!ChunkTemplateContract.isSupportedBy(template)) {
+            return renderSinglePass(factory, transformers, invoiceXml, out, "template does not support chunked rendering");
+        }
+        try {
+            return new ChunkedInvoiceRenderer(factory, rowsPerChunk).render(invoiceXml, transformers, out);
+        } catch (NotChunkableException e) {
+            return renderSinglePass(factory, transformers, invoiceXml, out, e.getMessage());
+        }
+    }
+
+    private static ChunkedRenderingResult renderSinglePass(FopFactory factory,
+                                                           ChunkedInvoiceRenderer.InvoiceTransformerSupplier transformers,
+                                                           byte[] invoiceXml,
+                                                           OutputStream out,
+                                                           String reason) throws TransformerException, FOPException {
+        log.debug("Rendering invoice in a single pass: {}", reason);
+        Fop fop = factory.newFop(MimeConstants.MIME_PDF, factory.newFOUserAgent(), out);
+        transformers.newTransformer().transform(new StreamSource(new ByteArrayInputStream(invoiceXml)),
+                new SAXResult(fop.getDefaultHandler()));
+        return ChunkedRenderingResult.singlePass(reason);
     }
 
     /**
