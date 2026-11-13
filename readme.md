@@ -218,6 +218,35 @@ PdfGenerator.clearCompiledTemplateCache();          // after templates change at
 Compilation is safe for concurrent use with different resource roots: the include resolver is
 bound to each compilation, not to the shared Saxon configuration.
 
+### Chunked rendering of long invoices
+
+FOP keeps a whole `fo:page-sequence` in memory until it ends, so a long invoice (hundreds of positions,
+a large attachment table) needs hundreds of MB of heap. `generateInvoiceChunked` lays long tables out
+in chunks of `rowsPerChunk` rows, each laid out separately, so FOP holds only one chunk at a time. The
+PDF looks the same as one from `generateInvoice`.
+
+```java
+ChunkedRenderingResult result = generator.generateInvoiceChunked(invoiceXml, params, out, 1000);
+result.isChunked();            // false -> rendered in a single pass, see result.getSinglePassReason()
+result.getChunkCount();
+```
+
+It works with any template; the template is not changed or involved. The XSL-FO it produces is written
+to a temporary file and split at table rows:
+
+- every table directly in the flow (with only plain blocks around it) can be split: positions, correction
+  differences, orders, attachment tables, in any page sequence;
+- a chunk ends at the last page on which a row starts; that page is dropped and the next chunk reopens
+  the page sequence, blocks and table (header included) at that row, on the page master FOP used there;
+- the cut is accepted only if the next chunk's first page draws exactly what the dropped page drew
+  before that row, so a row broken across pages or text between tables is never lost; otherwise an
+  earlier page or a larger chunk is tried.
+
+The invoice is rendered in a single pass, exactly like `generateInvoice`, when the document refers
+across pages (`fo:page-number-citation`, markers, internal links, bookmarks), uses multi-column regions
+or `page-position="last"` masters, tagged PDF is enabled, or no table is longer than `rowsPerChunk`.
+Nothing is written to the output before that decision. Temporary files go to `java.io.tmpdir`.
+
 ## Custom translations
 
 The library ships with built-in Polish and English translations for all PDF labels

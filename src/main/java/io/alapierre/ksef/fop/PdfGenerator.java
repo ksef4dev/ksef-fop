@@ -4,11 +4,14 @@ import io.alapierre.ksef.fop.i18n.TranslationService;
 import io.alapierre.ksef.fop.internal.Strings;
 import io.alapierre.ksef.fop.internal.TemplateResolver;
 import io.alapierre.ksef.fop.internal.XmlFactories;
+import io.alapierre.ksef.fop.internal.chunk.ChunkedInvoiceRenderer;
 import io.alapierre.ksef.fop.qr.QrCodeBuilder;
 import io.alapierre.ksef.fop.qr.QrCodeData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.configuration.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -159,6 +163,53 @@ public class PdfGenerator {
             List<QrCodeData> qrCodes = qrCodeBuilder.buildQrCodes(params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, langCode);
             generatePdfInvoice(invoiceXml, params, qrCodes, null, resolver, translationService, fop);
         });
+    }
+
+    /**
+     * Renders an invoice like {@link #generateInvoice}, but lays long tables out in chunks of {@code rowsPerChunk}
+     * rows, each cut at a page break FOP would make anyway, so FOP keeps only one chunk in memory instead of the
+     * whole document. Works with any template; the PDF looks the same as one from {@link #generateInvoice}.
+     *
+     * <p>When the document cannot be split (no table long enough, references across pages such as page-number
+     * citations, tagged PDF, or no page break that can be cut at safely), it is rendered in a single pass, exactly
+     * like {@link #generateInvoice}. The result tells which way was taken.</p>
+     *
+     * @param invoiceXml KSeF invoice XML matching the schema selected in {@code params}
+     * @param params generation parameters, as for {@link #generateInvoice}
+     * @param out where the PDF is written
+     * @param rowsPerChunk table rows per chunk, at least 1
+     * @return whether the invoice was rendered in chunks, with page and chunk counts
+     * @throws TransformerException when the XSLT transformation fails
+     * @throws FOPException when FOP rendering fails
+     */
+    public ChunkedRenderingResult generateInvoiceChunked(byte[] invoiceXml,
+                                                         InvoiceGenerationParams params,
+                                                         OutputStream out,
+                                                         int rowsPerChunk) throws TransformerException, FOPException {
+        if (rowsPerChunk < 1) {
+            throw new IllegalArgumentException("rowsPerChunk must be positive: " + rowsPerChunk);
+        }
+        AtomicReference<ChunkedRenderingResult> result = new AtomicReference<>();
+        fopRenderer.renderWithFactory(factory ->
+                result.set(renderInvoiceChunked(factory, invoiceXml, params, out, rowsPerChunk)));
+        return result.get();
+    }
+
+    private ChunkedRenderingResult renderInvoiceChunked(FopFactory factory,
+                                                        byte[] invoiceXml,
+                                                        InvoiceGenerationParams params,
+                                                        OutputStream out,
+                                                        int rowsPerChunk) throws TransformerException, FOPException {
+        String templatePath = resolveTemplatePath(params);
+        TemplateResolver resolver = createTemplateResolver(params.getResourceRoots(), templatePath);
+        TranslationService translationService = new TranslationService(resolver, templatePath);
+        List<QrCodeData> qrCodes = new QrCodeBuilder(translationService).buildQrCodes(
+                params.getInvoiceQRCodeGeneratorRequest(), params.getKsefNumber(), invoiceXml, params.resolveLanguageTag());
+        Transformer transformer = newTransformer(XmlFactories.getTemplate(resolver, templatePath), resolver);
+        applyParameters(params, qrCodes, null, resolver, translationService, transformer);
+
+        Source invoice = new StreamSource(new ByteArrayInputStream(invoiceXml));
+        return new ChunkedInvoiceRenderer(factory, rowsPerChunk).render(transformer, invoice, out);
     }
 
     /**

@@ -31,6 +31,16 @@ class FopRenderer {
         }
     }
 
+    void renderWithFactory(FactoryOperation operation) throws FOPException, TransformerException {
+        synchronized (renderLock) {
+            operation.render(fopFactory);
+        }
+    }
+
+    interface FactoryOperation {
+        void render(FopFactory factory) throws FOPException, TransformerException;
+    }
+
     private Fop newFop(OutputStream out) throws FOPException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         return fopFactory.newFop(MIME_PDF, foUserAgent, out);
