@@ -865,12 +865,13 @@
                                             <xsl:value-of select="crd:Fa/crd:OkresFaKorygowanej"/>
                                         </fo:block>
                                     </xsl:if>
-                                    <xsl:if test="local:showCommonExchangeRateHeader(crd:Fa/crd:FaWiersz)">
+                                    <!-- Common row rate, as in the KSeF visualisation: KursWalutyZ takes precedence, otherwise the single rate shared by all rows that have one -->
+                                    <xsl:if test="not(crd:Fa/crd:KursWalutyZ) and local:hasCommonExchangeRate(crd:Fa/crd:FaWiersz)">
                                         <fo:block id="exchangeRate" text-align="left" font-size="8pt">
                                             <fo:inline font-weight="bold"><xsl:value-of select="key('kLabels', 'exchangeRate', $labels)"/>: </fo:inline>
-                                            <xsl:value-of select="crd:Fa/crd:FaWiersz[1]/crd:KursWaluty"/>
+                                            <xsl:value-of select="(crd:Fa/crd:FaWiersz/crd:KursWaluty[normalize-space()])[1]"/>
                                         </fo:block>
-                                        <fo:block id="exchangeRateCommonNote" text-align="left" font-size="8pt">
+                                        <fo:block id="exchangeRateCommonNote" text-align="left" font-size="8pt" font-weight="bold">
                                             <xsl:value-of select="key('kLabels', 'exchangeRateCommonNote', $labels)"/>
                                         </fo:block>
                                     </xsl:if>

@@ -29,17 +29,12 @@
         <xsl:attribute name="padding-bottom">4pt</xsl:attribute>
     </xsl:attribute-set>
 
-    <!-- Checks whether all rows share one exchange rate. Returns true when every row has a rate and all are numerically equal. -->
+    <!-- Checks whether the rows share one exchange rate, following the official KSeF visualisation:
+         rows without a rate are ignored, and the remaining rates must all be numerically equal.
+         StanPrzed is not taken into account, so a correction that keeps the rate still has a common rate. -->
     <xsl:function name="local:hasCommonExchangeRate" as="xs:boolean">
         <xsl:param name="rows"/>
-        <xsl:sequence select="count($rows) = count($rows/crd:KursWaluty) and local:distinctDecimalCount($rows/crd:KursWaluty) = 1"/>
-    </xsl:function>
-
-    <!-- Checks whether the shared common-rate header may be shown.
-         Returns true when exchange rate is common between lines and the invoice has no before/after correction data. -->
-    <xsl:function name="local:showCommonExchangeRateHeader" as="xs:boolean">
-        <xsl:param name="rows"/>
-        <xsl:sequence select="local:hasCommonExchangeRate($rows) and not($rows[crd:StanPrzed])"/>
+        <xsl:sequence select="local:distinctDecimalCount($rows/crd:KursWaluty[normalize-space()]) = 1"/>
     </xsl:function>
 
     <!-- Template for rendering the positions table -->
@@ -48,7 +43,7 @@
 
         <!-- Show the per-line exchange rate column when a rate is present and the invoice rates are not common across all rows.
              Checked invoice-wide so before/after correction rows are taken into account. -->
-        <xsl:variable name="showExchangeRateColumn" select="boolean($faWiersz/crd:KursWaluty) and not(local:hasCommonExchangeRate(//crd:FaWiersz))"/>
+        <xsl:variable name="showExchangeRateColumn" select="boolean($faWiersz/crd:KursWaluty[normalize-space()]) and not(local:hasCommonExchangeRate(//crd:FaWiersz))"/>
 
         <!-- Calculate column width for name based on presence of other columns -->
         <!-- Fixed columns: Lp (4%), Quantity (8%), Unit (5%) = 17% -->
@@ -260,7 +255,7 @@
         <xsl:param name="showP11" select="boolean(//crd:FaWiersz/crd:P_11)" tunnel="yes"/>
         <xsl:param name="showP11Vat" select="boolean(//crd:FaWiersz/crd:P_11Vat)" tunnel="yes"/>
         <xsl:param name="showP11A" select="boolean(//crd:FaWiersz/crd:P_11A)" tunnel="yes"/>
-        <xsl:param name="showExchangeRate" select="boolean(//crd:FaWiersz/crd:KursWaluty) and not(local:hasCommonExchangeRate(//crd:FaWiersz))" tunnel="yes"/>
+        <xsl:param name="showExchangeRate" select="boolean(//crd:FaWiersz/crd:KursWaluty[normalize-space()]) and not(local:hasCommonExchangeRate(//crd:FaWiersz))" tunnel="yes"/>
         <fo:table-row>
             <fo:table-cell xsl:use-attribute-sets="tableFont tableBorder table.cell.padding" text-align="left">
                 <fo:block>
