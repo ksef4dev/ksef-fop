@@ -61,24 +61,24 @@ class ExchangeRateTest extends AbstractStyleSheetTest {
     }
 
     @Test
-    void shouldCorrectlyDisplayIncompleteLineRatesForVatInvoice() throws Exception {
+    void shouldShowCommonRateWhenSomeRowsHaveNoRate() throws Exception {
+        // As in the KSeF visualisation: rows without a rate are ignored when looking for a common rate
         URL input = resource("ExchangeRateTest/vat_incomplete_rates_in_rows.xml");
 
-        String firstRowExpectedRate = "4.3200";
+        String expectedRate = "4.3200";
 
         Node exchangeRateHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_HEADER_XPATH);
         Node exchangeRateNoteHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_NOTE_HEADER_XPATH);
         Node firstRow = transformFa3Invoice(input, INVOICE_XPATH, FIRST_ROW_XPATH);
 
-        assertNull(exchangeRateHeader,
-                "Exchange rate header should not be visible when rows have incomplete rates");
-        assertNull(exchangeRateNoteHeader,
-                "Exchange rate header note should not be visible when rows have incomplete rates");
-
-        assertNotNull(firstRow,
-                "Exchange rate should be shown per line when rows have incomplete rates");
-        assertTrue(firstRow.getTextContent().contains(firstRowExpectedRate),
-                () -> "Expected line 1 exchange rate " + firstRowExpectedRate + " but got: " + firstRow.getTextContent());
+        assertNotNull(exchangeRateHeader,
+                "Common exchange rate header should be visible when the rows that have a rate share it");
+        assertTrue(exchangeRateHeader.getTextContent().contains(expectedRate),
+                () -> "Expected common exchange rate " + expectedRate + " but got: " + exchangeRateHeader.getTextContent());
+        assertNotNull(exchangeRateNoteHeader,
+                "Common exchange rate note should be visible when the rows that have a rate share it");
+        assertNull(firstRow,
+                "Per-line exchange rate column must not be shown when there is a single rate");
     }
 
     @Test
@@ -106,18 +106,39 @@ class ExchangeRateTest extends AbstractStyleSheetTest {
     }
 
     @Test
-    void shouldHideExchangeRateForCorrectionWithoutRateChange() throws Exception {
+    void shouldShowCommonRateForCorrectionWithoutRateChange() throws Exception {
+        // As in the KSeF visualisation: StanPrzed rows do not prevent showing a common rate
         URL input = resource("ExchangeRateTest/correction_unchanged_rate.xml");
+
+        String expectedRate = "4.2106";
 
         Node exchangeRateHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_HEADER_XPATH);
         Node exchangeRateNoteHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_NOTE_HEADER_XPATH);
         Node firstRow = transformFa3Invoice(input, INVOICE_XPATH, FIRST_ROW_XPATH);
 
-        assertNull(exchangeRateHeader,
-                "Common exchange rate header should not be shown on a correction that does not change the rate");
-        assertNull(exchangeRateNoteHeader,
-                "Common exchange rate note should not be shown on a correction that does not change the rate");
+        assertNotNull(exchangeRateHeader,
+                "Common exchange rate header should be shown on a correction that does not change the rate");
+        assertTrue(exchangeRateHeader.getTextContent().contains(expectedRate),
+                () -> "Expected common exchange rate " + expectedRate + " but got: " + exchangeRateHeader.getTextContent());
+        assertNotNull(exchangeRateNoteHeader,
+                "Common exchange rate note should be shown on a correction that does not change the rate");
         assertNull(firstRow,
                 "Per-line exchange rate column should not be shown on a correction that does not change the rate");
+    }
+
+    @Test
+    void shouldPreferKursWalutyZOverCommonRowRate() throws Exception {
+        // As in the KSeF visualisation: Fa/KursWalutyZ takes precedence over the common FaWiersz/KursWaluty
+        URL input = resource("ExchangeRateTest/vat_same_rates_with_kurs_waluty_z.xml");
+
+        Node exchangeRateHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_HEADER_XPATH);
+        Node exchangeRateNoteHeader = transformFa3Invoice(input, INVOICE_XPATH, EXCHANGE_RATE_NOTE_HEADER_XPATH);
+        Node kursWalutyZ = transformFa3Invoice(input, INVOICE_XPATH, "//fo:block[contains(., '4.2500')]");
+        Node firstRow = transformFa3Invoice(input, INVOICE_XPATH, FIRST_ROW_XPATH);
+
+        assertNotNull(kursWalutyZ, "KursWalutyZ should be shown");
+        assertNull(exchangeRateHeader, "Common row rate must not be shown when KursWalutyZ is present");
+        assertNull(exchangeRateNoteHeader, "Common row rate note must not be shown when KursWalutyZ is present");
+        assertNull(firstRow, "Per-line exchange rate column must not be shown when all line rates are equal");
     }
 }
